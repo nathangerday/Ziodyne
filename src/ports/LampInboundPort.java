@@ -8,44 +8,36 @@ import interfaces.LampI;
 
 public class LampInboundPort extends AbstractInboundPort implements LampI{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public LampInboundPort(String uri, ComponentI lamp) throws Exception {
-		super(uri, LampI.class, lamp);
+    public LampInboundPort(String uri, ComponentI lamp) throws Exception {
+        super(uri, LampI.class, lamp);
 
-		assert uri != null && lamp instanceof Lamp;
-	}
+        assert uri != null && lamp instanceof Lamp;
+    }
 
-	public LampInboundPort(ComponentI lamp) throws Exception {
-		super(LampI.class, lamp);
+    public LampInboundPort(ComponentI lamp) throws Exception {
+        super(LampI.class, lamp);
 
-		assert lamp instanceof Lamp;
-	}
+        assert lamp instanceof Lamp;
+    }
 
-	@Override
-	public boolean isOn() throws Exception {
-		return this.getOwner().handleRequestSync(
-				owner -> ((Lamp)owner).isOn());
-	}
+    @Override
+    public boolean isOn() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((Lamp)owner).isOn());
+    }
 
-	@Override
-	public void switchButton() throws Exception {
-		//		this.getOwner().handleRequestSync(
-		//				owner -> ((Lamp)owner).switchButton());
-		//		
-		this.getOwner().handleRequestSync(
-				new AbstractComponent.AbstractService<Void>() {
-					@Override
-					public Void call() throws Exception {
-						((Lamp)this.getServiceOwner()).switchButton();
-						return null;
-					}
-				}) ;
-
-
-	}
+    @Override
+    public void switchButton() throws Exception {
+        this.getOwner().handleRequestSync(
+                new AbstractComponent.AbstractService<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        ((Lamp)this.getServiceOwner()).switchButton();
+                        return null;
+                    }
+                }) ;
+    }
 
 }
