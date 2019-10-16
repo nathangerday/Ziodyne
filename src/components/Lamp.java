@@ -8,15 +8,16 @@ import fr.sorbonne_u.components.exceptions.PreconditionException;
 import interfaces.LampI;
 import ports.LampInboundPort;
 
-public class Lamp extends AbstractComponent{
+public class Lamp extends AbstractComponent implements LampI{
 
-	//a boolean indicating the state of the lamp
-    protected boolean isOn;
+
     //a string prefix that will identify the URI lamp
     protected String uri;
     //port that exposes the offered interface with the
 	// given URI to ease the connection from controller components.
     protected LampInboundPort p;
+    //integer indicating the lamp's state
+    protected int state;
 
     
     /**
@@ -41,7 +42,7 @@ public class Lamp extends AbstractComponent{
         super(uri, 1, 0);
         assert uri != null :  new PreconditionException("uri can't be null!") ;
         this.uri = uri;
-        this.isOn = false;
+        this.state = 0;
         this.addOfferedInterface(LampI.class);
         p = new LampInboundPort(uri, this);
         p.publishPort();
@@ -49,7 +50,7 @@ public class Lamp extends AbstractComponent{
         assert this.uri.equals(uri) :
 			new PostconditionException("The URI prefix has not been initialised!");
         
-        assert this.isOn == false :
+        assert this.state == 0 :
         	new PostconditionException("The lamp's state has not been initialised correctly !");
         assert this.isPortExisting(p.getPortURI()):
 			new PostconditionException("The component must have a "
@@ -87,37 +88,9 @@ public class Lamp extends AbstractComponent{
         super.shutdownNow();
     }
 
-	/**
-	 * return a boolean whether the lamp is On or Off. (false if Off, true if On)
-	 * 
-	 * <p><strong>Contract</strong></p>
-	 * 
-	 * <pre>
-	 * pre	true
-	 * post	true
-	 * </pre>
-	 *
-	 * @return	boolean.
-	 * @throws Exception	<i>todo.</i>
-	 */
-    public boolean isOn() {
-        return this.isOn;
-    }
-
-    /**
-	 *  change the lamp status from Off to On or On to Off
-	 * 
-	 * <p><strong>Contract</strong></p>
-	 * 
-	 * <pre>
-	 * pre	true
-	 * post	isOn() == !isOn()@pre  
-	 * </pre>
-	 *
-	 * @throws Exception	<i>todo.</i> 
-	 */
-    public void switchButton() {
-        this.isOn = !this.isOn;
-    }
+	@Override
+	public int getState() {
+		return state;
+	}
 
 }

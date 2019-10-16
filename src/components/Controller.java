@@ -80,10 +80,14 @@ public class Controller extends AbstractComponent{
     @Override
     public void execute() throws Exception{
         super.execute();
-        this.p.switchLamp();
-        System.out.println("Lampe etat : " + p.isLampOn());
-        this.p.switchLamp();
-        System.out.println("Lampe etat : " + p.isLampOn());
+        System.out.print("Lampe état : ");
+        switch(this.p.getState()) {
+        	case 0 : System.out.println("éteint");break;
+	        case 1 : System.out.println("tamisé"); break;
+	        case 2 : System.out.println("normal"); break;
+	        case 3 : System.out.println("fort"); break;
+        }
+        
     }
 
     @Override
@@ -111,4 +115,5 @@ public class Controller extends AbstractComponent{
         this.doPortDisconnection(p.getPortURI());
         super.finalise();
     }
+
 }

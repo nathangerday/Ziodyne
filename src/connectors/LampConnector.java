@@ -7,18 +7,10 @@ import interfaces.LampI;
 public class LampConnector extends AbstractConnector implements LampControllerI{
 
 	/**
-	 * @see interfaces.LampControllerI#isLampOn
-	 */
-    @Override
-    public boolean isLampOn() throws Exception{
-        return ((LampI)this.offering).isOn();
-    }
-
-    /**
-	 * @see interfaces.LampControllerI#switchLamp
-	 */
-    @Override
-    public void switchLamp() throws Exception{
-        ((LampI)this.offering).switchButton();
-    }
+   	 * @see interfaces.LampControllerI#getState
+   	 */
+	@Override
+	public int getState() throws Exception {
+		return ((LampI)this.offering).getState();
+	}
 }

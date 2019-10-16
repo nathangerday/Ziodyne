@@ -22,12 +22,7 @@ public class LampControllerOutboundPort extends AbstractOutboundPort implements 
     }
 
     @Override
-    public boolean isLampOn() throws Exception{
-        return ((LampControllerI)this.connector).isLampOn();
-    }
-
-    @Override
-    public void switchLamp() throws Exception{
-        ((LampControllerI)this.connector).switchLamp();
+    public int getState() throws Exception{
+        return ((LampControllerI)this.connector).getState();
     }
 }
