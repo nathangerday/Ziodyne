@@ -1,6 +1,5 @@
 package ports;
 
-import components.Lamp;
 import components.WindTurbine;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.ComponentI;

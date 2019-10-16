@@ -1,7 +1,6 @@
 package components;
 
 import fr.sorbonne_u.components.AbstractComponent;
-import fr.sorbonne_u.components.examples.basic_cs.interfaces.URIProviderI;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.PostconditionException;
 import fr.sorbonne_u.components.exceptions.PreconditionException;
@@ -10,15 +9,11 @@ import ports.LampInboundPort;
 
 public class Lamp extends AbstractComponent implements LampI{
 
-
-    //a string prefix that will identify the URI lamp
-    protected String uri;
     //port that exposes the offered interface with the
 	// given URI to ease the connection from controller components.
-    protected LampInboundPort p;
+    protected LampInboundPort lampInboundPort;
     //integer indicating the lamp's state
     protected int state;
-
     
     /**
 	 * create a component Lamp with a given uri prefix and that will expose its
@@ -38,39 +33,35 @@ public class Lamp extends AbstractComponent implements LampI{
 	 * @param uriPrefix			the URI prefix of the lamp
 	 * @throws Exception			<i>todo.</i>
 	 */
-    protected Lamp(String uri) throws Exception {
+    protected Lamp(String uri, String lampInboundPortURI) throws Exception {
         super(uri, 1, 0);
         assert uri != null :  new PreconditionException("uri can't be null!") ;
-        this.uri = uri;
         this.state = 0;
         this.addOfferedInterface(LampI.class);
-        p = new LampInboundPort(uri, this);
-        p.publishPort();
-        
-        assert this.uri.equals(uri) :
-			new PostconditionException("The URI prefix has not been initialised!");
+        this.lampInboundPort = new LampInboundPort(lampInboundPortURI, this);
+        this.lampInboundPort.publishPort();
         
         assert this.state == 0 :
         	new PostconditionException("The lamp's state has not been initialised correctly !");
-        assert this.isPortExisting(p.getPortURI()):
+        assert this.isPortExisting(lampInboundPort.getPortURI()):
 			new PostconditionException("The component must have a "
-					+ "port with URI " + p.getPortURI()) ;
+					+ "port with URI " + lampInboundPort.getPortURI()) ;
 		
-        assert	this.findPortFromURI(p.getPortURI()).
-		getImplementedInterface().equals(URIProviderI.class) :
+        assert	this.findPortFromURI(lampInboundPort.getPortURI()).
+		getImplementedInterface().equals(LampI.class) :
 		new PostconditionException("The component must have a "
 				+ "port with implemented interface URIProviderI") ;
 		
-		assert	this.findPortFromURI(p.getPortURI()).isPublished() :
+		assert	this.findPortFromURI(lampInboundPort.getPortURI()).isPublished() :
 		new PostconditionException("The component must have a "
-				+ "port published with URI " + p.getPortURI()) ;
+				+ "port published with URI " + lampInboundPort.getPortURI()) ;
     }
 
 
     @Override
     public void shutdown() throws ComponentShutdownException {
         try {
-            p.unpublishPort();
+            this.lampInboundPort.unpublishPort();
         }catch(Exception e) {
             throw new ComponentShutdownException(e);
         }
@@ -81,7 +72,7 @@ public class Lamp extends AbstractComponent implements LampI{
     @Override
     public void shutdownNow() throws ComponentShutdownException {
         try {
-            p.unpublishPort();
+            this.lampInboundPort.unpublishPort();
         }catch(Exception e) {
             throw new ComponentShutdownException(e);
         }
