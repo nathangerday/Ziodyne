@@ -111,7 +111,7 @@ public class Lamp extends AbstractComponent{
 	 * 
 	 * <pre>
 	 * pre	true
-	 * post	true
+	 * post	isOn() == !isOn()@pre  
 	 * </pre>
 	 *
 	 * @throws Exception	<i>todo.</i> 

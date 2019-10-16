@@ -42,7 +42,7 @@ public interface LampI extends OfferedI{
 	 * 
 	 * <pre>
 	 * pre	true
-	 * post	true
+	 * post	isOn() == !isOn()@pre  
 	 * </pre>
 	 *
 	 * @throws Exception	<i>todo.</i> 

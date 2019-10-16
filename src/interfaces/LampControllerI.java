@@ -25,7 +25,7 @@ public interface LampControllerI extends RequiredI {
 	 * 
 	 * <pre>
 	 * pre	true
-	 * post	true
+	 * post	isOn() == !isOn()
 	 * </pre>
 	 *
 	 * @throws Exception	<i>todo.</i> 
