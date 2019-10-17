@@ -1,8 +1,10 @@
 package main;
 
 import components.Controller;
+import components.Dishwasher;
 import components.Fridge;
 import components.Lamp;
+import components.WindTurbine;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 
@@ -47,7 +49,9 @@ public class CVM extends AbstractCVM{
                         URI.FRIDGE_CONTROLLER_OUTBOUND_PORT,
                         URI.FRIDGE_INBOUND_PORT,
                         URI.WINDTURBINE_CONTROLLER_OUTBOUND_PORT,
-                        URI.WINDTURBINE_INBOUND_PORT});
+                        URI.WINDTURBINE_INBOUND_PORT,
+                        URI.DISHWASHER_CONTROLLER_OUTBOUND_PORT,
+                        URI.DISHWASHER_INBOUND_PORT});
 
         // Create the lamp
         AbstractComponent.createComponent(Lamp.class.getCanonicalName(),
@@ -62,10 +66,16 @@ public class CVM extends AbstractCVM{
                         URI.FRIDGE_INBOUND_PORT});
 
         // Create the wind turbine
-        AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
+        AbstractComponent.createComponent(WindTurbine.class.getCanonicalName(),
                 new Object[] {
                         URI.COMPONENT_WINDTURBINE,
                         URI.WINDTURBINE_INBOUND_PORT});
+        
+        // Create the dishwasher
+        AbstractComponent.createComponent(Dishwasher.class.getCanonicalName(),
+                new Object[] {
+                        URI.COMPONENT_DISHWASHER,
+                        URI.DISHWASHER_INBOUND_PORT});
         super.deploy();
 
         assert this.deploymentDone();

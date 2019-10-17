@@ -32,7 +32,7 @@ public class WindTurbine extends AbstractComponent implements WindTurbineI {
     @Override
     public void switchOn() throws Exception {
         assert !isOn : new PreconditionException("") ;
-    isOn = true;
+    	isOn = true;
     }
 
 

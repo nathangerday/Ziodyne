@@ -15,6 +15,14 @@ public class WindTurbineInboundPort extends AbstractInboundPort implements WindT
 
 	        assert uri != null && windTurbine instanceof WindTurbine;
 	    }
+	
+
+	public WindTurbineInboundPort(ComponentI windTurbine) throws Exception {
+	        super(WindTurbineI.class, windTurbine);
+
+	        assert windTurbine instanceof WindTurbine;
+	    }
+	
 
 	@Override
 	public void switchOn() throws Exception {

@@ -7,6 +7,8 @@ import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import interfaces.DishwasherI;
 
 public class DishwasherInboundPort extends AbstractInboundPort implements DishwasherI {
+	
+	private static final long serialVersionUID = 4328509908271704575L;
 
     public DishwasherInboundPort(String uri, ComponentI dishwasher) throws Exception {
         super(uri, DishwasherI.class, dishwasher);
@@ -15,8 +17,6 @@ public class DishwasherInboundPort extends AbstractInboundPort implements Dishwa
     public DishwasherInboundPort(ComponentI dishwasher) throws Exception{
         super(DishwasherI.class, dishwasher);
     }
-
-    private static final long serialVersionUID = 4328509908271704575L;
 
     @Override
     public boolean isOn() throws Exception {

@@ -14,6 +14,13 @@ public class WindTurbineControllerOutboundPort extends AbstractOutboundPort impl
 
         assert uri != null && owner instanceof Controller;
     }
+    
+
+    public WindTurbineControllerOutboundPort(ComponentI owner) throws Exception {
+        super(WindTurbineControllerI.class, owner);
+        assert owner instanceof Controller;
+    }
+
 
     @Override
     public void switchOn() throws Exception {
