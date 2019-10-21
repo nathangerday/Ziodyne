@@ -2,6 +2,7 @@ package components;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.PostconditionException;
 import fr.sorbonne_u.components.exceptions.PreconditionException;
 import interfaces.WindTurbineI;
 import ports.WindTurbineInboundPort;
@@ -27,11 +28,28 @@ public class WindTurbine extends AbstractComponent implements WindTurbineI {
         this.addOfferedInterface(WindTurbineI.class);
         windTurbineInboundPort = new WindTurbineInboundPort(windTurbineInboundPortURI, this);
         windTurbineInboundPort.publishPort();
+
+        assert this.energyProduced == 0 :
+                new PostconditionException("The wind turbine's state has not been initialised correctly !");
+        assert this.windSpeed == 0 :
+                new PostconditionException("The wind turbine's state has not been initialised correctly !");
+        assert this.isOn == false :
+                new PostconditionException("The wind turbine's state has not been initialised correctly !");
+        assert this.isPortExisting(windTurbineInboundPort.getPortURI()):
+                new PostconditionException("The component must have a "
+                        + "port with URI " + windTurbineInboundPort.getPortURI()) ;
+        assert	this.findPortFromURI(windTurbineInboundPort.getPortURI()).
+                getImplementedInterface().equals(WindTurbineI.class) :
+                new PostconditionException("The component must have a "
+                        + "port with implemented interface WindTurbineI") ;
+        assert	this.findPortFromURI(windTurbineInboundPort.getPortURI()).isPublished() :
+                new PostconditionException("The component must have a "
+                        + "port published with URI " + windTurbineInboundPort.getPortURI()) ;
     }
 
     @Override
     public void switchOn() throws Exception {
-        assert !isOn : new PreconditionException("") ;
+        assert !isOn : new PreconditionException("wind turbine is already on") ;
     	isOn = true;
     }
 

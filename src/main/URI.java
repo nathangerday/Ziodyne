@@ -14,6 +14,7 @@ public class URI {
     public static final String COMPONENT_DISHWASHER = "dishwasher-uri";
     public static final String COMPONENT_WINDTURBINE = "windturbine-uri";
     public static final String COMPONENT_ELECTRICMETER = "electricmeter-uri";
+    public static final String COMPONENT_BATTERY = "battery-uri" ;
 
 
     //ports uri
@@ -32,4 +33,8 @@ public class URI {
 
     public static final String ELECTRICMETER_CONTROLLER_OUTBOUND_PORT = "port-electricmeter-controller-out-uri";
     public static final String ELECTRICMETER_INBOUND_PORT = "port-electricmeter-in-uri";
+
+    public static final Object BATTERY_CONTROLLER_OUTBOUND_PORT = "port-battery-controller-out-uri" ;
+    public static final String BATTERY_INBOUND_PORT = "port-battery-in-uri" ;
+
 }

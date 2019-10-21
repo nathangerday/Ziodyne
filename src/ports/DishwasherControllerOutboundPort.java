@@ -9,8 +9,8 @@ public class DishwasherControllerOutboundPort extends AbstractOutboundPort imple
     private static final long serialVersionUID = -4235186469238174935L;
 
     public DishwasherControllerOutboundPort(String uri, ComponentI owner)
-			throws Exception {
-		super(uri, DishwasherControllerI.class, owner);
+            throws Exception {
+        super(uri, DishwasherControllerI.class, owner);
     }
     
     public DishwasherControllerOutboundPort(ComponentI owner) throws Exception{

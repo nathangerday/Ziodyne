@@ -1,11 +1,6 @@
 package main;
 
-import components.Controller;
-import components.Dishwasher;
-import components.ElectricMeter;
-import components.Fridge;
-import components.Lamp;
-import components.WindTurbine;
+import components.*;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 
@@ -53,7 +48,9 @@ public class CVM extends AbstractCVM{
                         URI.DISHWASHER_CONTROLLER_OUTBOUND_PORT,
                         URI.DISHWASHER_INBOUND_PORT,
                         URI.ELECTRICMETER_CONTROLLER_OUTBOUND_PORT,
-                        URI.ELECTRICMETER_INBOUND_PORT});
+                        URI.ELECTRICMETER_INBOUND_PORT,
+                        URI.BATTERY_CONTROLLER_OUTBOUND_PORT,
+                        URI.BATTERY_INBOUND_PORT});
 
         // Create the lamp
         AbstractComponent.createComponent(Lamp.class.getCanonicalName(),
@@ -84,6 +81,13 @@ public class CVM extends AbstractCVM{
                 new Object[] {
                         URI.COMPONENT_ELECTRICMETER,
                         URI.ELECTRICMETER_INBOUND_PORT});
+
+        //Create the battery
+        AbstractComponent.createComponent(Battery.class.getCanonicalName(),
+                new Object[] {
+                        URI.COMPONENT_BATTERY,
+                        URI.BATTERY_INBOUND_PORT
+                });
         super.deploy();
 
         assert this.deploymentDone();
