@@ -10,17 +10,15 @@ public class Dishwasher extends AbstractComponent{
     protected boolean isModeEco;
     protected int timeLeft;
 
-    protected String dishwasherURI;
     protected DishwasherInboundPort dishwasherInboundPort;
 
     protected Dishwasher(String uri, String dishwasherInboundPortURI) throws Exception{
         super(uri, 1, 0);
 
-        this.dishwasherURI = uri;
         this.isOn = false;
         this.isModeEco = false;
         this.timeLeft = 0;
-        
+
         this.addOfferedInterface(DishwasherI.class);
         dishwasherInboundPort = new DishwasherInboundPort(dishwasherInboundPortURI, this);
         dishwasherInboundPort.publishPort();
@@ -30,18 +28,18 @@ public class Dishwasher extends AbstractComponent{
     @Override
     public void shutdown() throws ComponentShutdownException {
         try {
-        	dishwasherInboundPort.unpublishPort();
+            dishwasherInboundPort.unpublishPort();
         }catch(Exception e) {
             throw new ComponentShutdownException(e);
         }
         super.shutdown();
     }
 
-    
+
     @Override
     public void shutdownNow() throws ComponentShutdownException {
         try {
-        	dishwasherInboundPort.unpublishPort();
+            dishwasherInboundPort.unpublishPort();
         }catch(Exception e) {
             throw new ComponentShutdownException(e);
         }

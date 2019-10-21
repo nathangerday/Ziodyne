@@ -1,6 +1,5 @@
 package ports;
 
-import components.Dishwasher;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import interfaces.DishwasherControllerI;

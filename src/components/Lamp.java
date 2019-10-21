@@ -50,13 +50,12 @@ public class Lamp extends AbstractComponent implements LampI{
         assert	this.findPortFromURI(lampInboundPort.getPortURI()).
 		getImplementedInterface().equals(LampI.class) :
 		new PostconditionException("The component must have a "
-				+ "port with implemented interface URIProviderI") ;
+				+ "port with implemented interface LampI") ;
 		
 		assert	this.findPortFromURI(lampInboundPort.getPortURI()).isPublished() :
 		new PostconditionException("The component must have a "
 				+ "port published with URI " + lampInboundPort.getPortURI()) ;
     }
-
 
     @Override
     public void shutdown() throws ComponentShutdownException {
@@ -68,7 +67,6 @@ public class Lamp extends AbstractComponent implements LampI{
         super.shutdown();
     }
 
-    
     @Override
     public void shutdownNow() throws ComponentShutdownException {
         try {
@@ -83,5 +81,4 @@ public class Lamp extends AbstractComponent implements LampI{
 	public int getState() {
 		return state;
 	}
-
 }

@@ -2,6 +2,7 @@ package main;
 
 import components.Controller;
 import components.Dishwasher;
+import components.ElectricMeter;
 import components.Fridge;
 import components.Lamp;
 import components.WindTurbine;
@@ -14,7 +15,6 @@ public class CVM extends AbstractCVM{
     public CVM() throws Exception{
         super();
     }
-
 
     public static void main(String[] args) throws Exception{
         CVM a = new CVM();
@@ -51,7 +51,9 @@ public class CVM extends AbstractCVM{
                         URI.WINDTURBINE_CONTROLLER_OUTBOUND_PORT,
                         URI.WINDTURBINE_INBOUND_PORT,
                         URI.DISHWASHER_CONTROLLER_OUTBOUND_PORT,
-                        URI.DISHWASHER_INBOUND_PORT});
+                        URI.DISHWASHER_INBOUND_PORT,
+                        URI.ELECTRICMETER_CONTROLLER_OUTBOUND_PORT,
+                        URI.ELECTRICMETER_INBOUND_PORT});
 
         // Create the lamp
         AbstractComponent.createComponent(Lamp.class.getCanonicalName(),
@@ -70,12 +72,18 @@ public class CVM extends AbstractCVM{
                 new Object[] {
                         URI.COMPONENT_WINDTURBINE,
                         URI.WINDTURBINE_INBOUND_PORT});
-        
+
         // Create the dishwasher
         AbstractComponent.createComponent(Dishwasher.class.getCanonicalName(),
                 new Object[] {
                         URI.COMPONENT_DISHWASHER,
                         URI.DISHWASHER_INBOUND_PORT});
+
+        // Create the electric meter
+        AbstractComponent.createComponent(ElectricMeter.class.getCanonicalName(),
+                new Object[] {
+                        URI.COMPONENT_ELECTRICMETER,
+                        URI.ELECTRICMETER_INBOUND_PORT});
         super.deploy();
 
         assert this.deploymentDone();

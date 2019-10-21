@@ -1,6 +1,7 @@
 package components;
 
 import connectors.DishwasherConnector;
+import connectors.ElectricMeterConnector;
 import connectors.FridgeConnector;
 import connectors.LampConnector;
 import connectors.WindTurbineConnector;
@@ -12,6 +13,7 @@ import interfaces.FridgeControllerI;
 import interfaces.LampControllerI;
 import interfaces.WindTurbineControllerI;
 import ports.DishwasherControllerOutboundPort;
+import ports.ElectricMeterControllerOutboundPort;
 import ports.FridgeControllerOutboundPort;
 import ports.LampControllerOutboundPort;
 import ports.WindTurbineControllerOutboundPort;
@@ -46,12 +48,14 @@ public class Controller extends AbstractComponent{
     private FridgeControllerOutboundPort fridgeOutboundPort;
     private WindTurbineControllerOutboundPort windTurbineOutboundPort;
     private DishwasherControllerOutboundPort dishwasherOutboundPort;
+    private ElectricMeterControllerOutboundPort electricMeterOutboundPort;
 
     //equipments ports uri
     private String lampInboundPortURI;
     private String fridgeInboundPortURI;
     private String windTurbineInboundPortURI;
     private String dishwasherInboundPortURI;
+    private String electricMeterInboundPortURI;
 
     protected Controller(
             String uri,
@@ -62,17 +66,22 @@ public class Controller extends AbstractComponent{
             String windTurbineOutboundPortURI,
             String windTurbineInboundPortURI,
             String dishwasherOutboundPortURI,
-            String dishwasherInboundPortURI) throws Exception{
+            String dishwasherInboundPortURI,
+            String electricMeterOutboundPortURI,
+            String electricMeterInboundPortURI) throws Exception{
         super(uri, 1, 0);
         this.lampInboundPortURI = lampInboundPortURI;
         this.fridgeInboundPortURI = fridgeInboundPortURI;
         this.windTurbineInboundPortURI = windTurbineInboundPortURI;
         this.dishwasherInboundPortURI = dishwasherInboundPortURI;
+        this.electricMeterInboundPortURI = electricMeterInboundPortURI;
 
         this.addRequiredInterface(LampControllerI.class);
         this.addRequiredInterface(FridgeControllerI.class);
         this.addRequiredInterface(WindTurbineControllerI.class);
         this.addRequiredInterface(DishwasherControllerI.class);
+        this.addRequiredInterface(ElectricMeterControllerOutboundPort.class);
+
         this.lampOutboundPort = new LampControllerOutboundPort(lampOutboundPortURI,this);
         this.lampOutboundPort.publishPort();
         this.fridgeOutboundPort = new FridgeControllerOutboundPort(fridgeOutboundPortURI,this);
@@ -81,6 +90,8 @@ public class Controller extends AbstractComponent{
         this.windTurbineOutboundPort.publishPort();
         this.dishwasherOutboundPort = new DishwasherControllerOutboundPort(dishwasherOutboundPortURI, this);
         this.dishwasherOutboundPort.publishPort();
+        this.electricMeterOutboundPort = new ElectricMeterControllerOutboundPort(electricMeterOutboundPortURI, this);
+        this.electricMeterOutboundPort.publishPort();
     }
 
 
@@ -117,9 +128,13 @@ public class Controller extends AbstractComponent{
                     this.windTurbineInboundPortURI,
                     WindTurbineConnector.class.getCanonicalName());
             this.doPortConnection(
-            		this.dishwasherOutboundPort.getPortURI(),
-            		this.dishwasherInboundPortURI,
-            		DishwasherConnector.class.getCanonicalName());
+                    this.dishwasherOutboundPort.getPortURI(),
+                    this.dishwasherInboundPortURI,
+                    DishwasherConnector.class.getCanonicalName());
+            this.doPortConnection(
+                    this.electricMeterOutboundPort.getPortURI(),
+                    this.electricMeterInboundPortURI,
+                    ElectricMeterConnector.class.getCanonicalName());
         }catch(Exception e) {
             throw new ComponentStartException(e);
         }
@@ -138,6 +153,7 @@ public class Controller extends AbstractComponent{
         System.out.println("Fridge temp : " + this.fridgeOutboundPort.getFreezerTemp());
         System.out.println("wind speed : " + this.windTurbineOutboundPort.getWindSpeed());
         System.out.println("Dishwasher time left : "+ this.dishwasherOutboundPort.getDishwasherTimeLeft());
+        System.out.println("Electric consommation : "+ this.electricMeterOutboundPort.getConsommation());
     }
 
     @Override
@@ -147,6 +163,7 @@ public class Controller extends AbstractComponent{
             this.fridgeOutboundPort.unpublishPort();
             this.windTurbineOutboundPort.unpublishPort();
             this.dishwasherOutboundPort.unpublishPort();
+            this.electricMeterOutboundPort.unpublishPort();
         }catch(Exception e) {
             throw new ComponentShutdownException(e);
         }
@@ -160,6 +177,7 @@ public class Controller extends AbstractComponent{
             this.fridgeOutboundPort.unpublishPort();
             this.windTurbineOutboundPort.unpublishPort();
             this.dishwasherOutboundPort.unpublishPort();
+            this.electricMeterOutboundPort.unpublishPort();
         }catch(Exception e) {
             throw new ComponentShutdownException(e);
         }
@@ -172,7 +190,7 @@ public class Controller extends AbstractComponent{
         this.doPortDisconnection(this.fridgeOutboundPort.getPortURI());
         this.doPortDisconnection(this.windTurbineOutboundPort.getPortURI());
         this.doPortDisconnection(this.dishwasherOutboundPort.getPortURI());
+        this.doPortDisconnection(this.electricMeterOutboundPort.getPortURI());
         super.finalise();
     }
-
 }
