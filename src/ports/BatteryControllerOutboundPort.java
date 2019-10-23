@@ -7,6 +7,8 @@ import interfaces.BatteryControllerI;
 
 public class BatteryControllerOutboundPort extends AbstractOutboundPort implements BatteryControllerI {
 
+    private static final long serialVersionUID = 1L;
+
     public BatteryControllerOutboundPort(String uri, ComponentI battery) throws Exception {
         super(uri, BatteryControllerI.class, battery);
         assert uri != null && battery instanceof Controller;

@@ -158,7 +158,7 @@ public class Controller extends AbstractComponent{
         System.out.println("wind speed : " + this.windTurbineOutboundPort.getWindSpeed());
         System.out.println("Dishwasher time left : "+ this.dishwasherOutboundPort.getDishwasherTimeLeft());
         System.out.println("Electric consommation : "+ this.electricMeterOutboundPort.getConsommation());
-        System.out.println("Battery mode : "+ this.batteryOutboundPort.getMaxCapacity());
+        System.out.println("Battery max capacity : "+ this.batteryOutboundPort.getMaxCapacity());
     }
 
     @Override
