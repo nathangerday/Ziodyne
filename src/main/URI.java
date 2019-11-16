@@ -16,6 +16,14 @@ public class URI {
     public static final String COMPONENT_ELECTRICMETER = "electricmeter-uri";
     public static final String COMPONENT_BATTERY = "battery-uri" ;
 
+    //jvm
+    public static final String JVM_CONTROLLER = "controller-jvm-uri";
+    public static final String JVM_LAMP = "lamp-jvm-uri";
+    public static final String JVM_FRIDGE = "fridge-jvm-uri";
+    public static final String JVM_DISHWASHER = "dishwasher-jvm-uri";
+    public static final String JVM_WINDTURBINE = "windturbine-jvm-uri";
+    public static final String JVM_ELECTRICMETER = "electricmeter-jvm-uri";
+    public static final String JVM_BATTERY = "battery-jvm-uri" ;
 
     //ports uri
 
