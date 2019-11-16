@@ -1,19 +1,23 @@
 <deployment>
    <hosts>
     <host name="localhost"
-          dir="/ALASCA/Tests/Ziodyne/"/>
+          dir="."/>
   </hosts>
   <cyclicBarrier   hostname="localhost" port="55253"/>
   <globalRegistry  hostname="localhost" port="55252"/>
   <rmiRegistryPort no="55999"/>
   <jvms2hostnames>
-    <jvm2hostname jvmuri="provider"
+    <jvm2hostname jvmuri="controller"
         rmiRegistryCreator="true"
         hostname="localhost"
         mainclass="main.DistributedCVM"/>
-    <jvm2hostname jvmuri="consumer"
+    <jvm2hostname jvmuri="electricmeter"
         rmiRegistryCreator="false"
-        	hostname="localhost"
+        hostname="localhost"
+        mainclass="main.DistributedCVM"/>
+    <jvm2hostname jvmuri="components"
+        rmiRegistryCreator="false"
+        hostname="localhost"
         mainclass="main.DistributedCVM"/>
   </jvms2hostnames>
 </deployment>
