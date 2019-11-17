@@ -143,11 +143,70 @@ public class Controller extends AbstractComponent{
             throw new ComponentStartException(e);
         }
     }
+    
+    public void scenario1() throws Exception {
+    	/*
+    	 *i want to turn off the fridge, turn it on and set the fridge temperature  
+    	 */	
+    	if(this.fridgeOutboundPort.isFridgeOn() && this.fridgeOutboundPort.isFreezerOn()) {
+    		System.out.println("Turning the fridge off");
+	    	//switch fridge compartment off
+	    	this.fridgeOutboundPort.switchFridge();
+	   
+	    	//switch freezer comparment off
+	    	this.fridgeOutboundPort.switchFreezer();
+	    	
+	    	System.out.println("Is the fridge compartment turned off ? "+this.fridgeOutboundPort.isFridgeOn());
+	    	System.out.println("Is the freezer compartment turned off ? "+this.fridgeOutboundPort.isFreezerOn());
+    	}
+    	
+    	System.out.println("Turning the fridge on");
+    	
+    	//switch fridge compartment on
+    	this.fridgeOutboundPort.switchFridge();
+    	System.out.println("Is the fridge compartment turned on ? "+this.fridgeOutboundPort.isFridgeOn());
+    	
+    	//switch freezer comparment on
+    	this.fridgeOutboundPort.switchFreezer();
+    	System.out.println("Is the freezer compartment turned off ? "+this.fridgeOutboundPort.isFreezerOn());
+    	
+    	//Check is the fridge and freezer temperature
+    	System.out.println("Fridge temperature : "+this.fridgeOutboundPort.getFridgeTemp());
+    	System.out.println("Freezer temperature : "+this.fridgeOutboundPort.getFreezerTemp());
+    	
+    	System.out.println("Setting fridge temperature");
+    	//fridge compartment is too hot
+    	this.fridgeOutboundPort.setFridgeTemp(2);
+    	
+    	//freezer compartment is not cold enough
+    	this.fridgeOutboundPort.setFreezerTemp(-20);
+    	
+    	//Check is the fridge and freezer temperature
+      	System.out.println("Fridge temperature : "+this.fridgeOutboundPort.getFridgeTemp());
+    	System.out.println("Freezer temperature : "+this.fridgeOutboundPort.getFreezerTemp());
+    	
+    	/*
+    	 * do the laundry with dishwasher in eco mode
+    	 */
+    	
+    	if(!this.dishwasherOutboundPort.isDishwasherModeEco()) {
+    		this.dishwasherOutboundPort.setDishwasherModeEco(true);
+    		System.out.println("Starting dishwasher in eco mode");
+    		this.dishwasherOutboundPort.startDishwasherProgram();
+    		
+    	}
+    	
+    	System.out.println("Time left : "+this.dishwasherOutboundPort.getDishwasherTimeLeft() );
+    	
+    	
+    
+    }
 
     @Override
     public void execute() throws Exception{
         super.execute();
-        System.out.print("Lampe état : ");
+        scenario1();
+     /*   System.out.print("Lampe état : ");
         switch(this.lampOutboundPort.getState()) {
         case 0 : System.out.println("éteint");break;
         case 1 : System.out.println("tamisé"); break;
@@ -158,7 +217,7 @@ public class Controller extends AbstractComponent{
         System.out.println("wind speed : " + this.windTurbineOutboundPort.getWindSpeed());
         System.out.println("Dishwasher time left : "+ this.dishwasherOutboundPort.getDishwasherTimeLeft());
         System.out.println("Electric consommation : "+ this.electricMeterOutboundPort.getConsommation());
-        System.out.println("Battery max capacity : "+ this.batteryOutboundPort.getMaxCapacity());
+        System.out.println("Battery max capacity : "+ this.batteryOutboundPort.getMaxCapacity());*/
     }
 
     @Override
