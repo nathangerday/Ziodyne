@@ -144,6 +144,66 @@ public class Controller extends AbstractComponent{
         }
     }
     
+    
+    public void scenario2() throws Exception {
+        if(this.windTurbineOutboundPort.getEnergyProduced() == 0) {
+            System.out.println("Windturbine not producing any energy, setting battery mode to \"producing\" ");
+            this.batteryOutboundPort.setMode(1);
+        }
+        
+        
+        if(this.electricMeterOutboundPort.getConsommation() == 0) {
+            System.out.println("No energy being consumed, switching on some devices");
+            if(!this.fridgeOutboundPort.isFridgeOn()) {
+                System.out.println("Switching fridge on");
+                this.fridgeOutboundPort.switchFridge();
+            }
+            
+            if(!this.fridgeOutboundPort.isFreezerOn()) {
+                System.out.println("Switching freezer on");
+                this.fridgeOutboundPort.switchFreezer();
+            }
+        }else if(this.electricMeterOutboundPort.getConsommation() > 50) {
+            System.out.println("Too much energy being consumed, switching off some devices");
+            if(this.fridgeOutboundPort.isFridgeOn()) {
+                System.out.println("Switching fridge off");
+                this.fridgeOutboundPort.switchFridge();
+            }
+            
+            if(this.fridgeOutboundPort.isFreezerOn()) {
+                System.out.println("Switching freezer off");
+                this.fridgeOutboundPort.switchFreezer();
+            }
+        }
+        
+        System.out.println("Is fridge on ? " + this.fridgeOutboundPort.isFridgeOn());
+        System.out.println("Is freezer on ? " + this.fridgeOutboundPort.isFreezerOn());
+        
+        
+        System.out.println("Setting the dishwasher to eco mode");
+        this.dishwasherOutboundPort.setDishwasherModeEco(true);
+        System.out.println("Is the dishwasher on ecode mode ? " + this.dishwasherOutboundPort.isDishwasherModeEco());
+        
+        
+        System.out.println("Starting the dishwasher");
+        this.dishwasherOutboundPort.startDishwasherProgram();
+        System.out.println("The time left on the dishwasher program is : " + this.dishwasherOutboundPort.getDishwasherTimeLeft());
+        
+        int lampIntensity = this.lampOutboundPort.getState();
+        System.out.println("The lamp intensity is : " + lampIntensity);
+        
+        if(lampIntensity > 5 && this.fridgeOutboundPort.isFridgeOn()) {
+            System.out.println("Switching off the fridge to have enough energy for the lamp");
+            this.fridgeOutboundPort.switchFridge();
+        }
+        
+        System.out.println("Is fridge on ? " + this.fridgeOutboundPort.isFridgeOn());
+        System.out.println("Is freezer on ? " + this.fridgeOutboundPort.isFreezerOn());
+        
+    }
+    
+    
+    
     public void scenario1() throws Exception {
     	/*
     	 *i want to turn off the fridge, turn it on and set the fridge temperature  
@@ -205,7 +265,7 @@ public class Controller extends AbstractComponent{
     @Override
     public void execute() throws Exception{
         super.execute();
-        scenario1();
+        scenario2();
      /*   System.out.print("Lampe état : ");
         switch(this.lampOutboundPort.getState()) {
         case 0 : System.out.println("éteint");break;
