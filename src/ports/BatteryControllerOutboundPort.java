@@ -1,5 +1,6 @@
 package ports;
 
+import components.BatteryState;
 import components.Controller;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
@@ -39,7 +40,7 @@ public class BatteryControllerOutboundPort extends AbstractOutboundPort implemen
     }
 
     @Override
-    public void setMode(int mode) throws Exception {
+    public void setMode(BatteryState mode) throws Exception {
         ((BatteryControllerI)this.connector).setMode(mode);
     }
 }

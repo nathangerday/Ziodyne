@@ -20,8 +20,8 @@ public class Battery extends AbstractComponent implements BatteryI {
     protected int currentCapacity;
     //a boolean value On/Off
     protected boolean isOn;
-    //mode of the battery : idle(0), producing energy(1) or charging(2)
-    protected int mode;
+    //mode of the battery : idle, producing energy or charging
+    protected BatteryState mode;
 
 
     protected Battery(String uri, String batteryInboundPortURI) throws Exception{
@@ -31,20 +31,20 @@ public class Battery extends AbstractComponent implements BatteryI {
         this.maxCapacity =1000;
         this.currentCapacity = 0;
         this.isOn = false;
-        this.mode = 0;
+        this.mode = BatteryState.Idle;
         this.addOfferedInterface(BatteryI.class);
         batteryInboundPort = new BatteryInboundPort(batteryInboundPortURI, this);
         batteryInboundPort.publishPort();
 
         assert this.energyProduced == 0 :
-                new PostconditionException("The battery's state has not been initialised correctly !");
+                new PostconditionException("The energy produced has not been initialised correctly !");
         assert this.maxCapacity == 1000 :
-                new PostconditionException("The battery's state has not been initialised correctly !");
+                new PostconditionException("The max capacity has not been initialised correctly !");
         assert this.currentCapacity == 0 :
-                new PostconditionException("The battery's state has not been initialised correctly !");
+                new PostconditionException("The current capacity has not been initialised correctly !");
         assert this.isOn == false :
-                new PostconditionException("The battery's state has not been initialised correctly !");
-        assert this.mode == 0 :
+                new PostconditionException("The battery is  has not been initialised correctly !");
+        assert this.mode == BatteryState.Idle :
                 new PostconditionException("The battery's state has not been initialised correctly !");
         assert this.isPortExisting(batteryInboundPort.getPortURI()):
                 new PostconditionException("The component must have a "
@@ -81,11 +81,11 @@ public class Battery extends AbstractComponent implements BatteryI {
     }
 
     @Override
-    public void setMode(int mode) throws Exception {
+    public void setMode(BatteryState mode) throws Exception {
         switch (mode){
-            case 0 : System.out.println("Now idling"); break;
-            case 1 : System.out.println("Now producing"); break;
-            case 2 : System.out.println("Now charging"); break;
+            case Idle : System.out.println("Now idling"); break;
+            case Producing : System.out.println("Now producing"); break;
+            case Charging : System.out.println("Now charging"); break;
             default : System.out.println("Mode doesn't exist");
         }
         this.mode = mode;

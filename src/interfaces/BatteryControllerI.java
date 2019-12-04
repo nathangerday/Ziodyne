@@ -1,5 +1,6 @@
 package interfaces;
 
+import components.BatteryState;
 import fr.sorbonne_u.components.interfaces.RequiredI;
 
 public interface BatteryControllerI extends RequiredI {
@@ -12,6 +13,6 @@ public interface BatteryControllerI extends RequiredI {
 
     public int getCurrentCapacity() throws Exception;
 
-    public void setMode(int mode) throws Exception;
+    public void setMode(BatteryState mode) throws Exception;
     
 }

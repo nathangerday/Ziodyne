@@ -1,6 +1,7 @@
 package ports;
 
 import components.Battery;
+import components.BatteryState;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
@@ -52,7 +53,7 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryI 
     }
 
     @Override
-    public void setMode(int mode) throws Exception {
+    public void setMode(BatteryState mode) throws Exception {
         this.getOwner().handleRequestSync(
                 new AbstractComponent.AbstractService<Void>() {
                     @Override

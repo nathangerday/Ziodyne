@@ -148,7 +148,7 @@ public class Controller extends AbstractComponent{
     public void scenario2() throws Exception {
         if(this.windTurbineOutboundPort.getEnergyProduced() == 0) {
             System.out.println("Windturbine not producing any energy, setting battery mode to \"producing\" ");
-            this.batteryOutboundPort.setMode(1);
+            this.batteryOutboundPort.setMode(BatteryState.Producing);
         }
         
         
@@ -258,6 +258,12 @@ public class Controller extends AbstractComponent{
     	
     	System.out.println("Time left : "+this.dishwasherOutboundPort.getDishwasherTimeLeft() );
     	
+    	/*
+    	 * battery 
+    	 */
+    	System.out.println("Turning the windturbine on");
+    	this.windTurbineOutboundPort.switchOn();
+    	 System.out.println("Wind speed : " + this.windTurbineOutboundPort.getWindSpeed());
     	
     
     }
@@ -265,19 +271,8 @@ public class Controller extends AbstractComponent{
     @Override
     public void execute() throws Exception{
         super.execute();
+        scenario1();
         scenario2();
-     /*   System.out.print("Lampe état : ");
-        switch(this.lampOutboundPort.getState()) {
-        case 0 : System.out.println("éteint");break;
-        case 1 : System.out.println("tamisé"); break;
-        case 2 : System.out.println("normal"); break;
-        case 3 : System.out.println("fort"); break;
-        }
-        System.out.println("Fridge temp : " + this.fridgeOutboundPort.getFreezerTemp());
-        System.out.println("wind speed : " + this.windTurbineOutboundPort.getWindSpeed());
-        System.out.println("Dishwasher time left : "+ this.dishwasherOutboundPort.getDishwasherTimeLeft());
-        System.out.println("Electric consommation : "+ this.electricMeterOutboundPort.getConsommation());
-        System.out.println("Battery max capacity : "+ this.batteryOutboundPort.getMaxCapacity());*/
     }
 
     @Override
