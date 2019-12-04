@@ -1,5 +1,6 @@
 package interfaces;
 
+import components.BatteryState;
 import fr.sorbonne_u.components.interfaces.OfferedI;
 
 public interface BatteryI extends OfferedI {
@@ -12,7 +13,7 @@ public interface BatteryI extends OfferedI {
 
     public int getCurrentCapacity() throws Exception;
 
-    public void setMode(int mode) throws Exception;
+	void setMode(BatteryState mode) throws Exception;
 
 
 }
