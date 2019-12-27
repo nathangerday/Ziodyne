@@ -113,11 +113,6 @@ public class Lamp extends AbstractCyPhyComponent
     public Object		getEmbeddingComponentStateValue(String name)
             throws Exception
     {
-        // As there is only one value, don't care about the name.
-        return LampModel.State.ON ; // just an example...
-        // With this facility, the state of the hair dryer can be set by the
-        // component part (e.g., the controller) rather than by the user model
-        // included in the hair dryer model in a development process going from
-        // a pure MIL simulation to a SIL simulation.
+        return asp.getModelStateValue(LampModel.URI, name);
     }
 }
