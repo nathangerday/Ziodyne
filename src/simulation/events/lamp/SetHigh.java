@@ -55,8 +55,6 @@ public class SetHigh extends AbstractLampEvent {
         assert	model instanceof LampModel;
 
         LampModel m = (LampModel)model ;
-        if (m.getState() == LampModel.State.MEDIUM) {
-            m.setState(LampModel.State.HIGH) ;
-        }
+        m.setState(LampModel.State.HIGH) ;
     }
 }

@@ -68,9 +68,9 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     private static final String	SERIES = "intensity" ;
 
     /** energy consumption (in Watts) of the lamp in LOW mode.		*/
-    protected static final double	LOW_MODE_CONSUMPTION = 16.0 ; // Watts
+    protected static final double	LOW_MODE_CONSUMPTION = 20.0 ; // Watts
     /** energy consumption (in Watts) of the lamp in MEDIUM mode.		*/
-    protected static final double	MEDIUM_MODE_CONSUMPTION = 60.0 ; // Watts
+    protected static final double	MEDIUM_MODE_CONSUMPTION = 40.0 ; // Watts
     /** energy consumption (in Watts) of the lamp in HIGH mode.		*/
     protected static final double	HIGH_MODE_CONSUMPTION = 60.0 ; // Watts
     /** nominal tension (in Volts) of the hair dryer.						*/
@@ -80,7 +80,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     /** current intensity in Amperes; intensity is power/tension.			*/
     @ExportedVariable(type = Double.class)
     protected final Value<Double> currentIntensity =
-            new Value<Double>(this, 0.0, 0) ;
+    new Value<Double>(this, 0.0, 0) ;
     /** current state (OFF, LOW, HIGH) of the lamp.					*/
     protected State					currentState ;
     /** plotter for the intensity level over time.							*/
@@ -224,7 +224,6 @@ public class LampModel 	extends AtomicHIOAwithEquations {
         if (this.hasDebugLevel(2)) {
             this.logMessage("LampModel::userDefinedExternalTransition 1");
         }
-
         // get the vector of current external events
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
         // when this method is called, there is at least one external event,
@@ -248,18 +247,38 @@ public class LampModel 	extends AtomicHIOAwithEquations {
             this.logMessage("LampModel::userDefinedExternalTransition 3 "
                     + this.getState());
         }
+
+        // execute the current external event on this model, changing its state
+        // and intensity level
+        ce.executeOn(this) ;
+
+        if (this.hasDebugLevel(1)) {
+            this.logMessage("HairDryerModel::userDefinedExternalTransition 4 "
+                    + this.getState()) ;
+        }
+
+        // add a new data on the plotter; this data will open a new piece
+        this.intensityPlotter.addData(
+                SERIES,
+                this.getCurrentStateTime().getSimulatedTime(),
+                this.getIntensity());
+
+        super.userDefinedExternalTransition(elapsedTime) ;
+        if (this.hasDebugLevel(2)) {
+            this.logMessage("HairDryerModel::userDefinedExternalTransition 5") ;
+        }
     }
 
     @Override
     public void	endSimulation(Time endTime) throws Exception {
-            this.intensityPlotter.addData(
-                    SERIES,
-                    endTime.getSimulatedTime(),
-                    this.getIntensity());
-            Thread.sleep(10000L);
-            this.intensityPlotter.dispose();
+        this.intensityPlotter.addData(
+                SERIES,
+                endTime.getSimulatedTime(),
+                this.getIntensity());
+        Thread.sleep(10000L);
+        this.intensityPlotter.dispose();
 
-            super.endSimulation(endTime);
+        super.endSimulation(endTime);
     }
 
     @Override
@@ -288,14 +307,21 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     public void			setState(State s)
     {
         this.currentState = s ;
+        System.out.println("set state");
         switch (s)
         {
-            case OFF : this.currentIntensity.v = 0.0 ; break ;
-            case LOW :
-                this.currentIntensity.v = LOW_MODE_CONSUMPTION/TENSION ;
-                break ;
-            case HIGH :
-                this.currentIntensity.v = HIGH_MODE_CONSUMPTION/TENSION ;
+        case OFF :
+            this.currentIntensity.v = 0.0 ;
+            break ;
+        case LOW :
+            this.currentIntensity.v = LOW_MODE_CONSUMPTION/TENSION;
+            break ;
+        case MEDIUM :
+            this.currentIntensity.v = MEDIUM_MODE_CONSUMPTION/TENSION;
+            break;
+        case HIGH :
+            this.currentIntensity.v = HIGH_MODE_CONSUMPTION/TENSION;
+            break;
         }
     }
 

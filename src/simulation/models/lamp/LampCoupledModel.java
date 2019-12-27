@@ -128,7 +128,7 @@ public class LampCoupledModel extends CoupledModel {
                 new EventSource(LampUserModel.URI, SetMedium.class) ;
         EventSink[] to5 = new EventSink[] {
                 new EventSink(LampModel.URI, SetMedium.class)} ;
-        connections.put(from4, to4) ;
+        connections.put(from5, to5) ;
 
         coupledModelDescriptors.put(
                LampCoupledModel.URI,
