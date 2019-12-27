@@ -148,7 +148,7 @@ public class Controller extends AbstractComponent{
     public void scenario2() throws Exception {
         if(this.windTurbineOutboundPort.getEnergyProduced() == 0) {
             System.out.println("Windturbine not producing any energy, setting battery mode to \"producing\" ");
-            this.batteryOutboundPort.setMode(1);
+            this.batteryOutboundPort.setMode(BatteryState.Producing);
         }
         
         
