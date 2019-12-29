@@ -18,7 +18,7 @@ public class LampSimulatorPlugin  extends AtomicSimulatorPlugin {
         // simulation model.
         ModelDescriptionI m = this.simulator.getDescendentModel(modelURI) ;
         // The only model in this example that provides access to some value
-        // is the HairDryerModel.
+        // is the LampModel.
         assert	m instanceof LampModel;
         // The following is the implementation of the protocol converting
         // names used by the caller to the values provided by the model;

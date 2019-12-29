@@ -31,11 +31,11 @@ public class LampUserModel extends AtomicES_Model {
     protected double	interdayDelay ;
     /** mean time between uses of the lamp in the same day.			*/
     protected double	meanTimeBetweenUsages ;
-    /** during one use, mean time the lamp is at high temperature.	*/
+    /** during one use, mean time the lamp is at high setting.	*/
     protected double	meanTimeAtHigh ;
-    /** during one use, mean time the lamp is at medium temperature.	*/
+    /** during one use, mean time the lamp is at medium setting.	*/
     protected double	meanTimeAtMedium ;
-    /** during one use, mean time the lamp is at low temperature.		*/
+    /** during one use, mean time the lamp is at low setting.		*/
     protected double	meanTimeAtLow ;
     /** next event to be sent.												*/
     protected Class<?>	nextEvent ;
@@ -43,7 +43,7 @@ public class LampUserModel extends AtomicES_Model {
     /**	a random number generator from common math library.					*/
     protected final RandomDataGenerator rg ;
     /** the current state of the lamp simulation model.				*/
-    protected LampModel.State hds ;
+    protected LampModel.State ls ;
     /**
      * create an atomic event scheduling model with the given URI (if null,
      * one will be generated) and to be run by the given simulator (or by the
@@ -90,7 +90,7 @@ public class LampUserModel extends AtomicES_Model {
         this.meanTimeAtHigh = 8.0 ;
         this.meanTimeAtMedium = 4.0;
         this.meanTimeAtLow = 2.0 ;
-        this.hds = LampModel.State.OFF ;
+        this.ls = LampModel.State.OFF ;
 
         this.rg.reSeedSecure() ;
 
@@ -165,7 +165,7 @@ public class LampUserModel extends AtomicES_Model {
         // to keep it for the internal transition)
         this.nextEvent = ret.get(0).getClass() ;
 
-        this.logMessage("HairDryerUserModel::output() " +
+        this.logMessage("LampUserModel::output() " +
                 this.nextEvent.getCanonicalName()) ;
         return ret ;
     }
@@ -178,17 +178,16 @@ public class LampUserModel extends AtomicES_Model {
             Duration elapsedTime
     )
     {
-        // This method implements a usage scenario for the hair dryer.
-        // Here, we assume that the hair dryer is used once each cycle (day)
+        // This method implements a usage scenario for the lamp.
+        // Here, we assume that the lamp is used once each cycle (day)
         // and then it starts in low mode, is set in high mode shortly after,
-        // used for a while in high mode and then set back in low mode to
-        // complete the drying.
+        // used for a while in high mode and then set back in low mode.
 
         Duration d ;
         // See what is the type of event to be executed
         if (this.nextEvent.equals(SwitchOn.class)) {
             // when a switch on event has been issued, plan the next event as
-            // a set high (the hair dryer is switched on in low mode
+            // a set high (the lamp is switched on in low mode
             d = new Duration(2.0 * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             // compute the time of occurrence (in the future)
@@ -205,7 +204,7 @@ public class LampUserModel extends AtomicES_Model {
             d =	new Duration(
                     2.0 * this.meanTimeAtHigh * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SetLow(this.getCurrentStateTime().add(d))) ;
+            this.scheduleEvent(new SetMedium(this.getCurrentStateTime().add(d))) ;
         } else if (this.nextEvent.equals(SetLow.class)) {
             // when a set high event has been issued, plan the next switch off
             // after some time of usage
@@ -214,6 +213,12 @@ public class LampUserModel extends AtomicES_Model {
                     this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(
                     new SwitchOff(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(SetMedium.class)) {
+        	d =	new Duration(
+                    2.0 * this.meanTimeAtMedium * this.rg.nextBeta(1.75, 1.75),
+                    this.getSimulatedTimeUnit()) ;
+            this.scheduleEvent(
+                    new SetLow(this.getCurrentStateTime().add(d))) ;
         }
     }
 }

@@ -73,7 +73,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     protected static final double	MEDIUM_MODE_CONSUMPTION = 40.0 ; // Watts
     /** energy consumption (in Watts) of the lamp in HIGH mode.		*/
     protected static final double	HIGH_MODE_CONSUMPTION = 60.0 ; // Watts
-    /** nominal tension (in Volts) of the hair dryer.						*/
+    /** nominal tension (in Volts) of the lamp.						*/
     protected static final double	TENSION = 12.0 ; // Volts
 
 
@@ -147,7 +147,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     @Override
     public void	initialiseState(Time initialTime)
     {
-        // the hair dryer starts in mode OFF
+        // the lamp starts in mode OFF
         this.currentState = LampModel.State.OFF ;
 
         // initialisation of the intensity plotter
@@ -169,7 +169,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     @Override
     protected void		initialiseVariables(Time startTime)
     {
-        // as the hair dryer starts in mode OFF, its power consumption is 0
+        // as the lamp starts in mode OFF, its power consumption is 0
         this.currentIntensity.v = 0.0 ;
 
         // first data in the plotter to start the plot.
@@ -227,7 +227,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
         // get the vector of current external events
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
         // when this method is called, there is at least one external event,
-        // and for the hair dryer model, there will be exactly one by
+        // and for the lamp model, there will be exactly one by
         // construction.
         assert currentEvents != null && currentEvents.size() == 1;
 
@@ -253,7 +253,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
         ce.executeOn(this) ;
 
         if (this.hasDebugLevel(1)) {
-            this.logMessage("HairDryerModel::userDefinedExternalTransition 4 "
+            this.logMessage("LampModel::userDefinedExternalTransition 4 "
                     + this.getState()) ;
         }
 
@@ -265,7 +265,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
 
         super.userDefinedExternalTransition(elapsedTime) ;
         if (this.hasDebugLevel(2)) {
-            this.logMessage("HairDryerModel::userDefinedExternalTransition 5") ;
+            this.logMessage("LampModel::userDefinedExternalTransition 5") ;
         }
     }
 
