@@ -54,7 +54,7 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
 
     private static final long serialVersionUID = 1L ;
     private static final String SERIES = "wind speed" ;
-    public static final String URI = "windSensorModel-1" ;
+    public static final String URI = "WindSensorModel" ;
 
     /** true when a external event triggered a reading.                     */
     protected boolean triggerReading ;
@@ -182,6 +182,8 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
             this.plotter.addData(SERIES,
                     endTime.getSimulatedTime(),
                     this.lastReading) ;
+            Thread.sleep(10000L);
+            this.plotter.dispose();
         }
 
         super.endSimulation(endTime);

@@ -55,7 +55,7 @@ public class WindModel extends AtomicHIOAwithDE{
 
     private static final long   serialVersionUID = 1L ;
     private static final String SERIES = "wind speed" ;
-    public static final String  URI = "windModel-1" ;
+    public static final String  URI = "WindModel" ;
 
     // Run parameter names to be used when initialising them before each run
     /** name of the run parameter defining the maximum wind speed.           */
@@ -77,13 +77,12 @@ public class WindModel extends AtomicHIOAwithDE{
     protected double nextWind;
     protected double nextDelay;
 
-    protected double averageWind;
     protected final Vector<DoublePiece> windFunction ;
     protected XYPlotter plotter;
 
     /** Wind speed in m/s. */
     @ExportedVariable(type = Double.class)
-    protected final Value<Double> wind = new Value<Double>(this, 10.0, 0);
+    protected final Value<Double> wind = new Value<Double>(this, 7.0, 0);
 
     public WindModel(
             String uri,
@@ -213,16 +212,17 @@ public class WindModel extends AtomicHIOAwithDE{
     }
 
     @Override
-    public void userDefinedExternalTransition(Duration elapsedTime){
-        if (this.hasDebugLevel(1)) {
-            this.logMessage("WindModel#userDefinedExternalTransition "
-                    + elapsedTime);
-        }
+    public Vector<EventI> output(){
+        return null ;
     }
 
     @Override
-    public Vector<EventI> output(){
-        return null ;
+    public void endSimulation(Time endTime) throws Exception {
+        if(this.plotter != null) {
+            Thread.sleep(10000L);
+            this.plotter.dispose();
+        }
+        super.endSimulation(endTime);
     }
 
     @Override

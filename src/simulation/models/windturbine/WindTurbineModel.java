@@ -5,6 +5,7 @@ import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
+import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
@@ -22,9 +23,14 @@ import simulation.events.windturbine.WindReading;
 
 @ModelExternalEvents(imported = {WindReading.class})
 public class WindTurbineModel extends AtomicHIOAwithEquations {
+
+    private static final long serialVersionUID = 1L;
+
     public enum State{ON,OFF}
 
     public static class WindTurbineReport extends AbstractSimulationReport{
+        private static final long serialVersionUID = 1L;
+
         public WindTurbineReport(String modelURI) {
             super(modelURI);
         }
@@ -42,7 +48,14 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     public static final String  URI = "WindTurbineModel" ;
     private static final String SERIES = "power" ;
 
-    /** current power in watt        */
+    private static final double RHO = 1.23;
+    private static final double R = 2;
+    private static final double COEFF = 0.5 * RHO * R * R * Math.PI;
+    /** Puissance en Watt
+     * P = 0.5 * RHO * S * v**3 
+     * RHO : masse volumique de l'air (kg/m^3)
+     * S : surface balayee par les pales (m^2)(rayon**2 * pi)
+     * v : vitesse du vent (m/s) */
     @ExportedVariable(type = Double.class)
     protected final Value<Double> currentPower = new Value<Double>(this, 0.0, 0) ;
     /** current state (OFF, ON) of the wind turbine                 */
@@ -61,13 +74,13 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
         PlotterDescription pd =
                 new PlotterDescription(
-                        "Wind turnbine power",
+                        "Wind Turnbine Model",
                         "Time (sec)",
                         "Power (watt)",
-                        100,
-                        0,
-                        600,
-                        400);
+                        SimulationMain.ORIGIN_X,
+                        SimulationMain.ORIGIN_Y + 3*SimulationMain.getPlotterHeight(),
+                        SimulationMain.getPlotterWidth(),
+                        SimulationMain.getPlotterHeight());
 
         this.powerPlotter = new XYPlotter(pd) ;
         this.powerPlotter.createSeries(SERIES) ;
@@ -155,20 +168,23 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
         }
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
 
-        this.logMessage("number of event : " + currentEvents.size());
-        WindReading e;
+        EventI e;
         for(int i=0;i<currentEvents.size();i++) {
-            e = (WindReading) currentEvents.get(i);
+            e = currentEvents.get(i);
             if (this.hasDebugLevel(2)) {
                 this.logMessage("WindModel::userDefinedExternalTransition 2 "
                         + e.getClass().getCanonicalName());
             }
-            currentPower.v = ((WindReading.Reading) e.getEventInformation()).value;
-            this.powerPlotter.addData(
-                    SERIES,
-                    e.getTimeOfOccurrence().getSimulatedTime(),
-                    this.getPower()
-                    );
+            if (e instanceof WindReading) {
+                double speed = ((WindReading.Reading) e.getEventInformation()).value;
+                currentPower.v = COEFF * Math.pow(speed, 3);
+                this.powerPlotter.addData(
+                        SERIES,
+                        e.getTimeOfOccurrence().getSimulatedTime(),
+                        this.getPower()
+                        );
+                this.logMessage("speed = " + speed + ", power = " + this.getPower());
+            }
         }
         super.userDefinedExternalTransition(elapsedTime) ;
     }
