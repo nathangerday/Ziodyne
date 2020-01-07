@@ -36,7 +36,6 @@ public class WindTurbineControllerModel extends AtomicModel{
     protected boolean triggerAction;
     protected double maxSpeed;
     protected double minSpeed;
-
     private double speed;
 
     public WindTurbineControllerModel(
@@ -48,8 +47,8 @@ public class WindTurbineControllerModel extends AtomicModel{
         //At the beginning, the wind turbine is off
         state = State.OFF;
         triggerAction = false;
-        this.minSpeed = 6;
-        this.maxSpeed = 8;
+        this.minSpeed = 4;
+        this.maxSpeed = 10;
         this.setLogger(new StandardLogger()) ;
     }
 
@@ -110,8 +109,8 @@ public class WindTurbineControllerModel extends AtomicModel{
         Vector<EventI> current = this.getStoredEventAndReset() ;
         for(EventI e : current) {
             speed = ((WindReading.Reading) e.getEventInformation()).value;
-            if((state == State.OFF && (speed >= minSpeed && speed <= maxSpeed))
-                    || state == State.ON && (speed < minSpeed || speed > maxSpeed)){
+            if((state == State.OFF && (speed >= minSpeed && speed <= maxSpeed)) ||
+                    (state == State.ON && (speed < minSpeed || speed > maxSpeed))){
                 triggerAction = true;
             }
         }

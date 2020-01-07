@@ -77,7 +77,7 @@ public class WindModel extends AtomicHIOAwithDE{
     protected double nextWind;
     protected double nextDelay;
 
-    protected final Vector<DoublePiece> windFunction ;
+    protected final Vector<DoublePiece> windFunction;
     protected XYPlotter plotter;
 
     /** Wind speed in m/s. */
@@ -109,43 +109,43 @@ public class WindModel extends AtomicHIOAwithDE{
         String vname = this.getURI() + ":" + WindModel.MAX_WIND;
         this.maxWind = (double) simParams.get(vname);
         vname = this.getURI() + ":" + WindModel.WMASSF;
-        this.windMeanAbsoluteSlopeScaleFactor = (double) simParams.get(vname) ;     
+        this.windMeanAbsoluteSlopeScaleFactor = (double) simParams.get(vname);
         vname = this.getURI() + ":" + WindModel.WIS;
-        this.windIntegrationStep = (double) simParams.get(vname) ;
+        this.windIntegrationStep = (double) simParams.get(vname);
 
         // Initialise the look of the plotter
-        vname = this.getURI() + ":" + PlotterDescription.PLOTTING_PARAM_NAME ;
-        PlotterDescription pd = (PlotterDescription) simParams.get(vname) ;
-        this.plotter = new XYPlotter(pd) ;
-        this.plotter.createSeries(SERIES) ;
+        vname = this.getURI() + ":" + PlotterDescription.PLOTTING_PARAM_NAME;
+        PlotterDescription pd = (PlotterDescription) simParams.get(vname);
+        this.plotter = new XYPlotter(pd);
+        this.plotter.createSeries(SERIES);
     }
 
     @Override
     public void initialiseState(Time initialTime){
         // initialisation of the random number generators
-        this.rgBrownianMotion1.reSeedSecure() ;
-        this.rgBrownianMotion2.reSeedSecure() ;
+        this.rgBrownianMotion1.reSeedSecure();
+        this.rgBrownianMotion2.reSeedSecure();
 
         // initialisation of the wind function for the report
-        this.windFunction.clear() ;
+        this.windFunction.clear();
         // initialisation of the wind function plotter on the screen
-        if (this.plotter != null) {
-            this.plotter.initialise() ;
-            this.plotter.showPlotter() ;
+        if (this.plotter != null){
+            this.plotter.initialise();
+            this.plotter.showPlotter();
         }
 
         // standard initialisation
-        super.initialiseState(initialTime) ;
+        super.initialiseState(initialTime);
     }
 
     @Override
     protected void initialiseDerivatives(){
-        this.computeDerivatives() ;
+        this.computeDerivatives();
     }
 
     @Override
     public Duration timeAdvance(){
-        return new Duration(this.nextDelay, this.getSimulatedTimeUnit()) ;
+        return new Duration(this.nextDelay, this.getSimulatedTimeUnit());
     }
 
     @Override
@@ -155,8 +155,7 @@ public class WindModel extends AtomicHIOAwithDE{
         double quantum = -Math.log(1 - uniform1) / delta_t ;
         quantum = quantum * this.windMeanAbsoluteSlopeScaleFactor ;
         double uniform2 = this.rgBrownianMotion2.nextUniform(0.0, 1.0) ;
-        double threshold =
-                (this.maxWind - this.wind.v)/this.maxWind ;
+        double threshold = (this.maxWind - this.wind.v)/this.maxWind ;
         if (Math.abs(uniform2 - threshold) < 0.000001) {
             this.nextWind = this.wind.v ;
             this.nextDelay = delta_t ;
@@ -213,12 +212,12 @@ public class WindModel extends AtomicHIOAwithDE{
 
     @Override
     public Vector<EventI> output(){
-        return null ;
+        return null;
     }
 
     @Override
-    public void endSimulation(Time endTime) throws Exception {
-        if(this.plotter != null) {
+    public void endSimulation(Time endTime) throws Exception{
+        if(this.plotter != null){
             Thread.sleep(10000L);
             this.plotter.dispose();
         }
