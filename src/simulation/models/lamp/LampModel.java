@@ -250,7 +250,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
 
         // execute the current external event on this model, changing its state
         // and intensity level
-        ce.executeOn(this) ;
+        ce.executeOn(this);
 
         if (this.hasDebugLevel(1)) {
             this.logMessage("LampModel::userDefinedExternalTransition 4 "
@@ -307,7 +307,6 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     public void			setState(State s)
     {
         this.currentState = s ;
-        System.out.println("set state");
         switch (s)
         {
         case OFF :
