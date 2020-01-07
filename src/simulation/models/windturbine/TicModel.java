@@ -11,9 +11,9 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import simulation.events.windturbine.TicEvent;
+import simulation.events.windturbine.SwitchOn;
 
-@ModelExternalEvents(exported = {TicEvent.class})
+@ModelExternalEvents(exported = {SwitchOn.class})
 public class TicModel extends AtomicModel{
 	private static final long	serialVersionUID = 1L;
 	/** name of the run parameter defining the delay between tic events.	*/
@@ -57,7 +57,7 @@ public class TicModel extends AtomicModel{
 		Vector<EventI> ret = new Vector<EventI>() ;
 		// compute the current simulation time because it has not been updated yet.
 		Time t = this.getCurrentStateTime().add(this.getNextTimeAdvance()) ;
-		TicEvent e = new TicEvent(t) ;
+		SwitchOn e = new SwitchOn(t) ;
 		this.logMessage("output " + e.eventAsString()) ;
 		// create the external event.
 		ret.add(e) ;

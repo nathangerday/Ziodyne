@@ -28,8 +28,8 @@ public class MIL_WindTurbine {
                           new Duration(10.0, TimeUnit.SECONDS));
             //Parameters of WindModel
             simParams.put(WindModel.URI + ":" + WindModel.MAX_WIND,13.8);
-            simParams.put(WindModel.URI + ":" + WindModel.WIS,0.5);
-            simParams.put(WindModel.URI + ":" + WindModel.WMASSF,1.0/11.0);
+            simParams.put(WindModel.URI + ":" + WindModel.WIS,0.9);
+            simParams.put(WindModel.URI + ":" + WindModel.WMASSF,1.0/10.0);
             simParams.put(
                     WindModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
                     new PlotterDescription(
@@ -51,6 +51,9 @@ public class MIL_WindTurbine {
                             SimulationMain.ORIGIN_Y + 2*SimulationMain.getPlotterHeight(),
                             SimulationMain.getPlotterWidth(),
                             SimulationMain.getPlotterHeight())) ;
+            //Parameters of WindTurbineControllerModel
+            simParams.put(WindTurbineControllerModel.URI + ":" + WindTurbineControllerModel.MAX_SPEED,8.0);
+            simParams.put(WindTurbineControllerModel.URI + ":" + WindTurbineControllerModel.MIN_SPEED,6.0);
             
             se.setSimulationRunParameters(simParams);
             SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 0L ;

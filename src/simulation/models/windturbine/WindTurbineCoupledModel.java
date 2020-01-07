@@ -25,11 +25,12 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardCoupledModelReport;
-import simulation.events.windturbine.TicEvent;
+import simulation.events.windturbine.SwitchOff;
+import simulation.events.windturbine.SwitchOn;
 import simulation.events.windturbine.WindReading;
 
 public class WindTurbineCoupledModel extends CoupledModel{
-    
+
     private static final long serialVersionUID = 1L;
     // -------------------------------------------------------------------------
     // Constants and variables
@@ -112,6 +113,14 @@ public class WindTurbineCoupledModel extends CoupledModel{
                         TimeUnit.SECONDS,
                         null,
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
+        atomicModelDescriptors.put(
+                WindTurbineControllerModel.URI,
+                AtomicModelDescriptor.create(
+                        WindTurbineControllerModel.class,
+                        WindTurbineControllerModel.URI,
+                        TimeUnit.SECONDS,
+                        null,
+                        SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
 
         Map<String, CoupledModelDescriptor> coupledModelDescriptors =
                 new HashMap<String,CoupledModelDescriptor>() ;
@@ -122,18 +131,30 @@ public class WindTurbineCoupledModel extends CoupledModel{
         submodels.add(WindModel.URI) ;
         submodels.add(WindSensorModel.URI) ;
         submodels.add(WindTurbineModel.URI) ;
+        submodels.add(WindTurbineControllerModel.URI) ;
 
         //*********************************** 
         //Connections Event between submodels
         //***********************************
 
         Map<EventSource,EventSink[]> connections = new HashMap<EventSource,EventSink[]>() ;
-        EventSource from = new EventSource(TicModel.URI, TicEvent.class) ;
-        EventSink[] to = new EventSink[] {new EventSink(WindSensorModel.URI, TicEvent.class)};
+        EventSource from = new EventSource(TicModel.URI, SwitchOn.class) ;
+        EventSink[] to = new EventSink[] {new EventSink(WindSensorModel.URI, SwitchOn.class)};
         connections.put(from, to);
 
         from = new EventSource(WindSensorModel.URI, WindReading.class) ;
-        to = new EventSink[] {new EventSink(WindTurbineModel.URI, WindReading.class)};
+        to = new EventSink[] {
+                new EventSink(WindTurbineModel.URI, WindReading.class),
+                new EventSink(WindTurbineControllerModel.URI, WindReading.class)
+        };
+        connections.put(from, to);
+
+        from = new EventSource(WindTurbineControllerModel.URI, SwitchOn.class) ;
+        to = new EventSink[] {new EventSink(WindTurbineModel.URI, SwitchOn.class)};
+        connections.put(from, to);
+
+        from = new EventSource(WindTurbineControllerModel.URI, SwitchOff.class) ;
+        to = new EventSink[] {new EventSink(WindTurbineModel.URI, SwitchOff.class)};
         connections.put(from, to);
 
         //*********************************** 

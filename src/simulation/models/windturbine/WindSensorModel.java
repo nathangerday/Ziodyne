@@ -16,10 +16,10 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
-import simulation.events.windturbine.TicEvent;
+import simulation.events.windturbine.SwitchOn;
 import simulation.events.windturbine.WindReading;
 
-@ModelExternalEvents(imported = {TicEvent.class},
+@ModelExternalEvents(imported = {SwitchOn.class},
 exported = {WindReading.class})
 
 public class WindSensorModel extends AtomicHIOAwithEquations{
@@ -159,13 +159,12 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
     }
 
     @Override
-    public void userDefinedExternalTransition(Duration elapsedTime)
-    {
+    public void userDefinedExternalTransition(Duration elapsedTime){
         super.userDefinedExternalTransition(elapsedTime);
         Vector<EventI> current = this.getStoredEventAndReset() ;
         boolean ticReceived = false ;
         for (int i = 0 ; !ticReceived && i < current.size() ; i++) {
-            if (current.get(i) instanceof TicEvent) {
+            if (current.get(i) instanceof SwitchOn) {
                 ticReceived = true ;
             }
         }

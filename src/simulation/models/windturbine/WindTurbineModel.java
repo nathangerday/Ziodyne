@@ -19,9 +19,11 @@ import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
+import simulation.events.windturbine.SwitchOff;
+import simulation.events.windturbine.SwitchOn;
 import simulation.events.windturbine.WindReading;
 
-@ModelExternalEvents(imported = {WindReading.class})
+@ModelExternalEvents(imported = {WindReading.class,SwitchOn.class,SwitchOff.class})
 public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     private static final long serialVersionUID = 1L;
@@ -97,7 +99,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     @Override
     public void initialiseState(Time initialTime){
         // the lamp starts in mode ON
-        this.currentState = WindTurbineModel.State.ON ;
+        this.currentState = WindTurbineModel.State.OFF ;
 
         // initialisation of the power plotter
         this.powerPlotter.initialise() ;
@@ -114,22 +116,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
         super.initialiseState(initialTime) ;
     }
 
-
-    @Override
-    protected void initialiseVariables(Time startTime){
-        //        // as the lamp starts in mode OFF, its power consumption is 0
-        //        this.currentPower.v = 0.0 ;
-        //
-        //        // first data in the plotter to start the plot.
-        //        this.powerPlotter.addData(
-        //                SERIES,
-        //                this.getCurrentStateTime().getSimulatedTime(),
-        //                this.getIntensity());
-
-        super.initialiseVariables(startTime);
-    }
-
-
+    
     @Override
     public Vector<EventI> output() {
         return null;
@@ -138,25 +125,9 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     @Override
     public Duration timeAdvance() {
         if (this.componentRef == null) {
-            // the model has no internal event, however, its state will evolve
-            // upon reception of external events.
             return Duration.INFINITY ;
         } else {
-            // This is to test the embedding component access facility.
             return new Duration(10.0, TimeUnit.SECONDS) ;
-        }
-    }
-
-
-    @Override
-    public void userDefinedInternalTransition(Duration elapsedTime){
-        if (this.componentRef != null) {
-            try {
-                this.logMessage("component state = " +
-                        componentRef.getEmbeddingComponentStateValue("state")) ;
-            } catch (Exception e) {
-                throw new RuntimeException(e) ;
-            }
         }
     }
 
@@ -167,7 +138,6 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
             this.logMessage("WindTurbine::userDefinedExternalTransition 1");
         }
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
-
         EventI e;
         for(int i=0;i<currentEvents.size();i++) {
             e = currentEvents.get(i);
@@ -176,14 +146,19 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
                         + e.getClass().getCanonicalName());
             }
             if (e instanceof WindReading) {
-                double speed = ((WindReading.Reading) e.getEventInformation()).value;
-                currentPower.v = COEFF * Math.pow(speed, 3);
+                if(getState() == State.ON) {
+                    double speed = ((WindReading.Reading) e.getEventInformation()).value;
+                    currentPower.v = COEFF * Math.pow(speed, 3);
+                }
                 this.powerPlotter.addData(
                         SERIES,
                         e.getTimeOfOccurrence().getSimulatedTime(),
                         this.getPower()
                         );
-                this.logMessage("speed = " + speed + ", power = " + this.getPower());
+            } else if (e instanceof SwitchOff) {
+                setState(State.OFF);
+            } else if (e instanceof SwitchOn) {
+                setState(State.ON);
             }
         }
         super.userDefinedExternalTransition(elapsedTime) ;
@@ -212,28 +187,15 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     // Model-specific methods
     // ------------------------------------------------------------------------
 
-    public void         setState(State s)
-    {
-        //        this.currentState = s ;
-        //        switch (s)
-        //        {
-        //        case OFF :
-        //            this.currentPower.v = 0.0 ;
-        //            break ;
-        //        case LOW :
-        //            this.currentPower.v = LOW_MODE_CONSUMPTION/TENSION;
-        //            break ;
-        //        case MEDIUM :
-        //            this.currentPower.v = MEDIUM_MODE_CONSUMPTION/TENSION;
-        //            break;
-        //        case HIGH :
-        //            this.currentPower.v = HIGH_MODE_CONSUMPTION/TENSION;
-        //            break;
-        //        }
-    }
-
     public State getState(){
         return this.currentState ;
+    }
+    
+    public void setState(State s) {
+        this.currentState = s;
+        if(s == State.OFF) {
+            this.currentPower.v = 0.0;
+        }
     }
 
     public double getPower(){
