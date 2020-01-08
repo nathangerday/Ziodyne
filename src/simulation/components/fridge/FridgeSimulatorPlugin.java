@@ -20,8 +20,8 @@ public class FridgeSimulatorPlugin extends AtomicSimulatorPlugin{
 	        // alternatively, the simulation model could take care of the
 	        // link between names and values.
 	        if (name.equals("state")) {
-	            return ((FridgeModel)m).getState() ;
-	        } 
+	            return ((FridgeModel)m).getStateFridge() ;
+	        }
 	        else if(name.equals("temperature-fridge")) {
 	        	return ((FridgeModel)m).getFridgeTemperature() ;
 	        }

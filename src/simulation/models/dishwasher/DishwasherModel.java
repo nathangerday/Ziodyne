@@ -57,11 +57,11 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     public static final String	URI = "DishwasherModel" ;
     private static final String	SERIES = "intensity" ;
 
-    /** energy consumption (in Watts) of the lamp in LOW mode.		*/
+    /** energy consumption (in Watts) of the dishwasher in LOW mode.		*/
     protected static final double	ECO_MODE_CONSUMPTION = 20.0 ; // Watts
-    /** energy consumption (in Watts) of the lamp in MEDIUM mode.		*/
+    /** energy consumption (in Watts) of the dishwasher in MEDIUM mode.		*/
     protected static final double	STANDARD_MODE_CONSUMPTION = 40.0 ; // Watts
-    /** nominal tension (in Volts) of the hair dryer.						*/
+    /** nominal tension (in Volts) of the dishwasher.						*/
     protected static final double	TENSION = 12.0 ; // Volts
 
     @ExportedVariable(type = Double.class)

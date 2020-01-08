@@ -25,12 +25,10 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardCoupledModelReport;
-import simulation.events.fridge.LowerFreezerTemp;
-import simulation.events.fridge.LowerFridgeTemp;
-import simulation.events.fridge.RaiseFreezerTemp;
-import simulation.events.fridge.RaiseFridgeTemp;
-import simulation.events.fridge.SwitchOff;
-import simulation.events.fridge.SwitchOn;
+import simulation.events.fridge.SwitchFreezerOn;
+import simulation.events.fridge.SwitchFreezerOff;
+import simulation.events.fridge.SwitchFridgeOn;
+import simulation.events.fridge.SwitchFridgeOff;
 
 public class FridgeCoupledModel extends CoupledModel{
 	
@@ -91,36 +89,26 @@ public class FridgeCoupledModel extends CoupledModel{
 	        Map<EventSource,EventSink[]> connections =
 	                new HashMap<EventSource,EventSink[]>() ;
 	        EventSource from1 =
-	                new EventSource(FridgeUserModel.URI, SwitchOn.class) ;
+	                new EventSource(FridgeUserModel.URI, SwitchFreezerOn.class) ;
 	        EventSink[] to1 =
 	                new EventSink[] {
-	                        new EventSink(FridgeModel.URI, SwitchOn.class)} ;
+	                        new EventSink(FridgeModel.URI, SwitchFreezerOn.class)} ;
 	        connections.put(from1, to1) ;
 	        EventSource from2 =
-	                new EventSource(FridgeUserModel.URI, SwitchOff.class) ;
+	                new EventSource(FridgeUserModel.URI, SwitchFreezerOff.class) ;
 	        EventSink[] to2 = new EventSink[] {
-	                new EventSink(FridgeModel.URI, SwitchOff.class)} ;
+	                new EventSink(FridgeModel.URI, SwitchFreezerOff.class)} ;
 	        connections.put(from2, to2) ;
 	        EventSource from3 =
-	                new EventSource(FridgeUserModel.URI, RaiseFreezerTemp.class) ;
+	                new EventSource(FridgeUserModel.URI, SwitchFridgeOn.class) ;
 	        EventSink[] to3 = new EventSink[] {
-	                new EventSink(FridgeModel.URI, RaiseFreezerTemp.class)} ;
+	                new EventSink(FridgeModel.URI, SwitchFridgeOn.class)} ;
 	        connections.put(from3, to3) ;
 	        EventSource from4 =
-	                new EventSource(FridgeUserModel.URI, RaiseFridgeTemp.class) ;
+	                new EventSource(FridgeUserModel.URI, SwitchFridgeOff.class) ;
 	        EventSink[] to4 = new EventSink[] {
-	                new EventSink(FridgeModel.URI, RaiseFridgeTemp.class)} ;
+	                new EventSink(FridgeModel.URI, SwitchFridgeOff.class)} ;
 	        connections.put(from4, to4) ;
-	        EventSource from5 =
-	                new EventSource(FridgeUserModel.URI, LowerFreezerTemp.class) ;
-	        EventSink[] to5 = new EventSink[] {
-	                new EventSink(FridgeModel.URI, LowerFreezerTemp.class)} ;
-	        connections.put(from5, to5) ;
-	        EventSource from6 =
-	                new EventSource(FridgeUserModel.URI, LowerFridgeTemp.class) ;
-	        EventSink[] to6 = new EventSink[] {
-	                new EventSink(FridgeModel.URI, LowerFridgeTemp.class)} ;
-	        connections.put(from6, to6) ;
 
 	        coupledModelDescriptors.put(
 	               FridgeCoupledModel.URI,

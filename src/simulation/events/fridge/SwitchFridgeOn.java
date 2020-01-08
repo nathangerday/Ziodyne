@@ -6,27 +6,22 @@ import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.models.fridge.FridgeModel;
 
-public class LowerFridgeTemp extends AbstractFridgeEvent {
+public class SwitchFridgeOn extends AbstractFridgeEvent {
 
-	public LowerFridgeTemp(Time timeOfOccurrence) {
+	public SwitchFridgeOn(Time timeOfOccurrence) {
 		super(timeOfOccurrence,null);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
     public String eventAsString()
     {
-        return "Fridge::LowerFridgeTemp" ;
+        return "Fridge::SwitchFridgeOn" ;
     }
 
     @Override
     public boolean	hasPriorityOver(EventI e)
     {
-    	 if (e instanceof SwitchOn  || e instanceof RaiseFridgeTemp) {
-             return false ;
-         } else {
-             return true ;
-         }
+    	return true;
     }
 
     @Override
@@ -34,7 +29,7 @@ public class LowerFridgeTemp extends AbstractFridgeEvent {
     {
         assert	model instanceof FridgeModel;
 
-        ((FridgeModel)model).lowerFridgeTemperature();
+        ((FridgeModel)model).setStateFridge(FridgeModel.State.ON);
     }
 
 }

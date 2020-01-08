@@ -19,21 +19,17 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
 import simulation.events.fridge.AbstractFridgeEvent;
-import simulation.events.fridge.LowerFreezerTemp;
-import simulation.events.fridge.LowerFridgeTemp;
-import simulation.events.fridge.RaiseFreezerTemp;
-import simulation.events.fridge.RaiseFridgeTemp;
-import simulation.events.fridge.SwitchOff;
-import simulation.events.fridge.SwitchOn;
+import simulation.events.fridge.SwitchFreezerOn;
+import simulation.events.fridge.SwitchFreezerOff;
+import simulation.events.fridge.SwitchFridgeOn;
+import simulation.events.fridge.SwitchFridgeOff;
 
 
-
-@ModelExternalEvents(imported = {SwitchOn.class,
-        SwitchOff.class,
-        RaiseFreezerTemp.class,
-        RaiseFridgeTemp.class,
-        LowerFridgeTemp.class,
-        LowerFreezerTemp.class})
+@ModelExternalEvents(imported = {
+        SwitchFridgeOn.class,
+        SwitchFridgeOff.class,
+        SwitchFreezerOff.class,
+        SwitchFreezerOn.class})
 public class FridgeModel extends AtomicHIOAwithEquations{
 
 	public enum State{ON,OFF}
@@ -70,23 +66,51 @@ public class FridgeModel extends AtomicHIOAwithEquations{
     public static final String	URI = "FridgeModel" ;
     private static final String	SERIES_FREEZER = "temperature-freezer" ;
     private static final String	SERIES_FRIDGE = "temperature-fridge" ;
- 
+    private static final String SERIES_INTENSITY = "intensity";
+    
+    /** energy consumption (in Watts) of the freezer.		*/
+    protected static final double	FREEZER_ON_CONSUMPTION = 20.0 ; // Celsius
+    /** energy consumption (in Watts) of the fridge.		*/
+    protected static final double	FRIDGE_ON_CONSUMPTION = 40.0 ; // Celsius
+    /** nominal tension of fridge **/
+    protected static final double	TENSION = 12.0 ; // Volts
+    
+    protected static final double INC_FREEZER_TEMP = 0.5 ; 
+    protected static final double INC_FRIDGE_TEMP = 0.5 ;
+    
+    protected static final double FREEZER_TEMP = -15.0 ; 
+    protected static final double FRIDGE_TEMP = 0.0 ; 
+    
     /** Fridge's temperature in Celsius		*/
     @ExportedVariable(type = Double.class)
-    protected final Value<Double> currentFridgeTemperature = new Value<Double>(this, 4.0, 0) ;
+    protected final Value<Double> currentFridgeTemperature = new Value<Double>(this, 0.0, 0) ;
     
     /** Freezer's temperature in Celsius		*/
     @ExportedVariable(type = Double.class)
-    protected final Value<Double> currentFreezerTemperature = new Value<Double>(this, -15.0, 0) ;
+    protected final Value<Double> currentFreezerTemperature = new Value<Double>(this, 0.0, 0) ;
+    
+    /** Freezer's intensity in Celsius		*/
+    @ExportedVariable(type = Double.class)
+    protected final Value<Double> currentFreezerIntensity = new Value<Double>(this, 0.0, 0) ;
+    
+    /** Fridge's intensity in Celsius		*/
+    @ExportedVariable(type = Double.class)
+    protected final Value<Double> currentFridgeIntensity = new Value<Double>(this, 0.0, 0) ;
     
     /** current state (OFF,ON) of the fridge.					*/
-    protected State	currentState ;
+    protected State	currentStateFridge ;
+    
+    /** current state (OFF,ON) of the freezer.					*/
+    protected State	currentStateFreezer;
     
     /** Fridge's temperature plotter **/
     protected XYPlotter temperatureFridgePlotter;
    
     /** Freezer's temperature plotter **/
     protected XYPlotter temperatureFreezerPlotter;
+    
+    /** Global intensity plotter **/
+    protected XYPlotter intensityPlotter;
 
     /** reference on the object representing the component that holds the
      *  model; enables the model to access the state of this component.		*/
@@ -116,12 +140,23 @@ public class FridgeModel extends AtomicHIOAwithEquations{
                         600,
                         400);
         
+        PlotterDescription pd_intensity =
+                new PlotterDescription(
+                        "Fridge Intensity Model",
+                        "Time (sec)",
+                        "Ampere",
+                        700,
+                        800,
+                        600,
+                        400);
         		
 
         this.temperatureFridgePlotter = new XYPlotter(pd_fridge) ;
         this.temperatureFreezerPlotter = new XYPlotter(pd_freezer) ;
+        this.intensityPlotter = new XYPlotter(pd_intensity) ;
         this.temperatureFridgePlotter.createSeries(SERIES_FRIDGE);
         this.temperatureFreezerPlotter.createSeries(SERIES_FREEZER);
+        this.intensityPlotter.createSeries(SERIES_INTENSITY);
 
         // create a standard logger (logging on the terminal)
         this.setLogger(new StandardLogger()) ;
@@ -137,11 +172,14 @@ public class FridgeModel extends AtomicHIOAwithEquations{
 	@Override
     public void	initialiseState(Time initialTime)
 	{
-        this.currentState = FridgeModel.State.OFF ;
+        this.currentStateFreezer = FridgeModel.State.OFF ;
+        this.currentStateFridge = FridgeModel.State.OFF;
 	    this.temperatureFreezerPlotter.initialise() ;
 	    this.temperatureFridgePlotter.initialise() ;
+	    this.intensityPlotter.initialise();
 	    this.temperatureFreezerPlotter.showPlotter() ;
 	    this.temperatureFridgePlotter.showPlotter() ;
+	    this.intensityPlotter.showPlotter();
 
 	    try {
 	    	this.setDebugLevel(1) ;
@@ -177,6 +215,61 @@ public class FridgeModel extends AtomicHIOAwithEquations{
             try {
                 this.logMessage("component state = " +
                         componentRef.getEmbeddingComponentStateValue("state")) ;
+                
+             // add a new data on the plotter; this data will open a new piece
+                this.temperatureFreezerPlotter.addData(
+                        SERIES_FREEZER,
+                        this.getCurrentStateTime().getSimulatedTime(),
+                        this.getFreezerTemperature());
+                
+                this.temperatureFridgePlotter.addData(
+                        SERIES_FRIDGE,
+                        this.getCurrentStateTime().getSimulatedTime(),
+                        this.getFridgeTemperature());
+                
+                this.intensityPlotter.addData(
+                		SERIES_FRIDGE,
+                		this.getCurrentStateTime().getSimulatedTime(),
+                		this.getIntensity());
+                
+            if(currentStateFreezer == FridgeModel.State.OFF) {
+            	this.currentFreezerTemperature.v += INC_FREEZER_TEMP;
+            }
+            else {
+            	while(this.currentFreezerTemperature.v > FREEZER_TEMP) {
+            		this.currentFreezerTemperature.v -= INC_FREEZER_TEMP;
+            	}
+            
+            }
+            
+            
+            if(currentStateFridge == FridgeModel.State.OFF) {
+            	this.currentFridgeTemperature.v += INC_FRIDGE_TEMP;
+            }
+            else {
+            	while(this.currentFreezerTemperature.v > FRIDGE_TEMP) {
+            		this.currentFreezerTemperature.v -= INC_FRIDGE_TEMP;
+            	}
+            }
+            
+            /*
+            this.temperatureFreezerPlotter.addData(
+                    SERIES_FREEZER,
+                    this.getCurrentStateTime().getSimulatedTime(),
+                    this.getFreezerTemperature());
+            
+            this.temperatureFridgePlotter.addData(
+                    SERIES_FRIDGE,
+                    this.getCurrentStateTime().getSimulatedTime(),
+                    this.getFridgeTemperature());
+            
+            this.intensityPlotter.addData(
+            		SERIES_FRIDGE,
+            		this.getCurrentStateTime().getSimulatedTime(),
+            		this.getIntensity());
+            */
+           
+                
             } catch (Exception e) {
                 throw new RuntimeException(e) ;
             }
@@ -198,50 +291,13 @@ public class FridgeModel extends AtomicHIOAwithEquations{
 
         Event ce = (Event) currentEvents.get(0);
         assert ce instanceof AbstractFridgeEvent;
-        if (this.hasDebugLevel(2)) {
-            this.logMessage("FridgeModel::userDefinedExternalTransition 2 "
-                    + ce.getClass().getCanonicalName());
-        }
-
-        this.temperatureFreezerPlotter.addData(
-                SERIES_FREEZER,
-                this.getCurrentStateTime().getSimulatedTime(),
-                this.getFreezerTemperature());
         
-        this.temperatureFridgePlotter.addData(
-                SERIES_FRIDGE,
-                this.getCurrentStateTime().getSimulatedTime(),
-                this.getFridgeTemperature());
-
-        if (this.hasDebugLevel(2)) {
-            this.logMessage("FridgeModel::userDefinedExternalTransition 3 "
-                    + this.getState());
+        for(EventI e : currentEvents) {
+        	e.executeOn(this);
         }
-
-        // execute the current external event on this model, changing its state
-        // and intensity level
-        ce.executeOn(this);
-
-        if (this.hasDebugLevel(1)) {
-            this.logMessage("FridgeModel::userDefinedExternalTransition 4 "
-                    + this.getState()) ;
-        }
-
-        // add a new data on the plotter; this data will open a new piece
-        this.temperatureFreezerPlotter.addData(
-                SERIES_FREEZER,
-                this.getCurrentStateTime().getSimulatedTime(),
-                this.getFreezerTemperature());
-        
-        this.temperatureFridgePlotter.addData(
-                SERIES_FRIDGE,
-                this.getCurrentStateTime().getSimulatedTime(),
-                this.getFridgeTemperature());
-
+   
         super.userDefinedExternalTransition(elapsedTime) ;
-        if (this.hasDebugLevel(2)) {
-            this.logMessage("FridgeModel::userDefinedExternalTransition 5") ;
-        }
+ 
     }
     
     @Override
@@ -254,35 +310,53 @@ public class FridgeModel extends AtomicHIOAwithEquations{
                 SERIES_FRIDGE,
                 endTime.getSimulatedTime(),
                 this.getFridgeTemperature());
+        this.intensityPlotter.addData(
+                SERIES_INTENSITY,
+                endTime.getSimulatedTime(),
+                this.getIntensity());
         Thread.sleep(10000L);
         this.temperatureFreezerPlotter.dispose();
         this.temperatureFridgePlotter.dispose();
+        this.intensityPlotter.dispose();
 
         super.endSimulation(endTime);
     }
 
-	public void setState(State state) {
-		this.currentState = state;
+	public void setStateFreezer(State state) {
+		this.currentStateFreezer = state;
+		
+		switch(state) {
+	        case OFF :
+	            this.currentFreezerIntensity.v = 0.0 ;
+	            break ;
+	        case ON :
+	            this.currentFreezerIntensity.v = FREEZER_ON_CONSUMPTION/TENSION;
+	            break ;
+		}
 	}
 	
-	public void lowerFridgeTemperature() {
-		this.currentFridgeTemperature.v -=0.5;
+	public void setStateFridge(State state) {
+		this.currentStateFridge = state;
+		switch(state) {
+	        case OFF :
+	            this.currentFridgeIntensity.v = 0.0 ;
+	            break ;
+	        case ON :
+	            this.currentFridgeIntensity.v = FRIDGE_ON_CONSUMPTION/TENSION;
+	            break ;
+		}
 	}
 	
-	public void lowerFreezerTemperature() {
-		this.currentFreezerTemperature.v -=0.5;
+	public State getStateFreezer() {
+		return this.currentStateFreezer;
 	}
 	
-	public void raiseFridgeTemperature() {
-		this.currentFridgeTemperature.v +=0.5;
+	public double getIntensity() {
+		return this.currentFridgeIntensity.v + this.currentFreezerIntensity.v;
 	}
 	
-	public void raiseFreezerTemperature() {
-		this.currentFreezerTemperature.v +=0.5;
-	}
-	
-	public State getState() {
-		return this.currentState;
+	public State getStateFridge() {
+		return this.currentStateFridge;
 	}
 	
 	public double getFreezerTemperature() {
