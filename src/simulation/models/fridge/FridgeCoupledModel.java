@@ -28,109 +28,113 @@ import fr.sorbonne_u.devs_simulation.utils.StandardCoupledModelReport;
 import simulation.events.fridge.SwitchFreezerOn;
 import simulation.events.fridge.SwitchFreezerOff;
 import simulation.events.fridge.SwitchFridgeOn;
+import simulation.events.fridge.TicEvent;
 import simulation.events.fridge.SwitchFridgeOff;
 
 public class FridgeCoupledModel extends CoupledModel{
-	
-	public FridgeCoupledModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine,
-			ModelDescriptionI[] submodels, Map<Class<? extends EventI>, EventSink[]> imported,
-			Map<Class<? extends EventI>, ReexportedEvent> reexported, Map<EventSource, EventSink[]> connections,
-			Map<StaticVariableDescriptor, VariableSink[]> importedVars,
-			Map<VariableSource, StaticVariableDescriptor> reexportedVars, Map<VariableSource, VariableSink[]> bindings)
-			throws Exception {
-		super(uri, simulatedTimeUnit, simulationEngine, submodels, imported, reexported, connections, importedVars,
-				reexportedVars, bindings);
-		// TODO Auto-generated constructor stub
-	}
 
-	public static final String	URI = "FridgeCoupledModel" ;
+    private static final long serialVersionUID = 1L;
+    public static final String  URI = "FridgeCoupledModel" ;
 
-	
-	 @Override
-	    public SimulationReportI getFinalReport() throws Exception
-	    {
-	        StandardCoupledModelReport ret =
-	                new StandardCoupledModelReport(this.getURI()) ;
-	        for (int i = 0 ; i < this.submodels.length ; i++) {
-	            ret.addReport(this.submodels[i].getFinalReport()) ;
-	        }
-	        return ret ;
-	    }
-	 
-	 public static Architecture build() throws Exception
-	    {
-	        Map<String, AbstractAtomicModelDescriptor> atomicModelDescriptors =
-	                new HashMap<>() ;
+    public FridgeCoupledModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine,
+            ModelDescriptionI[] submodels, Map<Class<? extends EventI>, EventSink[]> imported,
+            Map<Class<? extends EventI>, ReexportedEvent> reexported, Map<EventSource, EventSink[]> connections,
+            Map<StaticVariableDescriptor, VariableSink[]> importedVars,
+            Map<VariableSource, StaticVariableDescriptor> reexportedVars, Map<VariableSource, VariableSink[]> bindings)
+                    throws Exception {
+        super(uri, simulatedTimeUnit, simulationEngine, submodels, imported, reexported, connections, importedVars,
+                reexportedVars, bindings);
+    }
 
-	        atomicModelDescriptors.put(
-	                FridgeModel.URI,
-	                AtomicHIOA_Descriptor.create(
-	                        FridgeModel.class,
-	                        FridgeModel.URI,
-	                        TimeUnit.SECONDS,
-	                        null,
-	                        SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
-	        atomicModelDescriptors.put(
-	                FridgeUserModel.URI,
-	                AtomicModelDescriptor.create(
-	                        FridgeUserModel.class,
-	                        FridgeUserModel.URI,
-	                        TimeUnit.SECONDS,
-	                        null,
-	                        SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
+    @Override
+    public SimulationReportI getFinalReport() throws Exception
+    {
+        StandardCoupledModelReport ret =
+                new StandardCoupledModelReport(this.getURI()) ;
+        for (int i = 0 ; i < this.submodels.length ; i++) {
+            ret.addReport(this.submodels[i].getFinalReport()) ;
+        }
+        return ret ;
+    }
 
-	        Map<String, CoupledModelDescriptor> coupledModelDescriptors =
-	                new HashMap<String,CoupledModelDescriptor>() ;
+    public static Architecture build() throws Exception
+    {
+        Map<String, AbstractAtomicModelDescriptor> atomicModelDescriptors =
+                new HashMap<>() ;
 
-	        Set<String> submodels = new HashSet<String>() ;
-	        submodels.add(FridgeModel.URI) ;
-	        submodels.add(FridgeUserModel.URI) ;
+        atomicModelDescriptors.put(
+                FridgeModel.URI,
+                AtomicHIOA_Descriptor.create(
+                        FridgeModel.class,
+                        FridgeModel.URI,
+                        TimeUnit.SECONDS,
+                        null,
+                        SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
+        atomicModelDescriptors.put(
+                FridgeUserModel.URI,
+                AtomicModelDescriptor.create(
+                        FridgeUserModel.class,
+                        FridgeUserModel.URI,
+                        TimeUnit.SECONDS,
+                        null,
+                        SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
+        atomicModelDescriptors.put(
+                TicModel.URI,
+                AtomicModelDescriptor.create(
+                        TicModel.class,
+                        TicModel.URI,
+                        TimeUnit.SECONDS,
+                        null,
+                        SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
 
-	        Map<EventSource,EventSink[]> connections =
-	                new HashMap<EventSource,EventSink[]>() ;
-	        EventSource from1 =
-	                new EventSource(FridgeUserModel.URI, SwitchFreezerOn.class) ;
-	        EventSink[] to1 =
-	                new EventSink[] {
-	                        new EventSink(FridgeModel.URI, SwitchFreezerOn.class)} ;
-	        connections.put(from1, to1) ;
-	        EventSource from2 =
-	                new EventSource(FridgeUserModel.URI, SwitchFreezerOff.class) ;
-	        EventSink[] to2 = new EventSink[] {
-	                new EventSink(FridgeModel.URI, SwitchFreezerOff.class)} ;
-	        connections.put(from2, to2) ;
-	        EventSource from3 =
-	                new EventSource(FridgeUserModel.URI, SwitchFridgeOn.class) ;
-	        EventSink[] to3 = new EventSink[] {
-	                new EventSink(FridgeModel.URI, SwitchFridgeOn.class)} ;
-	        connections.put(from3, to3) ;
-	        EventSource from4 =
-	                new EventSource(FridgeUserModel.URI, SwitchFridgeOff.class) ;
-	        EventSink[] to4 = new EventSink[] {
-	                new EventSink(FridgeModel.URI, SwitchFridgeOff.class)} ;
-	        connections.put(from4, to4) ;
+        Map<String, CoupledModelDescriptor> coupledModelDescriptors =
+                new HashMap<String,CoupledModelDescriptor>() ;
 
-	        coupledModelDescriptors.put(
-	               FridgeCoupledModel.URI,
-	                new CoupledHIOA_Descriptor(
-	                        FridgeCoupledModel.class,
-	                        FridgeCoupledModel.URI,
-	                        submodels,
-	                        null,
-	                        null,
-	                        connections,
-	                        null,
-	                        SimulationEngineCreationMode.COORDINATION_ENGINE,
-	                        null,
-	                        null,
-	                        null)) ;
+        Set<String> submodels = new HashSet<String>() ;
+        submodels.add(FridgeModel.URI) ;
+        submodels.add(FridgeUserModel.URI) ;
+        submodels.add(TicModel.URI);
 
-	        return new Architecture(
-	                FridgeCoupledModel.URI,
-	                atomicModelDescriptors,
-	                coupledModelDescriptors,
-	                TimeUnit.SECONDS);
-	    }
+        Map<EventSource,EventSink[]> connections = new HashMap<EventSource,EventSink[]>() ;
+        EventSource from1 = new EventSource(FridgeUserModel.URI, SwitchFreezerOn.class) ;
+        EventSink[] to1 = new EventSink[] {new EventSink(FridgeModel.URI, SwitchFreezerOn.class)} ;
+        connections.put(from1, to1) ;
 
+        EventSource from2 = new EventSource(FridgeUserModel.URI, SwitchFreezerOff.class) ;
+        EventSink[] to2 = new EventSink[] {new EventSink(FridgeModel.URI, SwitchFreezerOff.class)} ;
+        connections.put(from2, to2) ;
 
+        EventSource from3 = new EventSource(FridgeUserModel.URI, SwitchFridgeOn.class) ;
+        EventSink[] to3 = new EventSink[] {new EventSink(FridgeModel.URI, SwitchFridgeOn.class)} ;
+        connections.put(from3, to3) ;
+
+        EventSource from4 = new EventSource(FridgeUserModel.URI, SwitchFridgeOff.class) ;
+        EventSink[] to4 = new EventSink[] {new EventSink(FridgeModel.URI, SwitchFridgeOff.class)} ;
+        connections.put(from4, to4) ;
+        
+        EventSource from5 = new EventSource(TicModel.URI, TicEvent.class) ;
+        EventSink[] to5 = new EventSink[] {new EventSink(FridgeModel.URI, TicEvent.class)} ;
+        connections.put(from5, to5) ;
+
+        coupledModelDescriptors.put(
+                FridgeCoupledModel.URI,
+                new CoupledHIOA_Descriptor(
+                        FridgeCoupledModel.class,
+                        FridgeCoupledModel.URI,
+                        submodels,
+                        null,
+                        null,
+                        connections,
+                        null,
+                        SimulationEngineCreationMode.COORDINATION_ENGINE,
+                        null,
+                        null,
+                        null)) ;
+
+        return new Architecture(
+                FridgeCoupledModel.URI,
+                atomicModelDescriptors,
+                coupledModelDescriptors,
+                TimeUnit.SECONDS);
+    }
 }

@@ -31,10 +31,13 @@ import java.util.concurrent.TimeUnit;
 // -----------------------------------------------------------------------------
 public class LampModel 	extends AtomicHIOAwithEquations {
 
+    private static final long serialVersionUID = 1L;
 
-    public enum State{ ON,OFF,LOW, MEDIUM,HIGH}
+    public enum State{OFF,LOW, MEDIUM,HIGH}
 
     public static class LampReport extends AbstractSimulationReport{
+
+        private static final long serialVersionUID = 1L;
 
         /**
          * create a simulation report.
@@ -252,7 +255,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
         // and intensity level
         ce.executeOn(this);
 
-        if (this.hasDebugLevel(1)) {
+        if (this.hasDebugLevel(2)) {
             this.logMessage("LampModel::userDefinedExternalTransition 4 "
                     + this.getState()) ;
         }

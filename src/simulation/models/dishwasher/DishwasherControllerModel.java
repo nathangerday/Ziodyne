@@ -14,6 +14,7 @@ import simulation.events.dishwasher.SetModeStandard;
 import simulation.events.dishwasher.SwitchOff;
 import simulation.events.dishwasher.SwitchOn;
 
+import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
         SetModeStandard.class,
         SwitchOn.class,
         SwitchOff.class})
-public class DishwasherUserModel extends AtomicES_Model {
+public class DishwasherControllerModel extends AtomicES_Model {
 
 
     // -------------------------------------------------------------------------
@@ -40,7 +41,7 @@ public class DishwasherUserModel extends AtomicES_Model {
 
     protected final RandomDataGenerator rg ;
     protected DishwasherModel.State hds ;
-    public DishwasherUserModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
+    public DishwasherControllerModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
 
         this.rg = new RandomDataGenerator() ;
@@ -149,28 +150,26 @@ public class DishwasherUserModel extends AtomicES_Model {
         Duration d ;
         // See what is the type of event to be executed
         if (this.nextEvent.equals(SwitchOn.class)) {
-            // when a switch on event has been issued, plan the next event as
-            // a set high (the hair dryer is switched on in low mode
             d = new Duration(2.0 * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            // compute the time of occurrence (in the future)
             Time t = this.getCurrentStateTime().add(d) ;
             // schedule the event
-            this.scheduleEvent(new SetModeStandard(t)) ;
+            if(new Random().nextBoolean()) {
+            	this.scheduleEvent(new SetModeStandard(t)) ;            	
+            }else {
+            	this.scheduleEvent(new SetModeEco(t)) ;
+            }
             // also, plan the next switch on for the next day
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(
                     new SwitchOn(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetModeStandard.class)) {
-            // when a set high event has been issued, plan the next set low
-            // after some time of usage
+        }else if (this.nextEvent.equals(SetModeStandard.class)) {
             d =	new Duration(
-                    2.0 * this.meanTimeAtStandardMode * this.rg.nextBeta(1.75, 1.75),
+                    2.0 * this.meanTimeAtStandardMode* this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SetModeEco(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetModeEco.class)) {
-            // when a set high event has been issued, plan the next switch off
-            // after some time of usage
+            this.scheduleEvent(
+                    new SwitchOff(this.getCurrentStateTime().add(d))) ;
+        }else if (this.nextEvent.equals(SetModeEco.class)) {
             d =	new Duration(
                     2.0 * this.meanTimeAtEcoMode * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
