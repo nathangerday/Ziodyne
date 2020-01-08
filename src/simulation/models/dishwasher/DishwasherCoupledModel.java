@@ -48,9 +48,6 @@ public class DishwasherCoupledModel extends CoupledModel {
     // -------------------------------------------------------------------------
     // Methods
     // -------------------------------------------------------------------------
-    /**
-     * @see fr.sorbonne_u.devs_simulation.models.CoupledModel#getFinalReport()
-     */
     @Override
     public SimulationReportI getFinalReport() throws Exception
     {
@@ -62,19 +59,6 @@ public class DishwasherCoupledModel extends CoupledModel {
         return ret ;
     }
 
-    /**
-     * build the simulation architecture corresponding to this coupled model.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true			// no precondition.
-     * post	true			// no postcondition.
-     * </pre>
-     *
-     * @return				the simulation architecture corresponding to this coupled model.
-     * @throws Exception	<i>TO DO.</i>
-     */
     public static Architecture build() throws Exception
     {
         Map<String, AbstractAtomicModelDescriptor> atomicModelDescriptors =
