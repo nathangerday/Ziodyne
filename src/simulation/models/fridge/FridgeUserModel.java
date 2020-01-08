@@ -24,36 +24,38 @@ import simulation.events.fridge.SwitchFridgeOff;
         SwitchFreezerOff.class,
         SwitchFreezerOn.class})
 public class FridgeUserModel extends AtomicES_Model {
-	
-	  public static final String	URI = "FridgeUserModel" ;
 
-	    /** initial delay before sending the first switch on event.				*/
-	    protected double	initialDelay ;
-	    /** delay between uses of the fridge from one day to another.		*/
-	    protected double	interdayDelay ;
-	    /** mean time between uses of the fridge in the same day.			*/
-	    protected double	meanTimeBetweenUsages ;
-	    /** during one use, mean time the fridge/freezer is lowering or raising temperature.	*/
-	    protected double	meanTimeTempAction ;
-	    /** next event to be sent.												*/
-	    protected Class<?>	nextEvent ;
+    private static final long serialVersionUID = 1L;
 
-	    /**	a random number generator from common math library.					*/
-	    protected final RandomDataGenerator rg ;
-	    /** the current state of the fridge simulation model.				*/
-	    protected FridgeModel.State fridge_s ;
-	    /** the current state of the freezer simulation model.				*/
-	    protected FridgeModel.State freezer_s ;
+    public static final String	URI = "FridgeUserModel" ;
 
-	public FridgeUserModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
-		super(uri, simulatedTimeUnit, simulationEngine);
-		this.rg = new RandomDataGenerator() ;
+    /** initial delay before sending the first switch on event.				*/
+    protected double	initialDelay ;
+    /** delay between uses of the fridge from one day to another.		*/
+    protected double	interdayDelay ;
+    /** mean time between uses of the fridge in the same day.			*/
+    protected double	meanTimeBetweenUsages ;
+    /** during one use, mean time the fridge/freezer is lowering or raising temperature.	*/
+    protected double	meanTimeTempAction ;
+    /** next event to be sent.												*/
+    protected Class<?>	nextEvent ;
+
+    /**	a random number generator from common math library.					*/
+    protected final RandomDataGenerator rg ;
+    /** the current state of the fridge simulation model.				*/
+    protected FridgeModel.State fridge_s ;
+    /** the current state of the freezer simulation model.				*/
+    protected FridgeModel.State freezer_s ;
+
+    public FridgeUserModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
+        super(uri, simulatedTimeUnit, simulationEngine);
+        this.rg = new RandomDataGenerator() ;
 
         // create a standard logger (logging on the terminal)
         this.setLogger(new StandardLogger()) ;
-	}
-	
-	@Override
+    }
+
+    @Override
     public void			initialiseState(Time initialTime)
     {
         this.initialDelay = 10.0 ;
@@ -74,7 +76,7 @@ public class FridgeUserModel extends AtomicES_Model {
         Duration d2 =
                 new Duration(
                         2.0 * this.meanTimeBetweenUsages *
-                                this.rg.nextBeta(1.75, 1.75),
+                        this.rg.nextBeta(1.75, 1.75),
                         this.getSimulatedTimeUnit()) ;
         Time t = this.getCurrentStateTime().add(d1).add(d2) ;
         this.scheduleEvent(new SwitchFridgeOn(t)) ;
@@ -82,105 +84,65 @@ public class FridgeUserModel extends AtomicES_Model {
         // Redo the initialisation to take into account the initial event
         // just scheduled.
         this.nextTimeAdvance = this.timeAdvance() ;
-        this.timeOfNextEvent =
-                this.getCurrentStateTime().add(this.nextTimeAdvance) ;
+        this.timeOfNextEvent = this.getCurrentStateTime().add(this.nextTimeAdvance) ;
+    }
 
-        try {
-            // set the debug level triggering the production of log messages.
-            //this.setDebugLevel(1) ;
-        } catch (Exception e) {
-            throw new RuntimeException(e) ;
+    @Override
+    public Duration timeAdvance()
+    {
+        Duration d = super.timeAdvance() ;
+        this.logMessage("FridgeUserModel::timeAdvance() 1 " + d +
+                " " + this.eventListAsString()) ;
+        return d ;
+    }
+
+    @Override
+    public Vector<EventI> output()
+    {
+        assert	!this.eventList.isEmpty() ;
+        Vector<EventI> ret = super.output() ;
+        assert	ret.size() == 1 ;
+
+        this.nextEvent = ret.get(0).getClass() ;
+
+        this.logMessage("FridgeUserModel::output() " +
+                this.nextEvent.getCanonicalName()) ;
+        return ret ;
+    }
+
+
+    @Override
+    public void	userDefinedInternalTransition(Duration elapsedTime){
+        Duration d ;
+        if (this.nextEvent.equals(SwitchFridgeOn.class)) {
+            d = new Duration(10.0 * this.rg.nextBeta(1.75, 1.75),
+                    this.getSimulatedTimeUnit()) ;
+            Time t = this.getCurrentStateTime().add(d) ;
+            this.scheduleEvent(new SwitchFreezerOn(t)) ;
+
+            // also, plan the next switch on for the next day
+            d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
+            this.scheduleEvent(new SwitchFridgeOff(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(SwitchFreezerOn.class)) {
+            //            d =	new Duration(
+            //                    2.0 * this.meanTimeTempAction * this.rg.nextBeta(1.75, 1.75),
+            //                    this.getSimulatedTimeUnit()) ;
+            //            this.scheduleEvent(new SwitchFridgeOff(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(SwitchFridgeOff.class)) {
+            d =	new Duration(
+                    10.0 * this.meanTimeTempAction* this.rg.nextBeta(1.75, 1.75),
+                    this.getSimulatedTimeUnit()) ;
+            this.scheduleEvent(new SwitchFreezerOff(this.getCurrentStateTime().add(d))) ;
+
+            // also, plan the next switch on for the next day
+            d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
+            this.scheduleEvent(new SwitchFridgeOn(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(SwitchFreezerOff.class)) {
+            //            d =	new Duration(
+            //                    2.0 * this.meanTimeTempAction * this.rg.nextBeta(1.75, 1.75),
+            //                    this.getSimulatedTimeUnit()) ;
+            //            this.scheduleEvent(
+            //                    new SwitchFridgeOn(this.getCurrentStateTime().add(d))) ;
         }
     }
-	
-	@Override
-	 public Duration timeAdvance()
-	    {
-	        // This is just for debugging purposes; the time advance for an ES
-	        // model is given by the earliest time among the currently scheduled
-	        // events.
-	        Duration d = super.timeAdvance() ;
-	        this.logMessage("FridgeUserModel::timeAdvance() 1 " + d +
-	                " " + this.eventListAsString()) ;
-	        return d ;
-	    }
-	
-	 @Override
-	    public Vector<EventI> output()
-	    {
-	        // output is called just before executing an internal transition
-	        // in ES models, this corresponds to having at least one event in
-	        // the event list which time of occurrence corresponds to the current
-	        // simulation time when performing the internal transition.
-
-	        // when called, there must be an event to be executed and it will
-	        // be sent to other models when they are external events.
-	        assert	!this.eventList.isEmpty() ;
-	        // produce the set of such events by calling the super method
-	        Vector<EventI> ret = super.output() ;
-	        // by construction, there will be only one such event
-	        assert	ret.size() == 1 ;
-
-	        // remember which external event was sent (in ES model, events are
-	        // either internal or external, hence an external event is removed
-	        // from the event list to be sent and it will not be accessible to
-	        // the internal transition method; hence, we store the information
-	        // to keep it for the internal transition)
-	        this.nextEvent = ret.get(0).getClass() ;
-
-	        this.logMessage("FridgeUserModel::output() " +
-	                this.nextEvent.getCanonicalName()) ;
-	        return ret ;
-	    }
-	 
-	 
-	  @Override
-	    public void				userDefinedInternalTransition(
-	            Duration elapsedTime
-	    )
-	    {
-	        // This method implements a usage scenario for the lamp.
-	        // Here, we assume that the lamp is used once each cycle (day)
-	        // and then it starts in low mode, is set in high mode shortly after,
-	        // used for a while in high mode and then set back in low mode.
-
-	        Duration d ;
-	        // See what is the type of event to be executed
-	        if (this.nextEvent.equals(SwitchFridgeOn.class)) {
-	            // when a switch on event has been issued, plan the next event as
-	            // a set high (the lamp is switched on in low mode
-	            d = new Duration(2.0 * this.rg.nextBeta(1.75, 1.75),
-	                    this.getSimulatedTimeUnit()) ;
-	            // compute the time of occurrence (in the future)
-	            Time t = this.getCurrentStateTime().add(d) ;
-	            // schedule the event
-	            this.scheduleEvent(new SwitchFreezerOn(t)) ;
-	            // also, plan the next switch on for the next day
-	            d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
-	            this.scheduleEvent(
-	                    new SwitchFreezerOn(this.getCurrentStateTime().add(d))) ;
-	        } else if (this.nextEvent.equals(SwitchFridgeOn.class)) {
-	            // when a set high event has been issued, plan the next set low
-	            // after some time of usage
-	            d =	new Duration(
-	                    2.0 * this.meanTimeTempAction * this.rg.nextBeta(1.75, 1.75),
-	                    this.getSimulatedTimeUnit()) ;
-	            this.scheduleEvent(new SwitchFridgeOff(this.getCurrentStateTime().add(d))) ;
-	        } else if (this.nextEvent.equals(SwitchFridgeOff.class)) {
-	            // when a set high event has been issued, plan the next switch off
-	            // after some time of usage
-	            d =	new Duration(
-	                    2.0 * this.meanTimeTempAction* this.rg.nextBeta(1.75, 1.75),
-	                    this.getSimulatedTimeUnit()) ;
-	            this.scheduleEvent(
-	                    new SwitchFreezerOff(this.getCurrentStateTime().add(d))) ;
-	        } else if (this.nextEvent.equals(SwitchFreezerOff.class)) {
-	        	d =	new Duration(
-	                    2.0 * this.meanTimeTempAction * this.rg.nextBeta(1.75, 1.75),
-	                    this.getSimulatedTimeUnit()) ;
-	            this.scheduleEvent(
-	                    new SwitchFridgeOn(this.getCurrentStateTime().add(d))) ;
-	        }
-	    }
-
 }

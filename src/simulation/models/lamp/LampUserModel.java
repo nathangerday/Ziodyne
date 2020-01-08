@@ -104,7 +104,7 @@ public class LampUserModel extends AtomicES_Model {
         Duration d2 =
                 new Duration(
                         2.0 * this.meanTimeBetweenUsages *
-                                this.rg.nextBeta(1.75, 1.75),
+                        this.rg.nextBeta(1.75, 1.75),
                         this.getSimulatedTimeUnit()) ;
         Time t = this.getCurrentStateTime().add(d1).add(d2) ;
         this.scheduleEvent(new SwitchOn(t)) ;
@@ -176,49 +176,30 @@ public class LampUserModel extends AtomicES_Model {
     @Override
     public void				userDefinedInternalTransition(
             Duration elapsedTime
-    )
+            )
     {
-        // This method implements a usage scenario for the lamp.
-        // Here, we assume that the lamp is used once each cycle (day)
-        // and then it starts in low mode, is set in high mode shortly after,
-        // used for a while in high mode and then set back in low mode.
-
         Duration d ;
-        // See what is the type of event to be executed
         if (this.nextEvent.equals(SwitchOn.class)) {
-            // when a switch on event has been issued, plan the next event as
-            // a set high (the lamp is switched on in low mode
             d = new Duration(2.0 * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            // compute the time of occurrence (in the future)
             Time t = this.getCurrentStateTime().add(d) ;
-            // schedule the event
             this.scheduleEvent(new SetHigh(t)) ;
             // also, plan the next switch on for the next day
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(
-                    new SwitchOn(this.getCurrentStateTime().add(d))) ;
+            this.scheduleEvent(new SwitchOn(this.getCurrentStateTime().add(d))) ;
         } else if (this.nextEvent.equals(SetHigh.class)) {
-            // when a set high event has been issued, plan the next set low
-            // after some time of usage
-            d =	new Duration(
-                    2.0 * this.meanTimeAtHigh * this.rg.nextBeta(1.75, 1.75),
+            d =	new Duration(2.0 * this.meanTimeAtHigh * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(new SetMedium(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetLow.class)) {
-            // when a set high event has been issued, plan the next switch off
-            // after some time of usage
-            d =	new Duration(
-                    2.0 * this.meanTimeAtLow * this.rg.nextBeta(1.75, 1.75),
-                    this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(
-                    new SwitchOff(this.getCurrentStateTime().add(d))) ;
         } else if (this.nextEvent.equals(SetMedium.class)) {
-        	d =	new Duration(
+            d = new Duration(
                     2.0 * this.meanTimeAtMedium * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(
-                    new SetLow(this.getCurrentStateTime().add(d))) ;
+            this.scheduleEvent(new SetLow(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(SetLow.class)) {
+            d =	new Duration(2.0 * this.meanTimeAtLow * this.rg.nextBeta(1.75, 1.75),
+                    this.getSimulatedTimeUnit()) ;
+            this.scheduleEvent(new SwitchOff(this.getCurrentStateTime().add(d))) ;
         }
     }
 }
