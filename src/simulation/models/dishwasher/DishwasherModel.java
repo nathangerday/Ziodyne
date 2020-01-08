@@ -57,11 +57,8 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     public static final String	URI = "DishwasherModel" ;
     private static final String	SERIES = "intensity" ;
 
-    /** energy consumption (in Watts) of the dishwasher in LOW mode.		*/
-    protected static final double	ECO_MODE_CONSUMPTION = 20.0 ; // Watts
-    /** energy consumption (in Watts) of the dishwasher in MEDIUM mode.		*/
-    protected static final double	STANDARD_MODE_CONSUMPTION = 40.0 ; // Watts
-    /** nominal tension (in Volts) of the dishwasher.						*/
+    protected static final double	ECO_MODE_CONSUMPTION = 700.0 ; // Watts
+    protected static final double	STANDARD_MODE_CONSUMPTION = 1600.0 ; // Watts
     protected static final double	TENSION = 12.0 ; // Volts
 
     @ExportedVariable(type = Double.class)
@@ -242,18 +239,6 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     // Model-specific methods
     // ------------------------------------------------------------------------
 
-    /**
-     * set the state of the lamp.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	s != null
-     * post	true			// no postcondition.
-     * </pre>
-     *
-     * @param s		the new state.
-     */
     public void			setState(State s)
     {
         this.currentState = s ;
@@ -272,18 +257,6 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
         }
     }
 
-    /**
-     * return the state of the lamp.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true			// no precondition.
-     * post	ret != null
-     * </pre>
-     *
-     * @return	the state of the lamp.
-     */
     public State		getState()
     {
         return this.currentState ;
