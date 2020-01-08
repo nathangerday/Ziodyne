@@ -84,7 +84,6 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
         this.intensityPlotter = new XYPlotter(pd) ;
         this.intensityPlotter.createSeries(SERIES) ;
 
-        // create a standard logger (logging on the terminal)
         this.setLogger(new StandardLogger()) ;
     }
 
@@ -92,7 +91,6 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     public void	setSimulationRunParameters(Map<String, Object> simParams) throws Exception
     {
 
-        // The reference to the embedding component
         this.componentRef =
                 (EmbeddingComponentStateAccessI) simParams.get("componentRef") ;
     }
@@ -151,11 +149,6 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     public void	userDefinedInternalTransition(Duration elapsedTime)
     {
         if (this.componentRef != null) {
-            // This is an example showing how to access the component state
-            // from a simulation model; this must be done with care and here
-            // we are not synchronising with other potential component threads
-            // that may access the state of the component object at the same
-            // time.
             try {
                 this.logMessage("component state = " +
                         componentRef.getEmbeddingComponentStateValue("state")) ;
@@ -171,11 +164,7 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
         if (this.hasDebugLevel(2)) {
             this.logMessage("DiishwasherModel::userDefinedExternalTransition 1");
         }
-        // get the vector of current external events
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
-        // when this method is called, there is at least one external event,
-        // and for the hair dryer model, there will be exactly one by
-        // construction.
         assert currentEvents != null && currentEvents.size() == 1;
 
         Event ce = (Event) currentEvents.get(0);
@@ -195,8 +184,6 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
                     + this.getState());
         }
 
-        // execute the current external event on this model, changing its state
-        // and intensity level
         ce.executeOn(this) ;
 
         if (this.hasDebugLevel(1)) {
@@ -204,7 +191,6 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
                     + this.getState()) ;
         }
 
-        // add a new data on the plotter; this data will open a new piece
         this.intensityPlotter.addData(
                 SERIES,
                 this.getCurrentStateTime().getSimulatedTime(),
@@ -262,18 +248,6 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
         return this.currentState ;
     }
 
-    /**
-     * return the current intensity of electricity consumption in amperes.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	true			// no precondition.
-     * post	{@code ret >= 0.0 and ret <= 1200.0/220.0}
-     * </pre>
-     *
-     * @return	the current intensity of electricity consumption in amperes.
-     */
     public double	getIntensity()
     {
         return this.currentIntensity.v ;
