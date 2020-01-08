@@ -27,6 +27,7 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardCoupledModelReport;
 import simulation.events.windturbine.SwitchOff;
 import simulation.events.windturbine.SwitchOn;
+import simulation.events.windturbine.TicEvent;
 import simulation.events.windturbine.WindReading;
 
 public class WindTurbineCoupledModel extends CoupledModel{
@@ -138,8 +139,8 @@ public class WindTurbineCoupledModel extends CoupledModel{
         //***********************************
 
         Map<EventSource,EventSink[]> connections = new HashMap<EventSource,EventSink[]>() ;
-        EventSource from = new EventSource(TicModel.URI, SwitchOn.class) ;
-        EventSink[] to = new EventSink[] {new EventSink(WindSensorModel.URI, SwitchOn.class)};
+        EventSource from = new EventSource(TicModel.URI, TicEvent.class) ;
+        EventSink[] to = new EventSink[] {new EventSink(WindSensorModel.URI, TicEvent.class)};
         connections.put(from, to);
 
         from = new EventSource(WindSensorModel.URI, WindReading.class) ;

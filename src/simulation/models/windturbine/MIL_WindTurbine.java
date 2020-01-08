@@ -11,8 +11,7 @@ import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
 import fr.sorbonne_u.utils.PlotterDescription;
 
 public class MIL_WindTurbine {
-    public static void   main(String[] args)
-    {
+    public static void   main(String[] args){
         SimulationEngine se ;
 
         try {
@@ -20,16 +19,19 @@ public class MIL_WindTurbine {
             se = localArchitecture.constructSimulator() ;
             se.setDebugLevel(0) ;
             System.out.println(se.simulatorAsString()) ;
-            
+
+            //**************
+            //Run parameters
+            //**************
+
             Map<String, Object> simParams = new HashMap<String, Object>() ;
-            
             //Parameter of TicModel
             simParams.put(TicModel.URI + ":" + TicModel.DELAY_PARAMETER_NAME,
-                          new Duration(10.0, TimeUnit.SECONDS));
+                    new Duration(10.0, TimeUnit.SECONDS));
             //Parameters of WindModel
-            simParams.put(WindModel.URI + ":" + WindModel.MAX_WIND,13.8);
-            simParams.put(WindModel.URI + ":" + WindModel.WIS,0.9);
-            simParams.put(WindModel.URI + ":" + WindModel.WMASSF,1.0/10.0);
+            simParams.put(WindModel.URI + ":" + WindModel.MAX_WIND,15.0);
+            simParams.put(WindModel.URI + ":" + WindModel.WIS,10.0);
+            simParams.put(WindModel.URI + ":" + WindModel.WMASSF,3.5);
             simParams.put(
                     WindModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
                     new PlotterDescription(
@@ -37,7 +39,7 @@ public class MIL_WindTurbine {
                             "Time (sec)",
                             "Speed (m/s)",
                             SimulationMain.ORIGIN_X,
-                            SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+                            SimulationMain.ORIGIN_Y + 2*SimulationMain.getPlotterHeight(),
                             SimulationMain.getPlotterWidth(),
                             SimulationMain.getPlotterHeight())) ;
             //Parameters of WindSendsorModel
@@ -48,18 +50,18 @@ public class MIL_WindTurbine {
                             "Time (sec)",
                             "Speed (m/s)",
                             SimulationMain.ORIGIN_X,
-                            SimulationMain.ORIGIN_Y + 2*SimulationMain.getPlotterHeight(),
+                            SimulationMain.ORIGIN_Y + 3*SimulationMain.getPlotterHeight(),
                             SimulationMain.getPlotterWidth(),
                             SimulationMain.getPlotterHeight())) ;
             //Parameters of WindTurbineControllerModel
-            simParams.put(WindTurbineControllerModel.URI + ":" + WindTurbineControllerModel.MAX_SPEED,8.0);
-            simParams.put(WindTurbineControllerModel.URI + ":" + WindTurbineControllerModel.MIN_SPEED,6.0);
-            
+            simParams.put(WindTurbineControllerModel.URI + ":" + WindTurbineControllerModel.MAX_SPEED,10.0);
+            simParams.put(WindTurbineControllerModel.URI + ":" + WindTurbineControllerModel.MIN_SPEED,3.0);
+
             se.setSimulationRunParameters(simParams);
             SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 0L ;
             se.doStandAloneSimulation(0.0, 500.0) ;
         } catch (Exception e) {
-            throw new RuntimeException(e) ;
+            throw new RuntimeException(e);
         }
     }
 }

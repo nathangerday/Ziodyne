@@ -28,6 +28,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     private static final long serialVersionUID = 1L;
 
+    //States of the wind turbine
     public enum State{ON,OFF}
 
     public static class WindTurbineReport extends AbstractSimulationReport{
@@ -50,9 +51,6 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     public static final String  URI = "WindTurbineModel" ;
     private static final String SERIES = "power" ;
 
-    private static final double RHO = 1.23;
-    private static final double R = 2;
-    private static final double COEFF = 0.5 * RHO * R * R * Math.PI;
     /** Puissance en Watt
      * P = 0.5 * RHO * S * v**3 
      * RHO : masse volumique de l'air (kg/m^3)
@@ -60,6 +58,12 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
      * v : vitesse du vent (m/s) */
     @ExportedVariable(type = Double.class)
     protected final Value<Double> currentPower = new Value<Double>(this, 0.0, 0) ;
+
+    private static final double RHO = 1.23;
+    private static final double R = 2;
+    private static final double COEFF = 0.5 * RHO * R * R * Math.PI;
+
+
     /** current state (OFF, ON) of the wind turbine                 */
     protected State currentState ;
     /** plotter for the power level over time.                          */
@@ -80,7 +84,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
                         "Time (sec)",
                         "Power (watt)",
                         SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + 3*SimulationMain.getPlotterHeight(),
+                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
                         SimulationMain.getPlotterWidth(),
                         SimulationMain.getPlotterHeight());
 
@@ -98,16 +102,12 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     @Override
     public void initialiseState(Time initialTime){
-        // the lamp starts in mode ON
         this.currentState = WindTurbineModel.State.OFF ;
 
-        // initialisation of the power plotter
         this.powerPlotter.initialise() ;
-        // show the plotter on the screen
         this.powerPlotter.showPlotter() ;
 
         try {
-            // set the debug level triggering the production of log messages.
             this.setDebugLevel(1) ;
         } catch (Exception e) {
             throw new RuntimeException(e) ;
@@ -116,7 +116,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
         super.initialiseState(initialTime) ;
     }
 
-    
+
     @Override
     public Vector<EventI> output() {
         return null;
@@ -134,17 +134,15 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     @Override
     public void userDefinedExternalTransition(Duration elapsedTime) {
-        if (this.hasDebugLevel(2)) {
-            this.logMessage("WindTurbine::userDefinedExternalTransition 1");
-        }
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
         EventI e;
         for(int i=0;i<currentEvents.size();i++) {
             e = currentEvents.get(i);
             if (this.hasDebugLevel(2)) {
-                this.logMessage("WindModel::userDefinedExternalTransition 2 "
+                this.logMessage("WindTurbineModel::userDefinedExternalTransition "
                         + e.getClass().getCanonicalName());
             }
+
             if (e instanceof WindReading) {
                 if(getState() == State.ON) {
                     double speed = ((WindReading.Reading) e.getEventInformation()).value;
@@ -152,7 +150,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
                 }
                 this.powerPlotter.addData(
                         SERIES,
-                        e.getTimeOfOccurrence().getSimulatedTime(),
+                        this.getCurrentStateTime().getSimulatedTime(),
                         this.getPower()
                         );
             } else if (e instanceof SwitchOff) {
@@ -190,7 +188,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     public State getState(){
         return this.currentState ;
     }
-    
+
     public void setState(State s) {
         this.currentState = s;
         if(s == State.OFF) {

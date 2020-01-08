@@ -16,10 +16,10 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
-import simulation.events.windturbine.SwitchOn;
+import simulation.events.windturbine.TicEvent;
 import simulation.events.windturbine.WindReading;
 
-@ModelExternalEvents(imported = {SwitchOn.class},
+@ModelExternalEvents(imported = {TicEvent.class},
 exported = {WindReading.class})
 
 public class WindSensorModel extends AtomicHIOAwithEquations{
@@ -59,7 +59,7 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
     /** true when a external event triggered a reading.                     */
     protected boolean triggerReading ;
     /** the last value emitted as a reading of the wind speed.              */
-    protected double lastReading;
+    protected double lastReading ;
     /** the simulation time at the last reading.                            */
     protected double lastReadingTime ;
     /** history of readings, for the simulation report.                     */
@@ -83,10 +83,7 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
             ) throws Exception{
         super(uri, simulatedTimeUnit, simulationEngine) ;
 
-        // Model implementation variable initialisation
         this.lastReading = -1.0 ;
-
-        // Create the representation of the sensor wind function
         this.readings = new Vector<WindReading>() ;
     }
 
@@ -102,7 +99,6 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
     @Override
     public void initialiseState(Time initialTime){
         this.triggerReading = false;
-
         this.lastReadingTime = initialTime.getSimulatedTime();
         this.readings.clear();
         if (this.plotter != null) {
@@ -151,20 +147,12 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
     }
 
     @Override
-    public void userDefinedInternalTransition(Duration elapsedTime){
-        super.userDefinedInternalTransition(elapsedTime) ;
-        this.logMessage(this.getCurrentStateTime() +
-                "|internal|wind speed = " +
-                this.wind.v + " m/s.") ;
-    }
-
-    @Override
     public void userDefinedExternalTransition(Duration elapsedTime){
-        super.userDefinedExternalTransition(elapsedTime);
+        super.userDefinedExternalTransition(elapsedTime) ;
         Vector<EventI> current = this.getStoredEventAndReset() ;
         boolean ticReceived = false ;
         for (int i = 0 ; !ticReceived && i < current.size() ; i++) {
-            if (current.get(i) instanceof SwitchOn) {
+            if (current.get(i) instanceof TicEvent) {
                 ticReceived = true ;
             }
         }
