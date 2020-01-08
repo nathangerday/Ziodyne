@@ -11,7 +11,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import simulation.events.windturbine.TicEvent;
+import simulation.events.fridge.TicEvent;
 
 @ModelExternalEvents(exported = {TicEvent.class})
 public class TicModel extends AtomicModel{

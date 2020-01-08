@@ -67,8 +67,8 @@ public class FridgeModel extends AtomicHIOAwithEquations{
     /** nominal tension of fridge **/
     protected static final double TENSION = 12.0 ; // Volts
 
-    protected static final double INC_FREEZER_TEMP = 0.5 ; 
-    protected static final double INC_FRIDGE_TEMP = 0.5 ;
+    protected static final double INC_FREEZER_TEMP = 1 ; 
+    protected static final double INC_FRIDGE_TEMP = 1 ;
 
     protected static final double FREEZER_TEMP_MIN = -15.0 ; 
     protected static final double FRIDGE_TEMP_MIN = 0.0 ; 
@@ -209,9 +209,7 @@ public class FridgeModel extends AtomicHIOAwithEquations{
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
 
         for(EventI e : currentEvents) {
-            this.logMessage(e.getClass().getCanonicalName());
             if (e instanceof TicEvent) {
-                this.logMessage("TicEvent");
                 this.temperatureFreezerPlotter.addData(
                         SERIES_FREEZER,
                         this.getCurrentStateTime().getSimulatedTime(),
