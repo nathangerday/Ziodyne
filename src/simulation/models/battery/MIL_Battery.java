@@ -1,0 +1,65 @@
+package simulation.models.battery;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import fr.sorbonne_u.devs_simulation.architectures.Architecture;
+import fr.sorbonne_u.devs_simulation.models.time.Duration;
+import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
+
+public class MIL_Battery{
+    public static void   main(String[] args){
+        SimulationEngine se ;
+
+        try {
+            Architecture localArchitecture = BatteryCoupledModel.build() ;
+            se = localArchitecture.constructSimulator() ;
+//            se.setDebugLevel(0) ;
+//            System.out.println(se.simulatorAsString()) ;
+
+            //**************
+            //Run parameters
+            //**************
+
+//            Map<String, Object> simParams = new HashMap<String, Object>() ;
+            //Parameter of TicModel
+//            simParams.put(TicModel.URI + ":" + TicModel.DELAY_PARAMETER_NAME,
+//                    new Duration(10.0, TimeUnit.SECONDS));
+            //Parameters of WindModel
+//            simParams.put(BatteryModel.URI + ":" + BatteryModel.MAX_CAPACITY,15.0);
+//            simParams.put(BatteryModel.URI + ":" + WindModel.WIS,10.0);
+//            simParams.put(WindModel.URI + ":" + WindModel.WMASSF,3.5);
+//            simParams.put(
+//                    WindModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
+//                    new PlotterDescription(
+//                            "Wind Model",
+//                            "Time (sec)",
+//                            "Speed (m/s)",
+//                            SimulationMain.ORIGIN_X,
+//                            SimulationMain.ORIGIN_Y + 2*SimulationMain.getPlotterHeight(),
+//                            SimulationMain.getPlotterWidth(),
+//                            SimulationMain.getPlotterHeight())) ;
+//            //Parameters of WindSendsorModel
+//            simParams.put(
+//                    WindSensorModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
+//                    new PlotterDescription(
+//                            "Wind Sensor Model",
+//                            "Time (sec)",
+//                            "Speed (m/s)",
+//                            SimulationMain.ORIGIN_X,
+//                            SimulationMain.ORIGIN_Y + 3*SimulationMain.getPlotterHeight(),
+//                            SimulationMain.getPlotterWidth(),
+//                            SimulationMain.getPlotterHeight())) ;
+//            //Parameters of WindTurbineControllerModel
+//            simParams.put(WindTurbineControllerModel.URI + ":" + WindTurbineControllerModel.MAX_SPEED,10.0);
+//            simParams.put(WindTurbineControllerModel.URI + ":" + WindTurbineControllerModel.MIN_SPEED,3.0);
+//
+//            se.setSimulationRunParameters(simParams);
+//            SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 0L ;
+//            se.doStandAloneSimulation(0.0, 500.0) ;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
