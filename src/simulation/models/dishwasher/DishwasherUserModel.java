@@ -17,7 +17,7 @@ import simulation.events.dishwasher.SwitchOn;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-@ModelExternalEvents(imported = {SetModeEco.class,
+@ModelExternalEvents(exported = {SetModeEco.class,
         SetModeStandard.class,
         SwitchOn.class,
         SwitchOff.class})
@@ -34,9 +34,8 @@ public class DishwasherUserModel extends AtomicES_Model {
     protected double	initialDelay ;
     protected double	interdayDelay ;
     protected double	meanTimeBetweenUsages ;
-    protected double	meanTimeAtHigh ;
-    protected double	meanTimeAtMedium ;
-    protected double	meanTimeAtLow ;
+    protected double	meanTimeAtEcoMode;
+    protected double 	meanTimeAtStandardMode;
     protected Class<?>	nextEvent ;
 
     protected final RandomDataGenerator rg ;
@@ -55,9 +54,8 @@ public class DishwasherUserModel extends AtomicES_Model {
         this.initialDelay = 10.0 ;
         this.interdayDelay = 100.0 ;
         this.meanTimeBetweenUsages = 10.0 ;
-        this.meanTimeAtHigh = 8.0 ;
-        this.meanTimeAtMedium = 4.0;
-        this.meanTimeAtLow = 2.0 ;
+        this.meanTimeAtEcoMode = 20.0;
+        this.meanTimeAtStandardMode = 10.0;
         this.hds = DishwasherModel.State.OFF ;
 
         this.rg.reSeedSecure() ;
@@ -167,14 +165,14 @@ public class DishwasherUserModel extends AtomicES_Model {
             // when a set high event has been issued, plan the next set low
             // after some time of usage
             d =	new Duration(
-                    2.0 * this.meanTimeAtHigh * this.rg.nextBeta(1.75, 1.75),
+                    2.0 * this.meanTimeAtStandardMode * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(new SetModeEco(this.getCurrentStateTime().add(d))) ;
         } else if (this.nextEvent.equals(SetModeEco.class)) {
             // when a set high event has been issued, plan the next switch off
             // after some time of usage
             d =	new Duration(
-                    2.0 * this.meanTimeAtLow * this.rg.nextBeta(1.75, 1.75),
+                    2.0 * this.meanTimeAtEcoMode * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(
                     new SwitchOff(this.getCurrentStateTime().add(d))) ;

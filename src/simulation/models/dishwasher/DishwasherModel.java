@@ -67,7 +67,7 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     @ExportedVariable(type = Double.class)
     protected final Value<Double> currentIntensity =
     new Value<Double>(this, 0.0, 0) ;
-    protected State					currentState ;
+    protected State	currentState ;
     protected XYPlotter intensityPlotter ;
     protected EmbeddingComponentStateAccessI componentRef ;
 
