@@ -41,6 +41,6 @@ public class SwitchOn extends AbstractDishwasherEvent{
     {
         assert	model instanceof DishwasherModel;
 
-        ((DishwasherModel)model).setState(DishwasherModel.State.ON) ;
+        ((DishwasherModel)model).setState(DishwasherModel.State.STD) ;
     }
 }

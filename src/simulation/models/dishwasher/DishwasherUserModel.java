@@ -163,14 +163,7 @@ public class DishwasherUserModel extends AtomicES_Model {
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(
                     new SwitchOn(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetModeStandard.class)) {
-            // when a set high event has been issued, plan the next set low
-            // after some time of usage
-            d =	new Duration(
-                    2.0 * this.meanTimeAtHigh * this.rg.nextBeta(1.75, 1.75),
-                    this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SetModeEco(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetModeEco.class)) {
+        } else if (this.nextEvent.equals(SetModeEco.class) || this.nextEvent.equals(SetModeStandard.class)) {
             // when a set high event has been issued, plan the next switch off
             // after some time of usage
             d =	new Duration(

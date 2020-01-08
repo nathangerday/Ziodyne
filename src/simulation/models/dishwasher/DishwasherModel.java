@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class DishwasherModel extends AtomicHIOAwithEquations {
 
 
-    public enum State{ ON,OFF,ECO, STD}
+    public enum State{OFF,ECO, STD}
 
     public static class DishwasherReport extends AbstractSimulationReport{
 
@@ -57,11 +57,8 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     public static final String	URI = "DishwasherModel" ;
     private static final String	SERIES = "intensity" ;
 
-    /** energy consumption (in Watts) of the lamp in LOW mode.		*/
     protected static final double	ECO_MODE_CONSUMPTION = 20.0 ; // Watts
-    /** energy consumption (in Watts) of the lamp in MEDIUM mode.		*/
     protected static final double	STANDARD_MODE_CONSUMPTION = 40.0 ; // Watts
-    /** nominal tension (in Volts) of the hair dryer.						*/
     protected static final double	TENSION = 12.0 ; // Volts
 
     @ExportedVariable(type = Double.class)
