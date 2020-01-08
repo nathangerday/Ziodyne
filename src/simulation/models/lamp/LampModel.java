@@ -124,7 +124,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
                         "Time (sec)",
                         "Intensity (Amp)",
                         100,
-                        0,
+                        500,
                         600,
                         400) ;
 

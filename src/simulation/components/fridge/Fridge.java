@@ -1,4 +1,4 @@
-package simulation.components.dishwasher;
+package simulation.components.fridge;
 
 import java.util.HashMap;
 
@@ -7,22 +7,24 @@ import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
-import simulation.models.dishwasher.DishwasherCoupledModel;
-import simulation.models.dishwasher.DishwasherModel;
-public class Dishwasher extends AbstractCyPhyComponent
-implements EmbeddingComponentStateAccessI
-{
+import simulation.components.fridge.FridgeSimulatorPlugin;
+import simulation.models.fridge.FridgeCoupledModel;
+import simulation.models.fridge.FridgeModel;
+
+public class Fridge  extends AbstractCyPhyComponent
+implements EmbeddingComponentStateAccessI{
+	
 	// -------------------------------------------------------------------------
 	// Constants and variables
 	// -------------------------------------------------------------------------
 
-	protected DishwasherSimulatorPlugin		asp ;
+	protected FridgeSimulatorPlugin		asp ;
 
 	// -------------------------------------------------------------------------
 	// Constructors
 	// -------------------------------------------------------------------------
 
-	protected Dishwasher() throws Exception
+	protected Fridge() throws Exception
 	{
 		// 2 threads to be able to execute tasks and requests while executing
 		// the DEVS simulation.
@@ -31,11 +33,13 @@ implements EmbeddingComponentStateAccessI
 
 	}
 
-	protected Dishwasher(String reflectionInboundPortURI) throws Exception
+	protected Fridge(String reflectionInboundPortURI) throws Exception
 	{
 		super(reflectionInboundPortURI, 1, 0) ;
 		this.initialise() ;
 	}
+
+
 
 	protected void		initialise() throws Exception
 	{
@@ -43,7 +47,7 @@ implements EmbeddingComponentStateAccessI
 		// architecture description.
 		Architecture localArchitecture = this.createLocalArchitecture(null) ;
 		// Create the appropriate DEVS simulation plug-in.
-		this.asp = new DishwasherSimulatorPlugin() ;
+		this.asp = new FridgeSimulatorPlugin() ;
 		// Set the URI of the plug-in, using the URI of its associated
 		// simulation model.
 		this.asp.setPluginURI(localArchitecture.getRootModelURI()) ;
@@ -66,7 +70,7 @@ implements EmbeddingComponentStateAccessI
 	protected Architecture	createLocalArchitecture(String architectureURI)
 			throws Exception
 	{
-		return DishwasherCoupledModel.build() ;
+		return FridgeCoupledModel.build() ;
 	}
 
 	/**
@@ -98,9 +102,10 @@ implements EmbeddingComponentStateAccessI
 		// During the simulation, the following lines provide an example how
 		// to use the simulation model access facility by the component.
 		for (int i = 0 ; i < 100 ; i++) {
-			this.logMessage("Dishwasher " +
-					this.asp.getModelStateValue(DishwasherModel.URI, "state") + " " +
-					this.asp.getModelStateValue(DishwasherModel.URI, "intensity")) ;
+			this.logMessage("Fridge " +
+					this.asp.getModelStateValue(FridgeModel.URI, "state") + " " +
+					this.asp.getModelStateValue(FridgeModel.URI, "temperature-freezer")+
+					this.asp.getModelStateValue(FridgeModel.URI, "temperature-fridge")) ;
 			Thread.sleep(5L) ;
 		}
 	}
@@ -112,6 +117,7 @@ implements EmbeddingComponentStateAccessI
 	public Object		getEmbeddingComponentStateValue(String name)
 			throws Exception
 	{
-		return asp.getModelStateValue(DishwasherModel.URI, name);
+		return asp.getModelStateValue(FridgeModel.URI, name);
 	}
+	
 }

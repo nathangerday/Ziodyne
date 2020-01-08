@@ -3,9 +3,6 @@ package simulation.events.dishwasher;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import simulation.events.lamp.SetLow;
-import simulation.events.lamp.SetMedium;
-import simulation.events.lamp.SwitchOn;
 import simulation.models.dishwasher.DishwasherModel;
 
 public class SetModeStandard extends AbstractDishwasherEvent {

@@ -3,7 +3,6 @@ package simulation.components.dishwasher;
 import fr.sorbonne_u.components.cyphy.plugins.devs.AtomicSimulatorPlugin;
 import fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI;
 import simulation.models.dishwasher.DishwasherModel;
-import simulation.models.lamp.LampModel;
 
 public class DishwasherSimulatorPlugin extends AtomicSimulatorPlugin{
 

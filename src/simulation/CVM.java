@@ -1,5 +1,7 @@
 package simulation;
 
+import simulation.components.dishwasher.Dishwasher;
+import simulation.components.fridge.Fridge;
 import simulation.components.lamp.Lamp;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
@@ -21,11 +23,22 @@ public class			CVM
     public void			deploy() throws Exception
     {
         @SuppressWarnings("unused")
-        String componentURI =
+        String componentLampURI =
                 AbstractComponent.createComponent(
                         Lamp.class.getCanonicalName(),
                         new Object[]{}) ;
-
+        
+        String componentFridgeURI =
+                AbstractComponent.createComponent(
+                        Fridge.class.getCanonicalName(),
+                        new Object[]{}) ;
+        
+        /*
+        String componentDishwasherURI =
+                AbstractComponent.createComponent(
+                        Dishwasher.class.getCanonicalName(),
+                        new Object[]{}) ;*/
+        
         super.deploy();
     }
 

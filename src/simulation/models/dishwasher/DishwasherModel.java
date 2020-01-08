@@ -172,7 +172,7 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     @Override
     public void	userDefinedExternalTransition(Duration elapsedTime) {
         if (this.hasDebugLevel(2)) {
-            this.logMessage("LampModel::userDefinedExternalTransition 1");
+            this.logMessage("DiishwasherModel::userDefinedExternalTransition 1");
         }
         // get the vector of current external events
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
