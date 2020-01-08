@@ -61,11 +61,11 @@ public class FridgeModel extends AtomicHIOAwithEquations{
     private static final String SERIES_INTENSITY = "intensity";
 
     /** energy consumption (in Watts) of the freezer.		*/
-    protected static final double	FREEZER_ON_CONSUMPTION = 20.0 ;
+    protected static final double	FREEZER_ON_CONSUMPTION = 80.0 ;
     /** energy consumption (in Watts) of the fridge.		*/
-    protected static final double	FRIDGE_ON_CONSUMPTION = 40.0 ;
+    protected static final double	FRIDGE_ON_CONSUMPTION = 300.0 ;
     /** nominal tension of fridge **/
-    protected static final double TENSION = 12.0 ; // Volts
+    protected static final double TENSION = 125.0 ; // Volts
 
     protected static final double INC_FREEZER_TEMP = 1 ; 
     protected static final double INC_FRIDGE_TEMP = 1 ;
