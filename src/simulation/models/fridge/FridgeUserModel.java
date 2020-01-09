@@ -12,17 +12,17 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import simulation.events.fridge.SwitchFreezerOn;
-import simulation.events.fridge.SwitchFreezerOff;
-import simulation.events.fridge.SwitchFridgeOn;
-import simulation.events.fridge.SwitchFridgeOff;
+import simulation.events.fridge.FreezerOn;
+import simulation.events.fridge.FreezerOff;
+import simulation.events.fridge.FridgeOn;
+import simulation.events.fridge.FridgeOff;
 
 
 @ModelExternalEvents(exported = {
-        SwitchFridgeOn.class,
-        SwitchFridgeOff.class,
-        SwitchFreezerOff.class,
-        SwitchFreezerOn.class})
+        FridgeOn.class,
+        FridgeOff.class,
+        FreezerOff.class,
+        FreezerOn.class})
 public class FridgeUserModel extends AtomicES_Model {
 
     private static final long serialVersionUID = 1L;
@@ -79,7 +79,7 @@ public class FridgeUserModel extends AtomicES_Model {
                         this.rg.nextBeta(1.75, 1.75),
                         this.getSimulatedTimeUnit()) ;
         Time t = this.getCurrentStateTime().add(d1).add(d2) ;
-        this.scheduleEvent(new SwitchFridgeOn(t)) ;
+        this.scheduleEvent(new FridgeOn(t)) ;
 
         // Redo the initialisation to take into account the initial event
         // just scheduled.
@@ -114,30 +114,30 @@ public class FridgeUserModel extends AtomicES_Model {
     @Override
     public void	userDefinedInternalTransition(Duration elapsedTime){
         Duration d ;
-        if (this.nextEvent.equals(SwitchFridgeOn.class)) {
+        if (this.nextEvent.equals(FridgeOn.class)) {
             d = new Duration(10.0 * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             Time t = this.getCurrentStateTime().add(d) ;
-            this.scheduleEvent(new SwitchFreezerOn(t)) ;
+            this.scheduleEvent(new FreezerOn(t)) ;
 
             // also, plan the next switch on for the next day
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SwitchFridgeOff(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SwitchFreezerOn.class)) {
+            this.scheduleEvent(new FridgeOff(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(FreezerOn.class)) {
             //            d =	new Duration(
             //                    2.0 * this.meanTimeTempAction * this.rg.nextBeta(1.75, 1.75),
             //                    this.getSimulatedTimeUnit()) ;
             //            this.scheduleEvent(new SwitchFridgeOff(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SwitchFridgeOff.class)) {
+        } else if (this.nextEvent.equals(FridgeOff.class)) {
             d =	new Duration(
                     10.0 * this.meanTimeTempAction* this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SwitchFreezerOff(this.getCurrentStateTime().add(d))) ;
+            this.scheduleEvent(new FreezerOff(this.getCurrentStateTime().add(d))) ;
 
             // also, plan the next switch on for the next day
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SwitchFridgeOn(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SwitchFreezerOff.class)) {
+            this.scheduleEvent(new FridgeOn(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(FreezerOff.class)) {
             //            d =	new Duration(
             //                    2.0 * this.meanTimeTempAction * this.rg.nextBeta(1.75, 1.75),
             //                    this.getSimulatedTimeUnit()) ;

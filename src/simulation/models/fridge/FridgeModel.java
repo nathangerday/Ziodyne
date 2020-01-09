@@ -18,18 +18,18 @@ import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
-import simulation.events.fridge.SwitchFreezerOn;
-import simulation.events.fridge.SwitchFreezerOff;
-import simulation.events.fridge.SwitchFridgeOn;
+import simulation.events.fridge.FreezerOn;
+import simulation.events.fridge.FreezerOff;
+import simulation.events.fridge.FridgeOn;
 import simulation.events.fridge.TicEvent;
-import simulation.events.fridge.SwitchFridgeOff;
+import simulation.events.fridge.FridgeOff;
 
 
 @ModelExternalEvents(imported = {
-        SwitchFridgeOn.class,
-        SwitchFridgeOff.class,
-        SwitchFreezerOff.class,
-        SwitchFreezerOn.class,
+        FridgeOn.class,
+        FridgeOff.class,
+        FreezerOff.class,
+        FreezerOn.class,
         TicEvent.class})
 public class FridgeModel extends AtomicHIOAwithEquations{
 

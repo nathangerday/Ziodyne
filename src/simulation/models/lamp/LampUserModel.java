@@ -14,7 +14,7 @@ import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 
-@ModelExternalEvents(exported = {SwitchOn.class, SwitchOff.class, SetHigh.class, SetMedium.class, SetLow.class})
+@ModelExternalEvents(exported = {LampOn.class, LampOff.class, LampHigh.class, LampMedium.class, LampLow.class})
 public class LampUserModel extends AtomicES_Model {
 
 
@@ -107,7 +107,7 @@ public class LampUserModel extends AtomicES_Model {
                         this.rg.nextBeta(1.75, 1.75),
                         this.getSimulatedTimeUnit()) ;
         Time t = this.getCurrentStateTime().add(d1).add(d2) ;
-        this.scheduleEvent(new SwitchOn(t)) ;
+        this.scheduleEvent(new LampOn(t)) ;
 
         // Redo the initialisation to take into account the initial event
         // just scheduled.
@@ -179,27 +179,27 @@ public class LampUserModel extends AtomicES_Model {
             )
     {
         Duration d ;
-        if (this.nextEvent.equals(SwitchOn.class)) {
+        if (this.nextEvent.equals(LampOn.class)) {
             d = new Duration(2.0 * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             Time t = this.getCurrentStateTime().add(d) ;
-            this.scheduleEvent(new SetHigh(t)) ;
+            this.scheduleEvent(new LampHigh(t)) ;
             // also, plan the next switch on for the next day
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SwitchOn(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetHigh.class)) {
+            this.scheduleEvent(new LampOn(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(LampHigh.class)) {
             d =	new Duration(2.0 * this.meanTimeAtHigh * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SetMedium(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetMedium.class)) {
+            this.scheduleEvent(new LampMedium(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(LampMedium.class)) {
             d = new Duration(
                     2.0 * this.meanTimeAtMedium * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SetLow(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetLow.class)) {
+            this.scheduleEvent(new LampLow(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(LampLow.class)) {
             d =	new Duration(2.0 * this.meanTimeAtLow * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SwitchOff(this.getCurrentStateTime().add(d))) ;
+            this.scheduleEvent(new LampOff(this.getCurrentStateTime().add(d))) ;
         }
     }
 }

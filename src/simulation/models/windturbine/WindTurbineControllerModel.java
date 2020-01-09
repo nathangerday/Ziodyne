@@ -11,13 +11,13 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import simulation.events.windturbine.SwitchOff;
-import simulation.events.windturbine.SwitchOn;
+import simulation.events.windturbine.WindTurbineOff;
+import simulation.events.windturbine.WindTurbineOn;
 import simulation.events.windturbine.WindReading;
 import simulation.models.windturbine.WindTurbineModel.State;
 
 @ModelExternalEvents(imported = {WindReading.class},
-exported = {SwitchOn.class,SwitchOff.class})
+exported = {WindTurbineOn.class,WindTurbineOff.class})
 public class WindTurbineControllerModel extends AtomicModel{
 
     // -------------------------------------------------------------------------
@@ -82,10 +82,10 @@ public class WindTurbineControllerModel extends AtomicModel{
             Time currentTime = this.getCurrentStateTime().add(this.getNextTimeAdvance()) ;
             EventI e = null;
             if(state == State.OFF && speed >= minSpeed && speed <= maxSpeed){
-                e = new SwitchOn(currentTime);
+                e = new WindTurbineOn(currentTime);
                 state = State.ON;
             }else if(state == State.ON && (speed < minSpeed || speed > maxSpeed)) {
-                e = new SwitchOff(currentTime);
+                e = new WindTurbineOff(currentTime);
                 state = State.OFF;
             }
 

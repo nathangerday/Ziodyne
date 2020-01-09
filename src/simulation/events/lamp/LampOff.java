@@ -1,12 +1,11 @@
-package simulation.events.dishwasher;
+package simulation.events.lamp;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
-import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
-import simulation.models.dishwasher.DishwasherModel;
+import simulation.models.lamp.LampModel;
 
-public class SwitchOn extends AbstractDishwasherEvent{
+public class LampOff extends AbstractLampEvent {
     /**
      * create an event from the given time of occurrence and event description.
      *
@@ -20,27 +19,27 @@ public class SwitchOn extends AbstractDishwasherEvent{
      *
      * @param timeOfOccurrence time of occurrence of the created event
      */
-    public SwitchOn(Time timeOfOccurrence) {
+    public LampOff(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }
 
     @Override
     public String eventAsString()
     {
-        return "Dishwasher::SwitchOn" ;
+        return "Lamp::SwitchOff" ;
     }
 
     @Override
     public boolean	hasPriorityOver(EventI e)
     {
-        return true ;
+        return false;
     }
 
     @Override
     public void	executeOn(AtomicModel model)
     {
-        assert	model instanceof DishwasherModel;
+        assert	model instanceof LampModel;
 
-        ((DishwasherModel)model).setState(DishwasherModel.State.ON) ;
+        ((LampModel)model).setState(LampModel.State.OFF) ;
     }
 }

@@ -2,10 +2,11 @@ package simulation.events.dishwasher;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
+import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.models.dishwasher.DishwasherModel;
 
-public class SetModeStandard extends AbstractDishwasherEvent {
+public class DishwasherOn extends AbstractDishwasherEvent{
     /**
      * create an event from the given time of occurrence and event description.
      *
@@ -19,24 +20,20 @@ public class SetModeStandard extends AbstractDishwasherEvent {
      *
      * @param timeOfOccurrence time of occurrence of the created event
      */
-    public SetModeStandard(Time timeOfOccurrence) {
+    public DishwasherOn(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }
 
     @Override
     public String eventAsString()
     {
-        return "Dishwasher::SetModeStandard" ;
+        return "Dishwasher::SwitchOn" ;
     }
 
     @Override
     public boolean	hasPriorityOver(EventI e)
     {
-    	if (e instanceof SwitchOn || e instanceof SetModeEco) {
-            return false ;
-        } else {
-            return true ;
-        }
+        return true ;
     }
 
     @Override
@@ -44,6 +41,6 @@ public class SetModeStandard extends AbstractDishwasherEvent {
     {
         assert	model instanceof DishwasherModel;
 
-        ((DishwasherModel)model).setState(DishwasherModel.State.STD) ;
+        ((DishwasherModel)model).setState(DishwasherModel.State.ON) ;
     }
 }

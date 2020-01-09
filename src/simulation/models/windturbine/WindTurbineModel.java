@@ -19,11 +19,11 @@ import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
-import simulation.events.windturbine.SwitchOff;
-import simulation.events.windturbine.SwitchOn;
+import simulation.events.windturbine.WindTurbineOff;
+import simulation.events.windturbine.WindTurbineOn;
 import simulation.events.windturbine.WindReading;
 
-@ModelExternalEvents(imported = {WindReading.class,SwitchOn.class,SwitchOff.class})
+@ModelExternalEvents(imported = {WindReading.class,WindTurbineOn.class,WindTurbineOff.class})
 public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     private static final long serialVersionUID = 1L;
@@ -153,9 +153,9 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
                         this.getCurrentStateTime().getSimulatedTime(),
                         this.getPower()
                         );
-            } else if (e instanceof SwitchOff) {
+            } else if (e instanceof WindTurbineOff) {
                 setState(State.OFF);
-            } else if (e instanceof SwitchOn) {
+            } else if (e instanceof WindTurbineOn) {
                 setState(State.ON);
             }
         }

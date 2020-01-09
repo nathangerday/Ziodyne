@@ -25,8 +25,8 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardCoupledModelReport;
-import simulation.events.windturbine.SwitchOff;
-import simulation.events.windturbine.SwitchOn;
+import simulation.events.windturbine.WindTurbineOff;
+import simulation.events.windturbine.WindTurbineOn;
 import simulation.events.windturbine.TicEvent;
 import simulation.events.windturbine.WindReading;
 
@@ -150,12 +150,12 @@ public class WindTurbineCoupledModel extends CoupledModel{
         };
         connections.put(from, to);
 
-        from = new EventSource(WindTurbineControllerModel.URI, SwitchOn.class) ;
-        to = new EventSink[] {new EventSink(WindTurbineModel.URI, SwitchOn.class)};
+        from = new EventSource(WindTurbineControllerModel.URI, WindTurbineOn.class) ;
+        to = new EventSink[] {new EventSink(WindTurbineModel.URI, WindTurbineOn.class)};
         connections.put(from, to);
 
-        from = new EventSource(WindTurbineControllerModel.URI, SwitchOff.class) ;
-        to = new EventSink[] {new EventSink(WindTurbineModel.URI, SwitchOff.class)};
+        from = new EventSource(WindTurbineControllerModel.URI, WindTurbineOff.class) ;
+        to = new EventSink[] {new EventSink(WindTurbineModel.URI, WindTurbineOff.class)};
         connections.put(from, to);
 
         //*********************************** 

@@ -6,17 +6,17 @@ import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.models.fridge.FridgeModel;
 
-public class SwitchFreezerOff extends AbstractFridgeEvent {
+public class FridgeOff extends AbstractFridgeEvent{
 
-	public SwitchFreezerOff(Time timeOfOccurrence) {
+	public FridgeOff(Time timeOfOccurrence) {
 		super(timeOfOccurrence,null);
-		// TODO Auto-generated constructor stub
 	}
 	
+
 	@Override
     public String eventAsString()
     {
-        return "Fridge::SwitchFreezerOff" ;
+        return "Fridge::SwitchFridgeOff" ;
     }
 
     @Override
@@ -30,7 +30,9 @@ public class SwitchFreezerOff extends AbstractFridgeEvent {
     {
         assert	model instanceof FridgeModel;
 
-        ((FridgeModel)model).setStateFreezer(FridgeModel.State.OFF);
+        ((FridgeModel)model).setStateFridge(FridgeModel.State.OFF);
     }
+	
+	
 
 }

@@ -19,10 +19,10 @@ import fr.sorbonne_u.devs_simulation.models.events.EventSource;
 import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardCoupledModelReport;
-import simulation.events.dishwasher.SetModeEco;
-import simulation.events.dishwasher.SetModeStandard;
-import simulation.events.dishwasher.SwitchOff;
-import simulation.events.dishwasher.SwitchOn;
+import simulation.events.dishwasher.ModeEco;
+import simulation.events.dishwasher.ModeStandard;
+import simulation.events.dishwasher.DishwasherOff;
+import simulation.events.dishwasher.DishwasherOn;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,25 +91,25 @@ public class DishwasherCoupledModel extends CoupledModel {
         Map<EventSource,EventSink[]> connections =
                 new HashMap<EventSource,EventSink[]>() ;
         EventSource from1 =
-                new EventSource(DishwasherControllerModel.URI, SwitchOn.class) ;
+                new EventSource(DishwasherControllerModel.URI, DishwasherOn.class) ;
         EventSink[] to1 =
                 new EventSink[] {
-                        new EventSink(DishwasherModel.URI, SwitchOn.class)} ;
+                        new EventSink(DishwasherModel.URI, DishwasherOn.class)} ;
         connections.put(from1, to1) ;
         EventSource from2 =
-                new EventSource(DishwasherControllerModel.URI, SwitchOff.class) ;
+                new EventSource(DishwasherControllerModel.URI, DishwasherOff.class) ;
         EventSink[] to2 = new EventSink[] {
-                new EventSink(DishwasherModel.URI, SwitchOff.class)} ;
+                new EventSink(DishwasherModel.URI, DishwasherOff.class)} ;
         connections.put(from2, to2) ;
         EventSource from3 =
-                new EventSource(DishwasherControllerModel.URI, SetModeEco.class) ;
+                new EventSource(DishwasherControllerModel.URI, ModeEco.class) ;
         EventSink[] to3 = new EventSink[] {
-                new EventSink(DishwasherModel.URI, SetModeEco.class)} ;
+                new EventSink(DishwasherModel.URI, ModeEco.class)} ;
         connections.put(from3, to3) ;
         EventSource from4 =
-                new EventSource(DishwasherControllerModel.URI, SetModeStandard.class) ;
+                new EventSource(DishwasherControllerModel.URI, ModeStandard.class) ;
         EventSink[] to4 = new EventSink[] {
-                new EventSink(DishwasherModel.URI, SetModeStandard.class)} ;
+                new EventSink(DishwasherModel.URI, ModeStandard.class)} ;
         connections.put(from4, to4) ;
 
         coupledModelDescriptors.put(

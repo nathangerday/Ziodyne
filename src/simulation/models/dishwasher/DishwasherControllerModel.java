@@ -9,19 +9,19 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import org.apache.commons.math3.random.RandomDataGenerator;
 
-import simulation.events.dishwasher.SetModeEco;
-import simulation.events.dishwasher.SetModeStandard;
-import simulation.events.dishwasher.SwitchOff;
-import simulation.events.dishwasher.SwitchOn;
+import simulation.events.dishwasher.ModeEco;
+import simulation.events.dishwasher.ModeStandard;
+import simulation.events.dishwasher.DishwasherOff;
+import simulation.events.dishwasher.DishwasherOn;
 
 import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-@ModelExternalEvents(exported = {SetModeEco.class,
-        SetModeStandard.class,
-        SwitchOn.class,
-        SwitchOff.class})
+@ModelExternalEvents(exported = {ModeEco.class,
+        ModeStandard.class,
+        DishwasherOn.class,
+        DishwasherOff.class})
 public class DishwasherControllerModel extends AtomicES_Model {
 
 
@@ -71,7 +71,7 @@ public class DishwasherControllerModel extends AtomicES_Model {
                                 this.rg.nextBeta(1.75, 1.75),
                         this.getSimulatedTimeUnit()) ;
         Time t = this.getCurrentStateTime().add(d1).add(d2) ;
-        this.scheduleEvent(new SwitchOn(t)) ;
+        this.scheduleEvent(new DishwasherOn(t)) ;
 
         this.nextTimeAdvance = this.timeAdvance() ;
         this.timeOfNextEvent =
@@ -114,30 +114,30 @@ public class DishwasherControllerModel extends AtomicES_Model {
 
         Duration d ;
         // See what is the type of event to be executed
-        if (this.nextEvent.equals(SwitchOn.class)) {
+        if (this.nextEvent.equals(DishwasherOn.class)) {
             d = new Duration(2.0 * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             Time t = this.getCurrentStateTime().add(d) ;
             if(new Random().nextBoolean()) {
-            	this.scheduleEvent(new SetModeStandard(t)) ;            	
+            	this.scheduleEvent(new ModeStandard(t)) ;            	
             }else {
-            	this.scheduleEvent(new SetModeEco(t)) ;
+            	this.scheduleEvent(new ModeEco(t)) ;
             }
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(
-                    new SwitchOn(this.getCurrentStateTime().add(d))) ;
-        }else if (this.nextEvent.equals(SetModeStandard.class)) {
+                    new DishwasherOn(this.getCurrentStateTime().add(d))) ;
+        }else if (this.nextEvent.equals(ModeStandard.class)) {
             d =	new Duration(
                     this.STANDARDMODEDURATION,
                     this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(
-                    new SwitchOff(this.getCurrentStateTime().add(d))) ;
-        }else if (this.nextEvent.equals(SetModeEco.class)) {
+                    new DishwasherOff(this.getCurrentStateTime().add(d))) ;
+        }else if (this.nextEvent.equals(ModeEco.class)) {
             d =	new Duration(
                     this.ECOMODEDURATION,
                     this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(
-                    new SwitchOff(this.getCurrentStateTime().add(d))) ;
+                    new DishwasherOff(this.getCurrentStateTime().add(d))) ;
         }
     }
 }

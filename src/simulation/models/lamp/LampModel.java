@@ -23,11 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 
 // -----------------------------------------------------------------------------
-@ModelExternalEvents(imported = {SwitchOn.class,
-        SwitchOff.class,
-        SetLow.class,
-        SetMedium.class,
-        SetHigh.class})
+@ModelExternalEvents(imported = {LampOn.class,
+        LampOff.class,
+        LampLow.class,
+        LampMedium.class,
+        LampHigh.class})
 // -----------------------------------------------------------------------------
 public class LampModel 	extends AtomicHIOAwithEquations {
 

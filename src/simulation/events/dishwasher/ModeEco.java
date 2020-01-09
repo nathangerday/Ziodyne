@@ -5,7 +5,7 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.models.dishwasher.DishwasherModel;
 
-public class SwitchOff extends AbstractDishwasherEvent {
+public class ModeEco extends AbstractDishwasherEvent {
     /**
      * create an event from the given time of occurrence and event description.
      *
@@ -19,20 +19,24 @@ public class SwitchOff extends AbstractDishwasherEvent {
      *
      * @param timeOfOccurrence time of occurrence of the created event
      */
-    public SwitchOff(Time timeOfOccurrence) {
+    public ModeEco(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }
 
     @Override
     public String eventAsString()
     {
-        return "Dishwasher::SwitchOff" ;
+        return "Dishwasher::SetModeEco" ;
     }
 
     @Override
     public boolean	hasPriorityOver(EventI e)
     {
-        return false;
+    	if (e instanceof DishwasherOn) {
+            return false ;
+        } else {
+            return true ;
+        }
     }
 
     @Override
@@ -40,6 +44,6 @@ public class SwitchOff extends AbstractDishwasherEvent {
     {
         assert	model instanceof DishwasherModel;
 
-        ((DishwasherModel)model).setState(DishwasherModel.State.OFF) ;
+        ((DishwasherModel)model).setState(DishwasherModel.State.ECO) ;
     }
 }

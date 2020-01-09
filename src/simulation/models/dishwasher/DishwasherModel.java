@@ -16,10 +16,10 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
 import simulation.events.dishwasher.AbstractDishwasherEvent;
-import simulation.events.dishwasher.SetModeEco;
-import simulation.events.dishwasher.SetModeStandard;
-import simulation.events.dishwasher.SwitchOn;
-import simulation.events.dishwasher.SwitchOff;
+import simulation.events.dishwasher.ModeEco;
+import simulation.events.dishwasher.ModeStandard;
+import simulation.events.dishwasher.DishwasherOn;
+import simulation.events.dishwasher.DishwasherOff;
 
 import java.util.Map;
 import java.util.Vector;
@@ -27,10 +27,10 @@ import java.util.concurrent.TimeUnit;
 
 
 // -----------------------------------------------------------------------------
-@ModelExternalEvents(imported = {SetModeEco.class,
-        SetModeStandard.class,
-        SwitchOn.class,
-        SwitchOff.class})
+@ModelExternalEvents(imported = {ModeEco.class,
+        ModeStandard.class,
+        DishwasherOn.class,
+        DishwasherOff.class})
 // -----------------------------------------------------------------------------
 public class DishwasherModel extends AtomicHIOAwithEquations {
 

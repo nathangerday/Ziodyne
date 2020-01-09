@@ -1,11 +1,12 @@
 package simulation.events.lamp;
 
+import fr.sorbonne_u.cyphy.examples.sg.equipments.hairdryer.models.events.SetHigh;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.models.lamp.LampModel;
 
-public class SetMedium extends AbstractLampEvent {
+public class LampLow extends AbstractLampEvent {
     /**
      * create an event from the given time of occurrence and event description.
      *
@@ -19,7 +20,7 @@ public class SetMedium extends AbstractLampEvent {
      *
      * @param timeOfOccurrence time of occurrence of the created event.
      */
-    public SetMedium(Time timeOfOccurrence) {
+    public LampLow(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }
 
@@ -30,7 +31,7 @@ public class SetMedium extends AbstractLampEvent {
     @Override
     public String	eventAsString()
     {
-        return "Lamp::SetMedium" ;
+        return "Lamp::SetLow" ;
     }
 
     /**
@@ -39,7 +40,7 @@ public class SetMedium extends AbstractLampEvent {
     @Override
     public boolean			hasPriorityOver(EventI e)
     {
-        if (e instanceof SwitchOn || e instanceof SetLow ) {
+        if (e instanceof LampOn  || e instanceof SetHigh || e instanceof LampMedium) {
             return false ;
         } else {
             return true ;
@@ -55,6 +56,6 @@ public class SetMedium extends AbstractLampEvent {
         assert	model instanceof LampModel;
 
         LampModel m = (LampModel)model ;
-        m.setState(LampModel.State.MEDIUM) ;
+        m.setState(LampModel.State.LOW) ;
     }
 }

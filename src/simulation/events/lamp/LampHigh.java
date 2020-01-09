@@ -5,7 +5,7 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.models.lamp.LampModel;
 
-public class SetHigh extends AbstractLampEvent {
+public class LampHigh extends AbstractLampEvent {
     /**
      * create an event from the given time of occurrence and event description.
      *
@@ -19,7 +19,7 @@ public class SetHigh extends AbstractLampEvent {
      *
      * @param timeOfOccurrence time of occurrence of the created event.
      */
-    public SetHigh(Time timeOfOccurrence) {
+    public LampHigh(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }
 
@@ -39,7 +39,7 @@ public class SetHigh extends AbstractLampEvent {
     @Override
     public boolean			hasPriorityOver(EventI e)
     {
-        if (e instanceof SwitchOn || e instanceof SetLow || e instanceof  SetMedium) {
+        if (e instanceof LampOn || e instanceof LampLow || e instanceof  LampMedium) {
             return false ;
         } else {
             return true ;
