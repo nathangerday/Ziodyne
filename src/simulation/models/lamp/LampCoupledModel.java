@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 public class LampCoupledModel extends CoupledModel {
 
+    private static final long serialVersionUID = 1L;
     // -------------------------------------------------------------------------
     // Constants and variables
     // -------------------------------------------------------------------------
@@ -38,7 +39,17 @@ public class LampCoupledModel extends CoupledModel {
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
-    public LampCoupledModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine, ModelDescriptionI[] submodels, Map<Class<? extends EventI>, EventSink[]> imported, Map<Class<? extends EventI>, ReexportedEvent> reexported, Map<EventSource, EventSink[]> connections, Map<StaticVariableDescriptor, VariableSink[]> importedVars, Map<VariableSource, StaticVariableDescriptor> reexportedVars, Map<VariableSource, VariableSink[]> bindings) throws Exception {
+    public LampCoupledModel(
+            String uri,
+            TimeUnit simulatedTimeUnit,
+            SimulatorI simulationEngine,
+            ModelDescriptionI[] submodels,
+            Map<Class<? extends EventI>, EventSink[]> imported,
+            Map<Class<? extends EventI>, ReexportedEvent> reexported,
+            Map<EventSource, EventSink[]> connections,
+            Map<StaticVariableDescriptor, VariableSink[]> importedVars,
+            Map<VariableSource, StaticVariableDescriptor> reexportedVars,
+            Map<VariableSource, VariableSink[]> bindings) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine, submodels, imported, reexported, connections, importedVars, reexportedVars, bindings);
     }
 

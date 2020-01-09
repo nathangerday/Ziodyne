@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DishwasherCoupledModel extends CoupledModel {
 
+    private static final long serialVersionUID = 1L;
     // -------------------------------------------------------------------------
     // Constants and variables
     // -------------------------------------------------------------------------

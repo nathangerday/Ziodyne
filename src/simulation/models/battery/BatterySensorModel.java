@@ -6,11 +6,11 @@ import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.examples.molene.bsm.BatteryLevel;
 import fr.sorbonne_u.devs_simulation.examples.molene.pcsm.PortableComputerStateModel;
-import fr.sorbonne_u.devs_simulation.examples.molene.tic.TicEvent;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ImportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
 import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
+import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
@@ -19,7 +19,10 @@ import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
+import simulation.events.common.TicEvent;
 
+
+@ModelExternalEvents(imported = {TicEvent.class})
 public class BatterySensorModel extends AtomicHIOAwithEquations{
 
 

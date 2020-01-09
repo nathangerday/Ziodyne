@@ -80,7 +80,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
         PlotterDescription pd =
                 new PlotterDescription(
-                        "Wind Turnbine Model",
+                        "Wind Turnbine Power Production Model",
                         "Time (sec)",
                         "Power (watt)",
                         SimulationMain.ORIGIN_X,

@@ -1,6 +1,7 @@
 package simulation.models.dishwasher;
 
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
+import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
@@ -34,10 +35,13 @@ import java.util.concurrent.TimeUnit;
 // -----------------------------------------------------------------------------
 public class DishwasherModel extends AtomicHIOAwithEquations {
 
+    private static final long serialVersionUID = 1L;
 
     public enum State{ ON,OFF,ECO, STD}
 
     public static class DishwasherReport extends AbstractSimulationReport{
+
+        private static final long serialVersionUID = 1L;
 
         public DishwasherReport(String modelURI) {
             super(modelURI);
@@ -55,17 +59,15 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     // -------------------------------------------------------------------------
 
     public static final String	URI = "DishwasherModel" ;
-    private static final String	SERIES = "intensity" ;
+    private static final String	SERIES = "power" ;
 
     protected static final double	ECO_MODE_CONSUMPTION = 700.0 ; // Watts
     protected static final double	STANDARD_MODE_CONSUMPTION = 1600.0 ; // Watts
-    protected static final double	TENSION = 12.0 ; // Volts
 
     @ExportedVariable(type = Double.class)
-    protected final Value<Double> currentIntensity =
-    new Value<Double>(this, 0.0, 0) ;
+    protected final Value<Double> currentPower = new Value<Double>(this, 0.0, 0) ;
     protected State	currentState ;
-    protected XYPlotter intensityPlotter ;
+    protected XYPlotter powerPlotter ;
     protected EmbeddingComponentStateAccessI componentRef ;
 
     public DishwasherModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
@@ -73,16 +75,16 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
 
         PlotterDescription pd =
                 new PlotterDescription(
-                        "Dishwasher intensity",
+                        "Dishwasher power",
                         "Time (sec)",
-                        "Intensity (Amp)",
-                        100,
-                        0,
-                        600,
-                        400) ;
+                        "Power (Watt)",
+                        SimulationMain.ORIGIN_X,
+                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+                        SimulationMain.getPlotterWidth(),
+                        SimulationMain.getPlotterHeight()) ;
 
-        this.intensityPlotter = new XYPlotter(pd) ;
-        this.intensityPlotter.createSeries(SERIES) ;
+        this.powerPlotter = new XYPlotter(pd) ;
+        this.powerPlotter.createSeries(SERIES) ;
 
         this.setLogger(new StandardLogger()) ;
     }
@@ -100,8 +102,8 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     {
         this.currentState = DishwasherModel.State.OFF ;
 
-        this.intensityPlotter.initialise() ;
-        this.intensityPlotter.showPlotter() ;
+        this.powerPlotter.initialise() ;
+        this.powerPlotter.showPlotter() ;
 
         try {
             this.setDebugLevel(1) ;
@@ -116,12 +118,12 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     @Override
     protected void		initialiseVariables(Time startTime)
     {
-        this.currentIntensity.v = 0.0 ;
+        this.currentPower.v = 0.0 ;
 
-        this.intensityPlotter.addData(
+        this.powerPlotter.addData(
                 SERIES,
                 this.getCurrentStateTime().getSimulatedTime(),
-                this.getIntensity());
+                this.getPower());
 
         super.initialiseVariables(startTime);
     }
@@ -174,10 +176,10 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
                     + ce.getClass().getCanonicalName());
         }
 
-        this.intensityPlotter.addData(
+        this.powerPlotter.addData(
                 SERIES,
                 this.getCurrentStateTime().getSimulatedTime(),
-                this.getIntensity());
+                this.getPower());
 
         if (this.hasDebugLevel(2)) {
             this.logMessage("DishwasherModel::userDefinedExternalTransition 3 "
@@ -186,15 +188,15 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
 
         ce.executeOn(this) ;
 
-        if (this.hasDebugLevel(1)) {
+        if (this.hasDebugLevel(2)) {
             this.logMessage("DishwasherModel::userDefinedExternalTransition 4 "
                     + this.getState()) ;
         }
 
-        this.intensityPlotter.addData(
+        this.powerPlotter.addData(
                 SERIES,
                 this.getCurrentStateTime().getSimulatedTime(),
-                this.getIntensity());
+                this.getPower());
 
         super.userDefinedExternalTransition(elapsedTime) ;
         if (this.hasDebugLevel(2)) {
@@ -204,12 +206,12 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
 
     @Override
     public void	endSimulation(Time endTime) throws Exception {
-        this.intensityPlotter.addData(
+        this.powerPlotter.addData(
                 SERIES,
                 endTime.getSimulatedTime(),
-                this.getIntensity());
+                this.getPower());
         Thread.sleep(10000L);
-        this.intensityPlotter.dispose();
+        this.powerPlotter.dispose();
 
         super.endSimulation(endTime);
     }
@@ -228,29 +230,28 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     public void			setState(State s)
     {
         this.currentState = s ;
-        System.out.println("set state");
-        switch (s)
-        {
+        switch (s){
         case OFF :
-            this.currentIntensity.v = 0.0 ;
+            this.currentPower.v = 0.0 ;
             break ;
         case ECO :
-            this.currentIntensity.v = ECO_MODE_CONSUMPTION/TENSION;
+            this.currentPower.v = ECO_MODE_CONSUMPTION;
             break ;
         case STD :
-            this.currentIntensity.v = STANDARD_MODE_CONSUMPTION/TENSION;
+            this.currentPower.v = STANDARD_MODE_CONSUMPTION;
+            break;
+        case ON :
             break;
         }
     }
 
-    public State		getState()
-    {
+    public State getState(){
         return this.currentState ;
     }
 
-    public double	getIntensity()
+    public double getPower()
     {
-        return this.currentIntensity.v ;
+        return this.currentPower.v ;
     }
 
 }

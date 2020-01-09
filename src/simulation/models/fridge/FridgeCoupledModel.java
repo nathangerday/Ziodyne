@@ -26,9 +26,10 @@ import fr.sorbonne_u.devs_simulation.models.events.ReexportedEvent;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardCoupledModelReport;
 import simulation.events.fridge.FreezerOn;
+import simulation.events.common.TicEvent;
 import simulation.events.fridge.FreezerOff;
 import simulation.events.fridge.FridgeOn;
-import simulation.events.fridge.TicEvent;
+import simulation.models.common.TicModel;
 import simulation.events.fridge.FridgeOff;
 
 public class FridgeCoupledModel extends CoupledModel{
@@ -79,10 +80,10 @@ public class FridgeCoupledModel extends CoupledModel{
                         null,
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
         atomicModelDescriptors.put(
-                TicModel.URI,
+                TicModel.URI_FRIDGE,
                 AtomicModelDescriptor.create(
                         TicModel.class,
-                        TicModel.URI,
+                        TicModel.URI_FRIDGE,
                         TimeUnit.SECONDS,
                         null,
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
@@ -93,7 +94,7 @@ public class FridgeCoupledModel extends CoupledModel{
         Set<String> submodels = new HashSet<String>() ;
         submodels.add(FridgeModel.URI) ;
         submodels.add(FridgeUserModel.URI) ;
-        submodels.add(TicModel.URI);
+        submodels.add(TicModel.URI_FRIDGE);
 
         Map<EventSource,EventSink[]> connections = new HashMap<EventSource,EventSink[]>() ;
         EventSource from1 = new EventSource(FridgeUserModel.URI, FreezerOn.class) ;
@@ -112,7 +113,7 @@ public class FridgeCoupledModel extends CoupledModel{
         EventSink[] to4 = new EventSink[] {new EventSink(FridgeModel.URI, FridgeOff.class)} ;
         connections.put(from4, to4) ;
         
-        EventSource from5 = new EventSource(TicModel.URI, TicEvent.class) ;
+        EventSource from5 = new EventSource(TicModel.URI_FRIDGE, TicEvent.class) ;
         EventSink[] to5 = new EventSink[] {new EventSink(FridgeModel.URI, TicEvent.class)} ;
         connections.put(from5, to5) ;
 

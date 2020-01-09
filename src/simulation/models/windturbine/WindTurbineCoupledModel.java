@@ -27,7 +27,8 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardCoupledModelReport;
 import simulation.events.windturbine.WindTurbineOff;
 import simulation.events.windturbine.WindTurbineOn;
-import simulation.events.windturbine.TicEvent;
+import simulation.models.common.TicModel;
+import simulation.events.common.TicEvent;
 import simulation.events.windturbine.WindReading;
 
 public class WindTurbineCoupledModel extends CoupledModel{
@@ -107,10 +108,10 @@ public class WindTurbineCoupledModel extends CoupledModel{
                         null,
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
         atomicModelDescriptors.put(
-                TicModel.URI,
+                TicModel.URI_WINDTURBINE,
                 AtomicModelDescriptor.create(
                         TicModel.class,
-                        TicModel.URI,
+                        TicModel.URI_WINDTURBINE,
                         TimeUnit.SECONDS,
                         null,
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
@@ -128,7 +129,7 @@ public class WindTurbineCoupledModel extends CoupledModel{
 
 
         Set<String> submodels = new HashSet<String>() ;
-        submodels.add(TicModel.URI) ;
+        submodels.add(TicModel.URI_WINDTURBINE) ;
         submodels.add(WindModel.URI) ;
         submodels.add(WindSensorModel.URI) ;
         submodels.add(WindTurbineModel.URI) ;
@@ -139,7 +140,7 @@ public class WindTurbineCoupledModel extends CoupledModel{
         //***********************************
 
         Map<EventSource,EventSink[]> connections = new HashMap<EventSource,EventSink[]>() ;
-        EventSource from = new EventSource(TicModel.URI, TicEvent.class) ;
+        EventSource from = new EventSource(TicModel.URI_WINDTURBINE, TicEvent.class) ;
         EventSink[] to = new EventSink[] {new EventSink(WindSensorModel.URI, TicEvent.class)};
         connections.put(from, to);
 

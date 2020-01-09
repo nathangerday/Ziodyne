@@ -1,4 +1,4 @@
-package simulation.models.windturbine;
+package simulation.models.common;
 
 import java.util.Map;
 import java.util.Vector;
@@ -11,7 +11,7 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import simulation.events.windturbine.TicEvent;
+import simulation.events.common.TicEvent;
 
 @ModelExternalEvents(exported = {TicEvent.class})
 public class TicModel extends AtomicModel{
@@ -21,7 +21,10 @@ public class TicModel extends AtomicModel{
     /** the standard delay between tic events.								*/
     public static Duration STANDARD_DURATION = new Duration(60.0, TimeUnit.SECONDS) ;
     /** the URI to be used when creating the instance of the model.			*/
-    public static final String	URI = "TicModel" ;
+    public static final String URI_WINDTURBINE = "TicModelWindTurbine";
+    public static final String URI_FRIDGE = "TicModelFridge";
+    public static final String URI_BATTERY = "TicModelBattery";
+
     /** the value of the delay between tic events during the current
      *  simulation run.														*/
     protected Duration delay ;
@@ -78,7 +81,9 @@ public class TicModel extends AtomicModel{
             public String getModelURI() { return uri ; }
 
             @Override
-            public String toString() { return "TicModelReport()" ; }
+            public String toString() {
+                return "TicModelReport()|" + this.getModelURI();
+            }
         };
     }
 }

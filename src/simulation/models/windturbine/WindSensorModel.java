@@ -16,7 +16,7 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
-import simulation.events.windturbine.TicEvent;
+import simulation.events.common.TicEvent;
 import simulation.events.windturbine.WindReading;
 
 @ModelExternalEvents(imported = {TicEvent.class},

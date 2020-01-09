@@ -27,7 +27,7 @@ public class DishwasherSimulatorPlugin extends AtomicSimulatorPlugin{
             return ((DishwasherModel)m).getState() ;
         } else {
             assert	name.equals("intensity") ;
-            return ((DishwasherModel)m).getIntensity() ;
+            return ((DishwasherModel)m).getPower() ;
         }
     }
 }

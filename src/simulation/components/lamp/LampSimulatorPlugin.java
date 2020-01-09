@@ -28,7 +28,7 @@ public class LampSimulatorPlugin  extends AtomicSimulatorPlugin {
             return ((LampModel)m).getState() ;
         } else {
             assert	name.equals("intensity") ;
-            return ((LampModel)m).getIntensity() ;
+            return ((LampModel)m).getPower() ;
         }
     }
 }

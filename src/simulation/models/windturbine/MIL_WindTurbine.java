@@ -9,6 +9,7 @@ import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
 import fr.sorbonne_u.utils.PlotterDescription;
+import simulation.models.common.TicModel;
 
 public class MIL_WindTurbine {
     public static void   main(String[] args){
@@ -26,7 +27,7 @@ public class MIL_WindTurbine {
 
             Map<String, Object> simParams = new HashMap<String, Object>() ;
             //Parameter of TicModel
-            simParams.put(TicModel.URI + ":" + TicModel.DELAY_PARAMETER_NAME,
+            simParams.put(TicModel.URI_WINDTURBINE + ":" + TicModel.DELAY_PARAMETER_NAME,
                     new Duration(10.0, TimeUnit.SECONDS));
             //Parameters of WindModel
             simParams.put(WindModel.URI + ":" + WindModel.MAX_WIND,15.0);
@@ -35,7 +36,7 @@ public class MIL_WindTurbine {
             simParams.put(
                     WindModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
                     new PlotterDescription(
-                            "Wind Model",
+                            "Wind Speed Model",
                             "Time (sec)",
                             "Speed (m/s)",
                             SimulationMain.ORIGIN_X,
@@ -46,7 +47,7 @@ public class MIL_WindTurbine {
             simParams.put(
                     WindSensorModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
                     new PlotterDescription(
-                            "Wind Sensor Model",
+                            "Wind Sensor Speed Model",
                             "Time (sec)",
                             "Speed (m/s)",
                             SimulationMain.ORIGIN_X,

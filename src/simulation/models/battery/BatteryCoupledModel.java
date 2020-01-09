@@ -30,7 +30,8 @@ import simulation.events.battery.BatteryLevel;
 import simulation.events.battery.BatteryOff;
 import simulation.events.battery.BatteryOn;
 import simulation.events.battery.BatteryProducing;
-import simulation.events.battery.TicEvent;
+import simulation.events.common.TicEvent;
+import simulation.models.common.TicModel;
 
 
 public class BatteryCoupledModel extends CoupledModel {
@@ -85,10 +86,10 @@ public class BatteryCoupledModel extends CoupledModel {
                         null,
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
         atomicModelDescriptors.put(
-                TicModel.URI,
+                TicModel.URI_BATTERY,
                 AtomicModelDescriptor.create(
                         TicModel.class,
-                        TicModel.URI,
+                        TicModel.URI_BATTERY,
                         TimeUnit.SECONDS,
                         null,
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
@@ -106,7 +107,7 @@ public class BatteryCoupledModel extends CoupledModel {
 
 
         Set<String> submodels = new HashSet<String>() ;
-        submodels.add(TicModel.URI) ;
+        submodels.add(TicModel.URI_BATTERY) ;
         submodels.add(BatteryModel.URI) ;
         submodels.add(BatterySensorModel.URI) ;
         submodels.add(BatteryModel.URI) ;
@@ -117,7 +118,7 @@ public class BatteryCoupledModel extends CoupledModel {
         //***********************************
 
         Map<EventSource,EventSink[]> connections = new HashMap<EventSource,EventSink[]>() ;
-        EventSource from = new EventSource(TicModel.URI, TicEvent.class) ;
+        EventSource from = new EventSource(TicModel.URI_BATTERY, TicEvent.class) ;
         EventSink[] to = new EventSink[] {new EventSink(BatterySensorModel.URI, TicEvent.class)};
         connections.put(from, to);
 
