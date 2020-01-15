@@ -6,19 +6,9 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.models.lamp.LampModel;
 
 public class LampOff extends AbstractLampEvent {
-    /**
-     * create an event from the given time of occurrence and event description.
-     *
-     * <p><strong>Contract</strong></p>
-     *
-     * <pre>
-     * pre	timeOfOccurrence != null
-     * post	this.getTimeOfOccurrence().equals(timeOfOccurrence)
-     * post	this.getEventInformation.equals(content)
-     * </pre>
-     *
-     * @param timeOfOccurrence time of occurrence of the created event
-     */
+
+    private static final long serialVersionUID = 1L;
+
     public LampOff(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }

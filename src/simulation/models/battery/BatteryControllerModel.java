@@ -1,10 +1,10 @@
 package simulation.models.battery;
 
-import java.util.Map;
+import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import fr.sorbonne_u.devs_simulation.models.AtomicModel;
+import fr.sorbonne_u.devs_simulation.es.models.AtomicES_Model;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
@@ -12,112 +12,93 @@ import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import simulation.events.battery.BatteryCharging;
-import simulation.events.battery.BatteryLevel;
-import simulation.events.battery.BatteryOff;
-import simulation.events.battery.BatteryOn;
 import simulation.events.battery.BatteryProducing;
-import simulation.models.battery.BatteryModel.State;
+import simulation.events.battery.BatteryStandby;
 
-@ModelExternalEvents(imported = {BatteryLevel.class},
-exported = {BatteryOn.class,BatteryOff.class,BatteryCharging.class,BatteryProducing.class})
-public class BatteryControllerModel extends AtomicModel  {
-	
+@ModelExternalEvents(exported = {BatteryCharging.class,BatteryStandby.class,BatteryProducing.class})
+public class BatteryControllerModel extends AtomicES_Model{
+
+    private static final long serialVersionUID = 1L;
+
     public static final String  URI = "BatteryControllerModel" ;
-    
-  //Parameters names
-    public static final String MAX_CAPACITY = "max-capacity";
-    public static final String CURRENT_CAPACITY = "current-capacity";
-    public static final String ENERGY_PRODUCED = "energy-produced";
-    
- // Model variables
-    protected State state;
-    protected boolean triggerAction;
-    protected double maxCapacity;
-    protected double currentCapacity;
-    protected double energyProduced;
 
+    // -------------------------------------------------------------------------
+    // Constants and variables
+    // -------------------------------------------------------------------------
 
-	public BatteryControllerModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine)
-			throws Exception {
-		super(uri, simulatedTimeUnit, simulationEngine);
-        state = State.OFF;
-        triggerAction = false;
-        this.maxCapacity= 10;
+    private double delay = 50;
+    protected Class<?>  nextEvent ;
+
+    public BatteryControllerModel(
+            String uri,
+            TimeUnit simulatedTimeUnit,
+            SimulatorI simulationEngine) throws Exception {
+        super(uri, simulatedTimeUnit, simulationEngine);
+
         this.setLogger(new StandardLogger()) ;
-	}
-	
-
+    }
     @Override
-    public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception{
-        super.setSimulationRunParameters(simParams) ;
-        String varName = this.getURI() + ":" + BatteryControllerModel.MAX_CAPACITY;
-        if (simParams.containsKey(varName)) {
-            this.maxCapacity = (Double) simParams.get(varName) ;
+    public void initialiseState(Time initialTime){
+        super.initialiseState(initialTime) ;
+
+        Duration d = new Duration(10,this.getSimulatedTimeUnit()) ;
+        Time t = this.getCurrentStateTime().add(d);
+        this.scheduleEvent(new BatteryCharging(t)) ;
+
+        this.nextTimeAdvance = this.timeAdvance() ;
+        this.timeOfNextEvent =this.getCurrentStateTime().add(this.nextTimeAdvance) ;
+
+        try {
+        } catch (Exception e) {
+            throw new RuntimeException(e) ;
         }
     }
-    
+
+    @Override
+    public Duration timeAdvance(){
+        Duration d = super.timeAdvance() ;
+        return d ;
+    }
+
     @Override
     public Vector<EventI> output(){
-        if (this.triggerAction) {
-            this.triggerAction = false ;
+        assert  !this.eventList.isEmpty() ;
+        Vector<EventI> ret = super.output() ;
+        assert  ret.size() == 1 ;
 
-            Time currentTime = this.getCurrentStateTime().add(this.getNextTimeAdvance()) ;
-            EventI e = null;
-            if(state == State.OFF){
-                e = new BatteryOn(currentTime);
-                state = State.ON;
-            }else if(state == State.ON && currentCapacity< maxCapacity) {
-                e = new BatteryCharging(currentTime);
-                state = State.CHARGING;
-            }
-            else if(state == State.ON && currentCapacity == maxCapacity) {
-                e = new BatteryProducing(currentTime);
-                state = State.PRODUCING;
-                
-            }else if (state == State.CHARGING && currentCapacity< maxCapacity) {
-            	e = new BatteryCharging(currentTime);
-                state = State.CHARGING;
-            }
-            else if (state == State.PRODUCING && currentCapacity>0) {
-            	e = new BatteryProducing(currentTime);
-                state = State.PRODUCING;
-            }
-
-            if (e != null) {
-                Vector<EventI> ret = new Vector<EventI>(1);
-                ret.add(e) ;
-                this.logMessage(this.getCurrentStateTime() +
-                        "|output|controller action = " + e.getClass().getCanonicalName());
-                return ret;
-            }else {
-                return null;
-            }
-        } else {
-            return null ;
-        }
+        this.nextEvent = ret.get(0).getClass() ;
+        return ret ;
     }
 
     @Override
-    public void userDefinedExternalTransition(Duration elapsedTime){
-        super.userDefinedExternalTransition(elapsedTime);
-        Vector<EventI> current = this.getStoredEventAndReset() ;
-        for(EventI e : current) {
-            currentCapacity = ((BatteryLevel.Reading) e.getEventInformation()).value;
-            if(state == State.OFF){
-                triggerAction = true;
+    public void userDefinedInternalTransition(Duration elapsedTime){
+
+        Duration d ;
+        // See what is the type of event to be executed
+        if (this.nextEvent.equals(BatteryCharging.class)) {
+            d = new Duration(delay,this.getSimulatedTimeUnit()) ;
+            Time t = this.getCurrentStateTime().add(d) ;
+            if(new Random().nextBoolean()) {
+                this.scheduleEvent(new BatteryStandby(t)) ;
+            }else {
+                this.scheduleEvent(new BatteryProducing(t)) ;
+            }
+        }else if (this.nextEvent.equals(BatteryStandby.class)) {
+            d = new Duration(delay,this.getSimulatedTimeUnit()) ;
+            Time t = this.getCurrentStateTime().add(d) ;
+            if(new Random().nextBoolean()) {
+                this.scheduleEvent(new BatteryCharging(t)) ;               
+            }else {
+                this.scheduleEvent(new BatteryProducing(t)) ;
+            }
+        }else if (this.nextEvent.equals(BatteryProducing.class)) {
+            d = new Duration(delay,this.getSimulatedTimeUnit()) ;
+            Time t = this.getCurrentStateTime().add(d) ;
+            if(new Random().nextBoolean()) {
+                this.scheduleEvent(new BatteryStandby(t)) ;               
+            }else {
+                this.scheduleEvent(new BatteryCharging(t)) ;
             }
         }
     }
-
-	  @Override
-	    public Duration timeAdvance(){
-	        if (this.triggerAction){
-	            return Duration.zero(this.getSimulatedTimeUnit()) ;
-	        } else {
-	            return Duration.INFINITY ;
-	        }
-	    }
-
-
-
 }

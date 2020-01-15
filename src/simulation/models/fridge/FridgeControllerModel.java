@@ -23,7 +23,7 @@ import simulation.events.fridge.FridgeOff;
         FridgeOff.class,
         FreezerOff.class,
         FreezerOn.class})
-public class FridgeUserModel extends AtomicES_Model {
+public class FridgeControllerModel extends AtomicES_Model {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,7 +47,7 @@ public class FridgeUserModel extends AtomicES_Model {
     /** the current state of the freezer simulation model.				*/
     protected FridgeModel.State freezer_s ;
 
-    public FridgeUserModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
+    public FridgeControllerModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
         this.rg = new RandomDataGenerator() ;
 

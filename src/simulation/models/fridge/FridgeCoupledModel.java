@@ -72,10 +72,10 @@ public class FridgeCoupledModel extends CoupledModel{
                         null,
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
         atomicModelDescriptors.put(
-                FridgeUserModel.URI,
+                FridgeControllerModel.URI,
                 AtomicModelDescriptor.create(
-                        FridgeUserModel.class,
-                        FridgeUserModel.URI,
+                        FridgeControllerModel.class,
+                        FridgeControllerModel.URI,
                         TimeUnit.SECONDS,
                         null,
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
@@ -93,23 +93,23 @@ public class FridgeCoupledModel extends CoupledModel{
 
         Set<String> submodels = new HashSet<String>() ;
         submodels.add(FridgeModel.URI) ;
-        submodels.add(FridgeUserModel.URI) ;
+        submodels.add(FridgeControllerModel.URI) ;
         submodels.add(TicModel.URI_FRIDGE);
 
         Map<EventSource,EventSink[]> connections = new HashMap<EventSource,EventSink[]>() ;
-        EventSource from1 = new EventSource(FridgeUserModel.URI, FreezerOn.class) ;
+        EventSource from1 = new EventSource(FridgeControllerModel.URI, FreezerOn.class) ;
         EventSink[] to1 = new EventSink[] {new EventSink(FridgeModel.URI, FreezerOn.class)} ;
         connections.put(from1, to1) ;
 
-        EventSource from2 = new EventSource(FridgeUserModel.URI, FreezerOff.class) ;
+        EventSource from2 = new EventSource(FridgeControllerModel.URI, FreezerOff.class) ;
         EventSink[] to2 = new EventSink[] {new EventSink(FridgeModel.URI, FreezerOff.class)} ;
         connections.put(from2, to2) ;
 
-        EventSource from3 = new EventSource(FridgeUserModel.URI, FridgeOn.class) ;
+        EventSource from3 = new EventSource(FridgeControllerModel.URI, FridgeOn.class) ;
         EventSink[] to3 = new EventSink[] {new EventSink(FridgeModel.URI, FridgeOn.class)} ;
         connections.put(from3, to3) ;
 
-        EventSource from4 = new EventSource(FridgeUserModel.URI, FridgeOff.class) ;
+        EventSource from4 = new EventSource(FridgeControllerModel.URI, FridgeOff.class) ;
         EventSink[] to4 = new EventSink[] {new EventSink(FridgeModel.URI, FridgeOff.class)} ;
         connections.put(from4, to4) ;
         

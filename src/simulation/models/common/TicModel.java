@@ -23,7 +23,6 @@ public class TicModel extends AtomicModel{
     /** the URI to be used when creating the instance of the model.			*/
     public static final String URI_WINDTURBINE = "TicModelWindTurbine";
     public static final String URI_FRIDGE = "TicModelFridge";
-    public static final String URI_BATTERY = "TicModelBattery";
 
     /** the value of the delay between tic events during the current
      *  simulation run.														*/

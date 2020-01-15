@@ -7,9 +7,8 @@ import simulation.models.lamp.LampModel;
 public class LampSimulatorPlugin  extends AtomicSimulatorPlugin {
 
 
-    /**
-     * @see fr.sorbonne_u.components.cyphy.plugins.devs.AtomicSimulatorPlugin#getModelStateValue(java.lang.String, java.lang.String)
-     */
+    private static final long serialVersionUID = 1L;
+
     @Override
     public Object		getModelStateValue(String modelURI, String name)
             throws Exception

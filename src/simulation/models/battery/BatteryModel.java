@@ -20,28 +20,38 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
 import simulation.events.battery.BatteryCharging;
-import simulation.events.battery.BatteryLevel;
-import simulation.events.battery.BatteryOff;
-import simulation.events.battery.BatteryOn;
 import simulation.events.battery.BatteryProducing;
+import simulation.events.battery.BatteryStandby;
 
-@ModelExternalEvents(imported = {BatteryLevel.class,BatteryOff.class,BatteryOn.class,BatteryProducing.class,BatteryCharging.class})
+@ModelExternalEvents(imported =
+{BatteryCharging.class, BatteryStandby.class, BatteryProducing.class})
 public class BatteryModel extends AtomicHIOAwithEquations{
 
     private static final long serialVersionUID = 1L;
 
-    public static final String  URI = "WindTurbineModel" ;
-    private static final String SERIES = "power" ;
-
     //States of the wind turbine
-    public enum State{ON,OFF,PRODUCING,CHARGING}
+    public enum State{PRODUCING,CHARGING,STANDBY}
 
-    private static final double COEFF = 2.0;
-    private static final double BATTERY_CHARGE = 0.5;
-    private static final double BATTERY_PRODUCE = -0.5;
-    public static final String MAX_CAPACITY = "max-capacity";
-    public static final String CURRENT_CAPACITY = "current-capacity";
-    public static final String ENERGY_PRODUCED = "energy-produced";
+    public static final String  URI = "BatteryModel" ;
+    private static final String SERIES_POWER = "power" ;
+    private static final String SERIES_CAPACITY = "capacity" ;
+
+    //Exported variables
+    @ExportedVariable(type = Double.class)
+    protected final Value<Double> currentPower = new Value<Double>(this, 0.0, 0);
+
+    @ExportedVariable(type = Double.class)
+    protected final Value<Double> currentCapacity = new Value<Double>(this, 0.0, 0);
+
+
+    //Constants and variable
+    private static final double BATTERY_CONSUMPTION = 1000; //Watt
+
+    protected double maxCapacity = 100000;
+    protected State currentState ;
+    protected XYPlotter powerPlotter ;
+    protected XYPlotter capacityPlotter ;
+    protected EmbeddingComponentStateAccessI componentRef ;
 
 
     public static class BatteryReport extends AbstractSimulationReport{
@@ -57,19 +67,6 @@ public class BatteryModel extends AtomicHIOAwithEquations{
         }
     }
 
-    @ExportedVariable(type = Double.class)
-    protected final Value<Double> currentPower = new Value<Double>(this, 0.0, 0);
-
-
-
-    /** current state (OFF, ON) of the battery                 */
-    protected State currentState ;
-    /** plotter for the power level over time.                          */
-    protected XYPlotter powerPlotter ;
-    /** reference on the object representing the component that holds the
-     *  model; enables the model to access the state of this component.     */
-    protected EmbeddingComponentStateAccessI componentRef ;
-
 
     public BatteryModel(
             String uri,
@@ -79,7 +76,7 @@ public class BatteryModel extends AtomicHIOAwithEquations{
 
         PlotterDescription pd =
                 new PlotterDescription(
-                        "Battery Model",
+                        "Battery Consumption Model",
                         "Time (sec)",
                         "Power (watt)",
                         SimulationMain.ORIGIN_X,
@@ -88,7 +85,19 @@ public class BatteryModel extends AtomicHIOAwithEquations{
                         SimulationMain.getPlotterHeight());
 
         this.powerPlotter = new XYPlotter(pd) ;
-        this.powerPlotter.createSeries(SERIES) ;
+        this.powerPlotter.createSeries(SERIES_POWER) ;
+
+        pd = new PlotterDescription(
+                "Battery Capacity Model",
+                "Time (sec)",
+                "Capacity (Wh)",
+                SimulationMain.ORIGIN_X,
+                SimulationMain.ORIGIN_Y + 2 * SimulationMain.getPlotterHeight(),
+                SimulationMain.getPlotterWidth(),
+                SimulationMain.getPlotterHeight());
+
+        this.capacityPlotter = new XYPlotter(pd) ;
+        this.capacityPlotter.createSeries(SERIES_CAPACITY) ;
 
         this.setLogger(new StandardLogger()) ;
     }
@@ -96,25 +105,26 @@ public class BatteryModel extends AtomicHIOAwithEquations{
 
     @Override
     public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception{
-        this.componentRef =
-                (EmbeddingComponentStateAccessI) simParams.get("componentRef") ;
+        this.componentRef = (EmbeddingComponentStateAccessI) simParams.get("componentRef") ;
     }
 
     @Override
     public void initialiseState(Time initialTime){
-        setState(BatteryModel.State.OFF); ;
         this.powerPlotter.initialise() ;
         this.powerPlotter.showPlotter() ;
+
+        this.capacityPlotter.initialise() ;
+        this.capacityPlotter.showPlotter() ;
+
+        super.initialiseState(initialTime) ;
+        setState(State.STANDBY);
 
         try {
             this.setDebugLevel(1) ;
         } catch (Exception e) {
             throw new RuntimeException(e) ;
         }
-
-        super.initialiseState(initialTime) ;
     }
-
 
     @Override
     public Vector<EventI> output() {
@@ -123,10 +133,33 @@ public class BatteryModel extends AtomicHIOAwithEquations{
 
     @Override
     public Duration timeAdvance() {
-        if (this.componentRef == null) {
-            return Duration.INFINITY ;
-        } else {
-            return new Duration(10.0, TimeUnit.SECONDS) ;
+        return new Duration(7.0, TimeUnit.SECONDS) ;
+    }
+
+    @Override
+    public void userDefinedInternalTransition(Duration elapsedTime) {
+        super.userDefinedInternalTransition(elapsedTime);
+
+        if(elapsedTime.greaterThan(Duration.zero(getSimulatedTimeUnit()))){
+            //change capacity
+            if(currentState == State.CHARGING) {
+                currentCapacity.v = Math.min(maxCapacity, currentCapacity.v +
+                        BATTERY_CONSUMPTION * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+            }else if(currentState == State.PRODUCING){
+                currentCapacity.v = Math.max(0, currentCapacity.v -
+                        BATTERY_CONSUMPTION * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+            }
+
+            this.capacityPlotter.addData(
+                    SERIES_CAPACITY,
+                    this.getCurrentStateTime().getSimulatedTime(),
+                    this.getCapacity());
+
+            //Change state if max or 0
+            if(currentState == State.CHARGING && getCapacity() == maxCapacity ||
+                    currentState == State.PRODUCING && getCapacity() == 0) {
+                setState(State.STANDBY);
+            }
         }
     }
 
@@ -140,34 +173,7 @@ public class BatteryModel extends AtomicHIOAwithEquations{
                 this.logMessage("BatteryModel::userDefinedExternalTransition "
                         + e.getClass().getCanonicalName());
             }
-
-            if (e instanceof BatteryLevel) {
-                if(getState() == State.ON) {
-                    double level = ((BatteryLevel.Reading) e.getEventInformation()).value;
-                    currentPower.v = level * COEFF;
-                }
-                else if(getState() == State.PRODUCING) {
-                    currentPower.v -= BATTERY_PRODUCE ;
-                }
-                else if(getState() == State.CHARGING) {
-                    currentPower.v += BATTERY_CHARGE ;
-                }
-                this.powerPlotter.addData(
-                        SERIES,
-                        this.getCurrentStateTime().getSimulatedTime(),
-                        this.getPower()
-                        );
-            } else if (e instanceof BatteryOff) {
-                setState(State.OFF);
-            } else if (e instanceof BatteryOn) {
-                setState(State.ON);
-            }
-            else if (e instanceof BatteryProducing) {
-                setState(State.PRODUCING);
-            }
-            else if (e instanceof BatteryCharging) {
-                setState(State.CHARGING);
-            }
+            e.executeOn(this);
         }
         super.userDefinedExternalTransition(elapsedTime) ;
     }
@@ -175,11 +181,16 @@ public class BatteryModel extends AtomicHIOAwithEquations{
     @Override
     public void endSimulation(Time endTime) throws Exception {
         this.powerPlotter.addData(
-                SERIES,
+                SERIES_POWER,
                 endTime.getSimulatedTime(),
                 this.getPower());
+        this.capacityPlotter.addData(
+                SERIES_CAPACITY,
+                endTime.getSimulatedTime(),
+                this.getCapacity());
         Thread.sleep(10000L);
         this.powerPlotter.dispose();
+        this.capacityPlotter.dispose();
 
         super.endSimulation(endTime);
     }
@@ -196,9 +207,13 @@ public class BatteryModel extends AtomicHIOAwithEquations{
     }
 
     public void setState(State s) {
-        this.currentState = s;
-        if(s == State.OFF) {
-            this.currentPower.v = 0.0;
+        if(this.currentState != s) {
+            this.currentState = s;
+            if(s == State.STANDBY || s == State.PRODUCING) {
+                setPower(0);
+            }else {
+                setPower(BATTERY_CONSUMPTION);
+            }
         }
     }
 
@@ -206,4 +221,21 @@ public class BatteryModel extends AtomicHIOAwithEquations{
         return this.currentPower.v;
     }
 
+    public void setPower(double v) {
+        this.powerPlotter.addData(
+                SERIES_POWER,
+                this.getCurrentStateTime().getSimulatedTime(),
+                this.getPower());
+
+        this.currentPower.v = v;
+
+        this.powerPlotter.addData(
+                SERIES_POWER,
+                this.getCurrentStateTime().getSimulatedTime(),
+                this.getPower());
+    }
+
+    public double getCapacity() {
+        return this.currentCapacity.v;
+    }
 }
