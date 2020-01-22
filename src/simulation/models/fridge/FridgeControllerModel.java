@@ -115,34 +115,21 @@ public class FridgeControllerModel extends AtomicES_Model {
     public void	userDefinedInternalTransition(Duration elapsedTime){
         Duration d ;
         if (this.nextEvent.equals(FridgeOn.class)) {
-            d = new Duration(10.0 * this.rg.nextBeta(1.75, 1.75),
+            d = new Duration(50 * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             Time t = this.getCurrentStateTime().add(d) ;
             this.scheduleEvent(new FreezerOn(t)) ;
 
-            // also, plan the next switch on for the next day
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(new FridgeOff(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(FreezerOn.class)) {
-            //            d =	new Duration(
-            //                    2.0 * this.meanTimeTempAction * this.rg.nextBeta(1.75, 1.75),
-            //                    this.getSimulatedTimeUnit()) ;
-            //            this.scheduleEvent(new SwitchFridgeOff(this.getCurrentStateTime().add(d))) ;
         } else if (this.nextEvent.equals(FridgeOff.class)) {
             d =	new Duration(
-                    10.0 * this.meanTimeTempAction* this.rg.nextBeta(1.75, 1.75),
+                    50 * this.meanTimeTempAction* this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(new FreezerOff(this.getCurrentStateTime().add(d))) ;
 
-            // also, plan the next switch on for the next day
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
             this.scheduleEvent(new FridgeOn(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(FreezerOff.class)) {
-            //            d =	new Duration(
-            //                    2.0 * this.meanTimeTempAction * this.rg.nextBeta(1.75, 1.75),
-            //                    this.getSimulatedTimeUnit()) ;
-            //            this.scheduleEvent(
-            //                    new SwitchFridgeOn(this.getCurrentStateTime().add(d))) ;
         }
     }
 }
