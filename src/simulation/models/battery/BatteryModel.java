@@ -133,7 +133,7 @@ public class BatteryModel extends AtomicHIOAwithEquations{
 
     @Override
     public Duration timeAdvance() {
-        return new Duration(7.0, TimeUnit.SECONDS) ;
+        return new Duration(10.0, TimeUnit.SECONDS) ;
     }
 
     @Override

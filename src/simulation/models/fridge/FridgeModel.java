@@ -19,7 +19,6 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
 import simulation.events.fridge.FreezerOn;
-import simulation.events.common.TicEvent;
 import simulation.events.fridge.FreezerOff;
 import simulation.events.fridge.FridgeOn;
 import simulation.events.fridge.FridgeOff;
@@ -29,13 +28,13 @@ import simulation.events.fridge.FridgeOff;
         FridgeOn.class,
         FridgeOff.class,
         FreezerOff.class,
-        FreezerOn.class,
-        TicEvent.class})
+        FreezerOn.class})
 public class FridgeModel extends AtomicHIOAwithEquations{
 
     private static final long serialVersionUID = 1L;
 
     public enum State{ON,OFF}
+    public enum DoorState{CLOSE,OPEN}
 
     public static class FridgeReport extends AbstractSimulationReport{
 
@@ -65,8 +64,8 @@ public class FridgeModel extends AtomicHIOAwithEquations{
     /** energy consumption (in Watts) of the fridge.		*/
     protected static final double	FRIDGE_ON_CONSUMPTION = 300.0 ;
 
-    protected static final double INC_FREEZER_TEMP = 1 ; 
-    protected static final double INC_FRIDGE_TEMP = 1 ;
+    protected static final double INC_FREEZER_TEMP = 0.2 ; 
+    protected static final double INC_FRIDGE_TEMP = 0.2 ;
 
     protected static final double FREEZER_TEMP_MIN = -13.0 ; 
     protected static final double FRIDGE_TEMP_MIN = 4.0 ; 
@@ -91,6 +90,12 @@ public class FridgeModel extends AtomicHIOAwithEquations{
     @ExportedVariable(type = Double.class)
     protected final Value<Double> currentPower = new Value<Double>(this, 0.0, 0) ;
 
+    /** fridge's door */
+    protected DoorState fridgeDoor ;
+    
+    /** freezer's door */
+    protected DoorState freezerDoor ;
+    
     /** current state (OFF,ON) of the fridge.					*/
     protected State	currentStateFridge ;
 
@@ -191,13 +196,46 @@ public class FridgeModel extends AtomicHIOAwithEquations{
 
     @Override
     public Duration timeAdvance() {
-        if (this.componentRef == null) {
-            return Duration.INFINITY ;
-        } else {
-            return new Duration(10.0, TimeUnit.SECONDS) ;
-        }
+        return new Duration(10.0, TimeUnit.SECONDS) ;
     }
 
+    @Override
+    public void userDefinedInternalTransition(Duration elapsedTime) {
+        super.userDefinedInternalTransition(elapsedTime);
+        if(elapsedTime.greaterThan(Duration.zero(getSimulatedTimeUnit()))){
+            //Change freezer temperature
+            if(currentStateFreezer == FridgeModel.State.OFF) {
+                this.currentFreezerTemperature.v =
+                        Math.min(FREEZER_TEMP_MAX, this.currentFreezerTemperature.v +
+                                INC_FREEZER_TEMP * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+            }
+            else {
+                this.currentFreezerTemperature.v =
+                        Math.max(FREEZER_TEMP_MIN, this.currentFreezerTemperature.v -
+                                INC_FREEZER_TEMP * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+            }
+            //Change fridge temperature
+            if(currentStateFridge == FridgeModel.State.OFF) {
+                this.currentFridgeTemperature.v =
+                        Math.min(FRIDGE_TEMP_MAX, this.currentFridgeTemperature.v +
+                                INC_FRIDGE_TEMP * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+            }
+            else {
+                this.currentFridgeTemperature.v =
+                        Math.max(FRIDGE_TEMP_MIN, this.currentFridgeTemperature.v -
+                                INC_FRIDGE_TEMP * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+            }
+            this.temperatureFreezerPlotter.addData(
+                    SERIES_FREEZER,
+                    this.getCurrentStateTime().getSimulatedTime(),
+                    this.getFreezerTemperature());
+
+            this.temperatureFridgePlotter.addData(
+                    SERIES_FRIDGE,
+                    this.getCurrentStateTime().getSimulatedTime(),
+                    this.getFridgeTemperature());
+        }
+    }
 
     @Override
     public void	userDefinedExternalTransition(Duration elapsedTime) {
@@ -207,46 +245,7 @@ public class FridgeModel extends AtomicHIOAwithEquations{
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
 
         for(EventI e : currentEvents) {
-            if (e instanceof TicEvent) {
-                this.temperatureFreezerPlotter.addData(
-                        SERIES_FREEZER,
-                        this.getCurrentStateTime().getSimulatedTime(),
-                        this.getFreezerTemperature());
-
-                this.temperatureFridgePlotter.addData(
-                        SERIES_FRIDGE,
-                        this.getCurrentStateTime().getSimulatedTime(),
-                        this.getFridgeTemperature());
-
-                //Change freezer temperature
-                if(currentStateFreezer == FridgeModel.State.OFF) {
-                    this.currentFreezerTemperature.v =
-                            Math.min(FREEZER_TEMP_MAX, this.currentFreezerTemperature.v + INC_FREEZER_TEMP);
-                }
-                else {
-                    this.currentFreezerTemperature.v =
-                            Math.max(FREEZER_TEMP_MIN, this.currentFreezerTemperature.v - INC_FREEZER_TEMP);
-                }
-                //Change fridge temperature
-                if(currentStateFridge == FridgeModel.State.OFF) {
-                    this.currentFridgeTemperature.v =
-                            Math.min(FRIDGE_TEMP_MAX, this.currentFridgeTemperature.v + INC_FRIDGE_TEMP);
-                }
-                else {
-                    this.currentFridgeTemperature.v =
-                            Math.max(FRIDGE_TEMP_MIN, this.currentFridgeTemperature.v - INC_FRIDGE_TEMP);
-                }
-            } else {
-                this.powerPlotter.addData(
-                        SERIES_POWER,
-                        this.getCurrentStateTime().getSimulatedTime(),
-                        this.getPower());
-                e.executeOn(this);
-                this.powerPlotter.addData(
-                        SERIES_POWER,
-                        this.getCurrentStateTime().getSimulatedTime(),
-                        this.getPower());
-            }
+            e.executeOn(this);
         }
         super.userDefinedExternalTransition(elapsedTime) ;
     }
@@ -266,29 +265,45 @@ public class FridgeModel extends AtomicHIOAwithEquations{
     }
 
     public void setStateFreezer(State state) {
-        this.currentStateFreezer = state;
-        switch(state) {
-        case OFF :
-            this.currentFreezerPower.v = 0.0 ;
-            break ;
-        case ON :
-            this.currentFreezerPower.v = FREEZER_ON_CONSUMPTION;
-            break ;
+        if(this.currentStateFreezer != state) {
+            this.currentStateFreezer = state;
+            switch(state) {
+            case OFF :
+                this.currentFreezerPower.v = 0.0 ;
+                break ;
+            case ON :
+                this.currentFreezerPower.v = FREEZER_ON_CONSUMPTION;
+                break ;
+            }
+            this.setPower(this.currentFreezerPower.v + this.currentFridgePower.v);
         }
-        this.currentPower.v = this.currentFreezerPower.v + this.currentFridgePower.v;
     }
 
     public void setStateFridge(State state) {
-        this.currentStateFridge = state;
-        switch(state) {
-        case OFF :
-            this.currentFridgePower.v = 0.0;
-            break ;
-        case ON :
-            this.currentFridgePower.v = FRIDGE_ON_CONSUMPTION;
-            break ;
+        if(this.currentStateFridge != state) {
+            this.currentStateFridge = state;
+            switch(state) {
+            case OFF :
+                this.currentFridgePower.v = 0.0;
+                break ;
+            case ON :
+                this.currentFridgePower.v = FRIDGE_ON_CONSUMPTION;
+                break ;
+            }
+            this.setPower(this.currentFreezerPower.v + this.currentFridgePower.v);
         }
-        this.currentPower.v = this.currentFreezerPower.v + this.currentFridgePower.v;
+    }
+
+    public void setPower(double v) {
+        this.powerPlotter.addData(
+                SERIES_POWER,
+                this.getCurrentStateTime().getSimulatedTime(),
+                this.getPower());
+        this.currentPower.v = v;
+        this.powerPlotter.addData(
+                SERIES_POWER,
+                this.getCurrentStateTime().getSimulatedTime(),
+                this.getPower());
     }
 
     public double getPower() {
