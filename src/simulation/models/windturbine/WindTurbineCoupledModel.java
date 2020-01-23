@@ -69,6 +69,7 @@ public class WindTurbineCoupledModel extends CoupledModel{
     // -------------------------------------------------------------------------
     // Methods
     // -------------------------------------------------------------------------
+
     @Override
     public SimulationReportI getFinalReport() throws Exception{
         StandardCoupledModelReport ret =
