@@ -63,6 +63,8 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     private static final double R = 2;
     private static final double COEFF = 0.5 * RHO * R * R * Math.PI;
 
+    private double speed;
+
 
     /** current state (OFF, ON) of the wind turbine                 */
     protected State currentState ;
@@ -103,6 +105,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     @Override
     public void initialiseState(Time initialTime){
         this.currentState = WindTurbineModel.State.OFF ;
+        this.speed = 0;
 
         this.powerPlotter.initialise() ;
         this.powerPlotter.showPlotter() ;
@@ -124,20 +127,19 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     @Override
     public Duration timeAdvance() {
-        if (this.componentRef == null) {
-            return Duration.INFINITY ;
-        } else {
-            return new Duration(10.0, TimeUnit.SECONDS) ;
-        }
+        return new Duration(10.0, TimeUnit.SECONDS) ;
     }
 
 
     @Override
+    public void userDefinedInternalTransition(Duration elapsedTime) {
+        super.userDefinedInternalTransition(elapsedTime);
+    }
+
+    @Override
     public void userDefinedExternalTransition(Duration elapsedTime) {
         Vector<EventI> currentEvents = this.getStoredEventAndReset();
-        EventI e;
-        for(int i=0;i<currentEvents.size();i++) {
-            e = currentEvents.get(i);
+        for(EventI e : currentEvents) {
             if (this.hasDebugLevel(2)) {
                 this.logMessage("WindTurbineModel::userDefinedExternalTransition "
                         + e.getClass().getCanonicalName());
@@ -190,13 +192,37 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     }
 
     public void setState(State s) {
-        this.currentState = s;
-        if(s == State.OFF) {
-            this.currentPower.v = 0.0;
+        if(this.getState() != s) {
+            this.currentState = s;
+            switch(s) {
+            case OFF:
+                this.setPower(0);
+                break;
+            case ON:
+                this.setPower(COEFF * Math.pow(speed, 3));
+                break;
+            }
         }
+    }
+
+    public void setPower(double v) {
+        this.currentPower.v = v;
+        this.powerPlotter.addData(
+                SERIES,
+                this.getCurrentStateTime().getSimulatedTime(),
+                this.getPower()
+                );
     }
 
     public double getPower(){
         return this.currentPower.v ;
+    }
+
+    public void setSpeed(double s) {
+        this.speed = s;
+    }
+
+    public double getSpeed(){
+        return speed;
     }
 }

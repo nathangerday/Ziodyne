@@ -1,7 +1,9 @@
 package simulation.events.windturbine;
 
+import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.events.Event;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
+import simulation.models.windturbine.WindTurbineModel;
 
 public class WindTurbineOff extends Event{
 
@@ -11,6 +13,12 @@ public class WindTurbineOff extends Event{
         super(timeOfOccurrence, null);
     }
     public String eventAsString(){
-        return "SwitchOff(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+        return "WindTurbineOff(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
+    }
+
+    @Override
+    public void executeOn(AtomicModel model) {
+        WindTurbineModel m = (WindTurbineModel)model ;
+        m.setState(WindTurbineModel.State.OFF);
     }
 }
