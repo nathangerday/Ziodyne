@@ -12,22 +12,22 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import simulation.events.fridge.FreezerOn;
-import simulation.events.fridge.FreezerOff;
-import simulation.events.fridge.FridgeOn;
-import simulation.events.fridge.FridgeOff;
+import simulation.events.fridge.FreezerOpen;
+import simulation.events.fridge.FreezerClose;
+import simulation.events.fridge.FridgeOpen;
+import simulation.events.fridge.FridgeClose;
 
 
 @ModelExternalEvents(exported = {
-        FridgeOn.class,
-        FridgeOff.class,
-        FreezerOff.class,
-        FreezerOn.class})
-public class FridgeControllerModel extends AtomicES_Model {
+        FridgeOpen.class,
+        FridgeClose.class,
+        FreezerOpen.class,
+        FreezerClose.class})
+public class FridgeUserModel extends AtomicES_Model {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String	URI = "FridgeControllerModel" ;
+    public static final String	URI = "FridgeUserModel" ;
 
     /** initial delay before sending the first switch on event.				*/
     protected double	initialDelay ;
@@ -43,11 +43,11 @@ public class FridgeControllerModel extends AtomicES_Model {
     /**	a random number generator from common math library.					*/
     protected final RandomDataGenerator rg ;
     /** the current state of the fridge simulation model.				*/
-    protected FridgeModel.State fridge_s ;
+    protected FridgeModel.DoorState fridge_s ;
     /** the current state of the freezer simulation model.				*/
-    protected FridgeModel.State freezer_s ;
+    protected FridgeModel.DoorState freezer_s ;
 
-    public FridgeControllerModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
+    public FridgeUserModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
         this.rg = new RandomDataGenerator() ;
 
@@ -62,8 +62,8 @@ public class FridgeControllerModel extends AtomicES_Model {
         this.interdayDelay = 100.0 ;
         this.meanTimeBetweenUsages = 10.0 ;
         this.meanTimeTempAction = 5.0;
-        this.fridge_s = FridgeModel.State.OFF ;
-        this.freezer_s = FridgeModel.State.OFF;
+        this.fridge_s = FridgeModel.DoorState.CLOSE ;
+        this.freezer_s = FridgeModel.DoorState.CLOSE;
         this.rg.reSeedSecure() ;
 
         // Initialise to get the correct current time.
@@ -79,7 +79,7 @@ public class FridgeControllerModel extends AtomicES_Model {
                         this.rg.nextBeta(1.75, 1.75),
                         this.getSimulatedTimeUnit()) ;
         Time t = this.getCurrentStateTime().add(d1).add(d2) ;
-        this.scheduleEvent(new FridgeOn(t)) ;
+        this.scheduleEvent(new FridgeOpen(t)) ;
 
         // Redo the initialisation to take into account the initial event
         // just scheduled.
@@ -114,22 +114,22 @@ public class FridgeControllerModel extends AtomicES_Model {
     @Override
     public void	userDefinedInternalTransition(Duration elapsedTime){
         Duration d ;
-        if (this.nextEvent.equals(FridgeOn.class)) {
+        if (this.nextEvent.equals(FridgeOpen.class)) {
             d = new Duration(50 * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
             Time t = this.getCurrentStateTime().add(d) ;
-            this.scheduleEvent(new FreezerOn(t)) ;
+            this.scheduleEvent(new FreezerOpen(t)) ;
 
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new FridgeOff(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(FridgeOff.class)) {
+            this.scheduleEvent(new FridgeClose(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(FridgeClose.class)) {
             d =	new Duration(
                     50 * this.meanTimeTempAction* this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new FreezerOff(this.getCurrentStateTime().add(d))) ;
+            this.scheduleEvent(new FreezerClose(this.getCurrentStateTime().add(d))) ;
 
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new FridgeOn(this.getCurrentStateTime().add(d))) ;
+            this.scheduleEvent(new FridgeClose(this.getCurrentStateTime().add(d))) ;
         }
     }
 }

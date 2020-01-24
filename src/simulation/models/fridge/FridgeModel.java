@@ -19,8 +19,12 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
 import simulation.events.fridge.FreezerOn;
+import simulation.events.fridge.FreezerOpen;
+import simulation.events.fridge.FridgeClose;
+import simulation.events.fridge.FreezerClose;
 import simulation.events.fridge.FreezerOff;
 import simulation.events.fridge.FridgeOn;
+import simulation.events.fridge.FridgeOpen;
 import simulation.events.fridge.FridgeOff;
 
 
@@ -28,7 +32,11 @@ import simulation.events.fridge.FridgeOff;
         FridgeOn.class,
         FridgeOff.class,
         FreezerOff.class,
-        FreezerOn.class})
+        FreezerOn.class,
+        FridgeOpen.class,
+        FridgeClose.class,
+        FreezerOpen.class,
+        FreezerClose.class})
 public class FridgeModel extends AtomicHIOAwithEquations{
 
     private static final long serialVersionUID = 1L;
@@ -178,6 +186,8 @@ public class FridgeModel extends AtomicHIOAwithEquations{
         this.powerPlotter.initialise();
         this.temperatureFreezerPlotter.showPlotter() ;
         this.temperatureFridgePlotter.showPlotter() ;
+        this.freezerDoor = DoorState.CLOSE;
+        this.fridgeDoor = DoorState.CLOSE;
         this.powerPlotter.showPlotter();
 
         try {
@@ -204,26 +214,39 @@ public class FridgeModel extends AtomicHIOAwithEquations{
         super.userDefinedInternalTransition(elapsedTime);
         if(elapsedTime.greaterThan(Duration.zero(getSimulatedTimeUnit()))){
             //Change freezer temperature
+        	
+        	int doorFreezerOpenCoefficient = 1; 
+        	int doorFridgeOpenCoefficient = 1;
+        	//TODO Maybe do dynamic coef depening on the temperature
+        	if(this.fridgeDoor == DoorState.OPEN) {
+        		doorFridgeOpenCoefficient = 3;
+        	}
+        	if(this.freezerDoor == DoorState.OPEN) {
+        		doorFreezerOpenCoefficient = 5;
+        	}
+        	
+        	
+        	
             if(currentStateFreezer == FridgeModel.State.OFF) {
                 this.currentFreezerTemperature.v =
                         Math.min(FREEZER_TEMP_MAX, this.currentFreezerTemperature.v +
-                                INC_FREEZER_TEMP * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+                                INC_FREEZER_TEMP * doorFreezerOpenCoefficient * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
             }
             else {
                 this.currentFreezerTemperature.v =
                         Math.max(FREEZER_TEMP_MIN, this.currentFreezerTemperature.v -
-                                INC_FREEZER_TEMP * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+                                INC_FREEZER_TEMP * doorFreezerOpenCoefficient * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
             }
             //Change fridge temperature
             if(currentStateFridge == FridgeModel.State.OFF) {
                 this.currentFridgeTemperature.v =
                         Math.min(FRIDGE_TEMP_MAX, this.currentFridgeTemperature.v +
-                                INC_FRIDGE_TEMP * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+                                INC_FRIDGE_TEMP * doorFridgeOpenCoefficient * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
             }
             else {
                 this.currentFridgeTemperature.v =
                         Math.max(FRIDGE_TEMP_MIN, this.currentFridgeTemperature.v -
-                                INC_FRIDGE_TEMP * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
+                                INC_FRIDGE_TEMP * doorFridgeOpenCoefficient * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
             }
             this.temperatureFreezerPlotter.addData(
                     SERIES_FREEZER,
@@ -305,6 +328,14 @@ public class FridgeModel extends AtomicHIOAwithEquations{
                 this.getCurrentStateTime().getSimulatedTime(),
                 this.getPower());
     }
+    
+    public void setStateFridgeDoor(DoorState state) {
+    	this.fridgeDoor = state;
+    }
+    
+    public void setStateFreezerDoor(DoorState state) {
+    	this.freezerDoor = state;
+    }
 
     public double getPower() {
         return this.currentPower.v;
@@ -324,5 +355,13 @@ public class FridgeModel extends AtomicHIOAwithEquations{
 
     public double getFridgeTemperature() {
         return this.currentFridgeTemperature.v;
-    }	
+    }
+    
+    public DoorState getFridgeDoorState() {
+    	return this.fridgeDoor;
+    }
+    
+    public DoorState getFreezerDoorState() {
+    	return this.freezerDoor;
+    }
 }
