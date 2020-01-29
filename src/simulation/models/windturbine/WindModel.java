@@ -1,5 +1,6 @@
 package simulation.models.windturbine;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
@@ -224,7 +225,7 @@ public class WindModel extends AtomicHIOAwithDE{
 
 
     @Override
-    public Vector<EventI> output(){
+    public ArrayList<EventI> output(){
         return null;
     }
 

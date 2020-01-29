@@ -1,6 +1,6 @@
 package simulation.models.fridge;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.random.RandomDataGenerator;
@@ -12,10 +12,10 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import simulation.events.fridge.FreezerOpen;
 import simulation.events.fridge.FreezerClose;
-import simulation.events.fridge.FridgeOpen;
+import simulation.events.fridge.FreezerOpen;
 import simulation.events.fridge.FridgeClose;
+import simulation.events.fridge.FridgeOpen;
 
 
 @ModelExternalEvents(exported = {
@@ -97,10 +97,10 @@ public class FridgeUserModel extends AtomicES_Model {
     }
 
     @Override
-    public Vector<EventI> output()
+    public ArrayList<EventI> output()
     {
         assert	!this.eventList.isEmpty() ;
-        Vector<EventI> ret = super.output() ;
+        ArrayList<EventI> ret = super.output() ;
         assert	ret.size() == 1 ;
 
         this.nextEvent = ret.get(0).getClass() ;

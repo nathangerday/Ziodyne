@@ -1,6 +1,6 @@
 package simulation.models.windturbine;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
@@ -118,7 +118,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
 
     @Override
-    public Vector<EventI> output() {
+    public ArrayList<EventI> output() {
         return null;
     }
 
@@ -142,7 +142,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     @Override
     public void userDefinedExternalTransition(Duration elapsedTime) {
-        Vector<EventI> currentEvents = this.getStoredEventAndReset();
+        ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
         for(EventI e : currentEvents) {
             e.executeOn(this);
         }

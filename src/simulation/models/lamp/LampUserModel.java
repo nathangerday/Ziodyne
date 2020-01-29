@@ -1,5 +1,10 @@
 package simulation.models.lamp;
 
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.math3.random.RandomDataGenerator;
+
 import fr.sorbonne_u.devs_simulation.es.models.AtomicES_Model;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
@@ -7,11 +12,11 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import org.apache.commons.math3.random.RandomDataGenerator;
-import simulation.events.lamp.*;
-
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
+import simulation.events.lamp.LampHigh;
+import simulation.events.lamp.LampLow;
+import simulation.events.lamp.LampMedium;
+import simulation.events.lamp.LampOff;
+import simulation.events.lamp.LampOn;
 
 
 @ModelExternalEvents(exported = {LampOn.class, LampOff.class, LampHigh.class, LampMedium.class, LampLow.class})
@@ -143,7 +148,7 @@ public class LampUserModel extends AtomicES_Model {
      * @see fr.sorbonne_u.devs_simulation.es.models.AtomicES_Model#output()
      */
     @Override
-    public Vector<EventI> output()
+    public ArrayList<EventI> output()
     {
         // output is called just before executing an internal transition
         // in ES models, this corresponds to having at least one event in
@@ -154,7 +159,7 @@ public class LampUserModel extends AtomicES_Model {
         // be sent to other models when they are external events.
         assert	!this.eventList.isEmpty() ;
         // produce the set of such events by calling the super method
-        Vector<EventI> ret = super.output() ;
+        ArrayList<EventI> ret = super.output() ;
         // by construction, there will be only one such event
         assert	ret.size() == 1 ;
 

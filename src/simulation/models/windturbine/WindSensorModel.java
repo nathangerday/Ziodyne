@@ -1,5 +1,6 @@
 package simulation.models.windturbine;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
@@ -120,7 +121,7 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
     }
 
     @Override
-    public Vector<EventI> output() {
+    public ArrayList<EventI> output() {
         if (this.triggerReading) {
             if (this.plotter != null) {
                 this.plotter.addData(SERIES,this.lastReadingTime,this.wind.v);
@@ -128,7 +129,7 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
             }
             this.lastReading = this.wind.v;
             this.lastReadingTime = this.getCurrentStateTime().getSimulatedTime();
-            Vector<EventI> ret = new Vector<EventI>(1);
+            ArrayList<EventI> ret = new ArrayList<EventI>(1);
             Time currentTime = this.getCurrentStateTime().add(this.getNextTimeAdvance());
             WindReading wr = new WindReading(currentTime, this.wind.v);
             ret.add(wr);
@@ -143,7 +144,7 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
     @Override
     public void userDefinedExternalTransition(Duration elapsedTime) {
         super.userDefinedExternalTransition(elapsedTime);
-        Vector<EventI> current = this.getStoredEventAndReset();
+        ArrayList<EventI> current = this.getStoredEventAndReset();
         boolean ticReceived = false;
         for (int i = 0; !ticReceived && i < current.size(); i++) {
             if (current.get(i) instanceof TicEvent) {

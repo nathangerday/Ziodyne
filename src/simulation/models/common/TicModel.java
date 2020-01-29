@@ -1,8 +1,9 @@
 package simulation.models.common;
 
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+
 import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
@@ -49,8 +50,8 @@ public class TicModel extends AtomicModel{
     }
 
     @Override
-    public Vector<EventI> output(){
-        Vector<EventI> ret = new Vector<EventI>() ;
+    public ArrayList<EventI> output(){
+        ArrayList<EventI> ret = new ArrayList<EventI>() ;
         Time t = this.getCurrentStateTime().add(this.getNextTimeAdvance()) ;
         TicEvent e = new TicEvent(t) ;
         this.logMessage("output " + e.eventAsString()) ;

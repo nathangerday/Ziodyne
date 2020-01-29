@@ -1,7 +1,7 @@
 package simulation.models.windturbine;
 
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.models.AtomicModel;
@@ -11,9 +11,9 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
+import simulation.events.windturbine.WindReading;
 import simulation.events.windturbine.WindTurbineOff;
 import simulation.events.windturbine.WindTurbineOn;
-import simulation.events.windturbine.WindReading;
 import simulation.models.windturbine.WindTurbineModel.State;
 
 @ModelExternalEvents(imported = {WindReading.class},
@@ -75,7 +75,7 @@ public class WindTurbineControllerModel extends AtomicModel{
     }
 
     @Override
-    public Vector<EventI> output(){
+    public ArrayList<EventI> output(){
         if (this.triggerAction) {
             this.triggerAction = false ;
 
@@ -90,7 +90,7 @@ public class WindTurbineControllerModel extends AtomicModel{
             }
 
             if (e != null) {
-                Vector<EventI> ret = new Vector<EventI>(1);
+                ArrayList<EventI> ret = new ArrayList<EventI>(1);
                 ret.add(e) ;
                 this.logMessage(this.getCurrentStateTime() +
                         "|output|controller action = " + e.getClass().getCanonicalName());
@@ -106,7 +106,7 @@ public class WindTurbineControllerModel extends AtomicModel{
     @Override
     public void userDefinedExternalTransition(Duration elapsedTime){
         super.userDefinedExternalTransition(elapsedTime);
-        Vector<EventI> current = this.getStoredEventAndReset() ;
+        ArrayList<EventI> current = this.getStoredEventAndReset() ;
         for(EventI e : current) {
             speed = ((WindReading.Reading) e.getEventInformation()).value;
             if((state == State.OFF && (speed >= minSpeed && speed <= maxSpeed)) ||

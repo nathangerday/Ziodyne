@@ -1,7 +1,7 @@
 package simulation.models.fridge;
 
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
@@ -200,7 +200,7 @@ public class FridgeModel extends AtomicHIOAwithEquations{
 
 
     @Override
-    public Vector<EventI> output() {
+    public ArrayList<EventI> output() {
         return null;
     }
 
@@ -265,7 +265,7 @@ public class FridgeModel extends AtomicHIOAwithEquations{
         if (this.hasDebugLevel(2)) {
             this.logMessage("FridgeModel::userDefinedExternalTransition 1");
         }
-        Vector<EventI> currentEvents = this.getStoredEventAndReset();
+        ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
 
         for(EventI e : currentEvents) {
             e.executeOn(this);

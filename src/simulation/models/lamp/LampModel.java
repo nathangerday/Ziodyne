@@ -1,7 +1,7 @@
 package simulation.models.lamp;
 
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
@@ -188,7 +188,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
 
 
     @Override
-    public Vector<EventI> output() {
+    public ArrayList<EventI> output() {
         return null;
     }
 
@@ -230,7 +230,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
             this.logMessage("LampModel::userDefinedExternalTransition 1");
         }
         // get the vector of current external events
-        Vector<EventI> currentEvents = this.getStoredEventAndReset();
+        ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
         // when this method is called, there is at least one external event,
         // and for the lamp model, there will be exactly one by
         // construction.

@@ -1,5 +1,11 @@
 package simulation.models.dishwasher;
 
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.math3.random.RandomDataGenerator;
+
 import fr.sorbonne_u.devs_simulation.es.models.AtomicES_Model;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
@@ -7,16 +13,10 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import org.apache.commons.math3.random.RandomDataGenerator;
-
-import simulation.events.dishwasher.ModeEco;
-import simulation.events.dishwasher.ModeStandard;
 import simulation.events.dishwasher.DishwasherOff;
 import simulation.events.dishwasher.DishwasherOn;
-
-import java.util.Random;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
+import simulation.events.dishwasher.ModeEco;
+import simulation.events.dishwasher.ModeStandard;
 
 @ModelExternalEvents(exported = {ModeEco.class,
         ModeStandard.class,
@@ -93,10 +93,10 @@ public class DishwasherControllerModel extends AtomicES_Model {
     }
 
     @Override
-    public Vector<EventI> output()
+    public ArrayList<EventI> output()
     {
         assert	!this.eventList.isEmpty() ;
-        Vector<EventI> ret = super.output() ;
+        ArrayList<EventI> ret = super.output() ;
         assert	ret.size() == 1 ;
 
         this.nextEvent = ret.get(0).getClass() ;

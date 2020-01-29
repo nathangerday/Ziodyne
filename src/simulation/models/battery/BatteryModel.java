@@ -1,7 +1,7 @@
 package simulation.models.battery;
 
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
@@ -127,7 +127,7 @@ public class BatteryModel extends AtomicHIOAwithEquations{
     }
 
     @Override
-    public Vector<EventI> output() {
+    public ArrayList<EventI> output() {
         return null;
     }
 
@@ -165,7 +165,7 @@ public class BatteryModel extends AtomicHIOAwithEquations{
 
     @Override
     public void userDefinedExternalTransition(Duration elapsedTime) {
-        Vector<EventI> currentEvents = this.getStoredEventAndReset();
+        ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
         EventI e;
         for(int i=0;i<currentEvents.size();i++) {
             e = currentEvents.get(i);

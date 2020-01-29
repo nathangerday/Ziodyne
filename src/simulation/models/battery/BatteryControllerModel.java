@@ -1,7 +1,7 @@
 package simulation.models.battery;
 
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.devs_simulation.es.models.AtomicES_Model;
@@ -61,9 +61,9 @@ public class BatteryControllerModel extends AtomicES_Model{
     }
 
     @Override
-    public Vector<EventI> output(){
+    public ArrayList<EventI> output(){
         assert  !this.eventList.isEmpty() ;
-        Vector<EventI> ret = super.output() ;
+        ArrayList<EventI> ret = super.output() ;
         assert  ret.size() == 1 ;
 
         this.nextEvent = ret.get(0).getClass() ;

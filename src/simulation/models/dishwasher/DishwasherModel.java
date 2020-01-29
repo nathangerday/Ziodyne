@@ -1,7 +1,7 @@
 package simulation.models.dishwasher;
 
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
@@ -130,7 +130,7 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
 
 
     @Override
-    public Vector<EventI> output() {
+    public ArrayList<EventI> output() {
         return null;
     }
 
@@ -166,7 +166,7 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
         if (this.hasDebugLevel(2)) {
             this.logMessage("DiishwasherModel::userDefinedExternalTransition 1");
         }
-        Vector<EventI> currentEvents = this.getStoredEventAndReset();
+        ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
         assert currentEvents != null && currentEvents.size() == 1;
 
         Event ce = (Event) currentEvents.get(0);
