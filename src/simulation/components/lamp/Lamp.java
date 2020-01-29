@@ -1,17 +1,17 @@
 package simulation.components.lamp;
 
+import java.util.HashMap;
+
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
-import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
 import simulation.models.lamp.LampCoupledModel;
 import simulation.models.lamp.LampModel;
 
-import java.util.HashMap;
-
 public class Lamp extends AbstractCyPhyComponent
-        implements EmbeddingComponentStateAccessI
+        implements EmbeddingComponentAccessI
 {
     // -------------------------------------------------------------------------
     // Constants and variables

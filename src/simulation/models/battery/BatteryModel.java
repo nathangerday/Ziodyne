@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
@@ -51,7 +51,7 @@ public class BatteryModel extends AtomicHIOAwithEquations{
     protected State currentState ;
     protected XYPlotter powerPlotter ;
     protected XYPlotter capacityPlotter ;
-    protected EmbeddingComponentStateAccessI componentRef ;
+    protected EmbeddingComponentAccessI componentRef ;
 
 
     public static class BatteryReport extends AbstractSimulationReport{
@@ -105,7 +105,7 @@ public class BatteryModel extends AtomicHIOAwithEquations{
 
     @Override
     public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception{
-        this.componentRef = (EmbeddingComponentStateAccessI) simParams.get("componentRef") ;
+        this.componentRef = (EmbeddingComponentAccessI) simParams.get("componentRef") ;
     }
 
     @Override

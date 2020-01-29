@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
@@ -109,7 +109,7 @@ public class ElectricMeterModel extends AtomicHIOAwithEquations {
 	 * reference on the object representing the component that holds the model;
 	 * enables the model to access the state of this component.
 	 */
-	protected EmbeddingComponentStateAccessI componentRef;
+	protected EmbeddingComponentAccessI componentRef;
 
 	/**
 	 * create an atomic hybrid input/output model based on an algebraic equations
@@ -163,7 +163,7 @@ public class ElectricMeterModel extends AtomicHIOAwithEquations {
 	public void setSimulationRunParameters(Map<String, Object> simParams) throws Exception {
 
 		// The reference to the embedding component
-		this.componentRef = (EmbeddingComponentStateAccessI) simParams.get("componentRef");
+		this.componentRef = (EmbeddingComponentAccessI) simParams.get("componentRef");
 	}
 
 	@Override

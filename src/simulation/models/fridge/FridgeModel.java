@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
@@ -18,14 +18,14 @@ import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
+import simulation.events.fridge.FreezerClose;
+import simulation.events.fridge.FreezerOff;
 import simulation.events.fridge.FreezerOn;
 import simulation.events.fridge.FreezerOpen;
 import simulation.events.fridge.FridgeClose;
-import simulation.events.fridge.FreezerClose;
-import simulation.events.fridge.FreezerOff;
+import simulation.events.fridge.FridgeOff;
 import simulation.events.fridge.FridgeOn;
 import simulation.events.fridge.FridgeOpen;
-import simulation.events.fridge.FridgeOff;
 
 
 @ModelExternalEvents(imported = {
@@ -121,7 +121,7 @@ public class FridgeModel extends AtomicHIOAwithEquations{
 
     /** reference on the object representing the component that holds the
      *  model; enables the model to access the state of this component.		*/
-    protected EmbeddingComponentStateAccessI componentRef ;
+    protected EmbeddingComponentAccessI componentRef ;
 
 
     public FridgeModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
@@ -173,7 +173,7 @@ public class FridgeModel extends AtomicHIOAwithEquations{
     public void	setSimulationRunParameters(Map<String, Object> simParams) throws Exception
     {
         // The reference to the embedding component
-        this.componentRef =(EmbeddingComponentStateAccessI) simParams.get("componentRef") ;
+        this.componentRef =(EmbeddingComponentAccessI) simParams.get("componentRef") ;
     }
 
     @Override

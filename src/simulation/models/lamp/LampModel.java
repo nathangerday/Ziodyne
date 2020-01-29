@@ -1,6 +1,10 @@
 package simulation.models.lamp;
 
-import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
+import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
@@ -16,11 +20,12 @@ import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
-import simulation.events.lamp.*;
-
-import java.util.Map;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
+import simulation.events.lamp.AbstractLampEvent;
+import simulation.events.lamp.LampHigh;
+import simulation.events.lamp.LampLow;
+import simulation.events.lamp.LampMedium;
+import simulation.events.lamp.LampOff;
+import simulation.events.lamp.LampOn;
 
 
 // -----------------------------------------------------------------------------
@@ -87,7 +92,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     protected XYPlotter powerPlotter ;
     /** reference on the object representing the component that holds the
      *  model; enables the model to access the state of this component.		*/
-    protected EmbeddingComponentStateAccessI componentRef ;
+    protected EmbeddingComponentAccessI componentRef ;
 
 
     /**
@@ -141,7 +146,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
 
         // The reference to the embedding component
         this.componentRef =
-                (EmbeddingComponentStateAccessI) simParams.get("componentRef") ;
+                (EmbeddingComponentAccessI) simParams.get("componentRef") ;
     }
 
     @Override

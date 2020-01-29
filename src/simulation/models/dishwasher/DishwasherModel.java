@@ -1,6 +1,10 @@
 package simulation.models.dishwasher;
 
-import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
+import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
@@ -17,14 +21,10 @@ import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
 import simulation.events.dishwasher.AbstractDishwasherEvent;
+import simulation.events.dishwasher.DishwasherOff;
+import simulation.events.dishwasher.DishwasherOn;
 import simulation.events.dishwasher.ModeEco;
 import simulation.events.dishwasher.ModeStandard;
-import simulation.events.dishwasher.DishwasherOn;
-import simulation.events.dishwasher.DishwasherOff;
-
-import java.util.Map;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
 
 
 // -----------------------------------------------------------------------------
@@ -68,7 +68,7 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     protected final Value<Double> currentPower = new Value<Double>(this, 0.0, 0) ;
     protected State	currentState ;
     protected XYPlotter powerPlotter ;
-    protected EmbeddingComponentStateAccessI componentRef ;
+    protected EmbeddingComponentAccessI componentRef ;
 
     public DishwasherModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
@@ -94,7 +94,7 @@ public class DishwasherModel extends AtomicHIOAwithEquations {
     {
 
         this.componentRef =
-                (EmbeddingComponentStateAccessI) simParams.get("componentRef") ;
+                (EmbeddingComponentAccessI) simParams.get("componentRef") ;
     }
 
     @Override
