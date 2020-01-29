@@ -1,14 +1,13 @@
 package simulation;
 
-import simulation.components.dishwasher.Dishwasher;
-import simulation.components.fridge.Fridge;
-import simulation.components.lamp.Lamp;
+import components.Lamp;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
+import main.URI;
 
 public class			CVM
-        extends AbstractCVM
+extends AbstractCVM
 {
     public				CVM() throws Exception
     {
@@ -16,29 +15,15 @@ public class			CVM
         SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 10L ;
     }
 
-    /**
-     * @see fr.sorbonne_u.components.cvm.AbstractCVM#deploy()
-     */
     @Override
     public void			deploy() throws Exception
     {
         @SuppressWarnings("unused")
         String componentLampURI =
-                AbstractComponent.createComponent(
-                        Lamp.class.getCanonicalName(),
-                        new Object[]{}) ;
-        
-        String componentFridgeURI =
-                AbstractComponent.createComponent(
-                        Fridge.class.getCanonicalName(),
-                        new Object[]{}) ;
-        
-        /*
-        String componentDishwasherURI =
-                AbstractComponent.createComponent(
-                        Dishwasher.class.getCanonicalName(),
-                        new Object[]{}) ;*/
-        
+        AbstractComponent.createComponent(
+                Lamp.class.getCanonicalName(),
+                new Object[]{URI.COMPONENT_LAMP,URI.LAMP_INBOUND_PORT}) ;
+
         super.deploy();
     }
 

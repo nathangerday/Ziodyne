@@ -189,7 +189,8 @@ public class Controller extends AbstractComponent{
         this.dishwasherOutboundPort.startDishwasherProgram();
         System.out.println("The time left on the dishwasher program is : " + this.dishwasherOutboundPort.getDishwasherTimeLeft());
         
-        int lampIntensity = this.lampOutboundPort.getState();
+//        int lampIntensity = this.lampOutboundPort.getState();
+        int lampIntensity = 0;
         System.out.println("The lamp intensity is : " + lampIntensity);
         
         if(lampIntensity > 5 && this.fridgeOutboundPort.isFridgeOn()) {
