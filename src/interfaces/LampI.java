@@ -1,7 +1,8 @@
 package interfaces;
 
-import components.Lamp.State;
+import components.Lamp.LampState;
+import fr.sorbonne_u.components.interfaces.OfferedI;
 
-public interface LampI{
-    public State getState() throws Exception;
+public interface LampI extends OfferedI{
+    public LampState getState() throws Exception;
 }

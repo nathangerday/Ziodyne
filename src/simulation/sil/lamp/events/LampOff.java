@@ -21,6 +21,6 @@ public class LampOff extends AbstractLampEvent {
     @Override
     public void	executeOn(AtomicModel model) {
         assert	model instanceof LampModel;
-        ((LampModel)model).setState(Lamp.State.OFF);
+        ((LampModel)model).setState(Lamp.LampState.OFF);
     }
 }

@@ -22,6 +22,6 @@ public class LampLow extends AbstractLampEvent {
     public void	executeOn(AtomicModel model) {
         assert	model instanceof LampModel;
         LampModel m = (LampModel)model;
-        m.setState(Lamp.State.LOW);
+        m.setState(Lamp.LampState.LOW);
     }
 }

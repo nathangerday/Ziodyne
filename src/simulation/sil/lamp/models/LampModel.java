@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import components.Lamp;
-import components.Lamp.State;   
+import components.Lamp.LampState;   
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
 import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
@@ -30,7 +30,8 @@ import simulation.sil.lamp.events.LampOff;
         LampOff.class,
         LampLow.class,
         LampMedium.class,
-        LampHigh.class})
+        LampHigh.class},
+exported = {LampConsumption.class})
 public class LampModel 	extends AtomicHIOAwithEquations {
 
     private static final long serialVersionUID = 1L;
@@ -55,7 +56,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     // -------------------------------------------------------------------------
     // Constants and variables
     // -------------------------------------------------------------------------
-    
+
     public static final String COMPONENT_REF = URI + ":componentRef";
 
     /** energy consumption (in Watts) of the lamp in LOW mode.		*/
@@ -83,15 +84,6 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     public LampModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
         this.setLogger(new StandardLogger());
-        //        PlotterDescription pd =
-        //                new PlotterDescription(
-        //                        "Lamp Power",
-        //                        "Time (sec)",
-        //                        "Power (Watt)",
-        //                        SimulationMain.ORIGIN_X,
-        //                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
-        //                        SimulationMain.getPlotterWidth(),
-        //                        SimulationMain.getPlotterHeight());
     }
 
 
@@ -122,11 +114,6 @@ public class LampModel 	extends AtomicHIOAwithEquations {
             this.powerPlotter.showPlotter();
         }
         this.consumptionHasChanged = false;
-        try {
-            this.setDebugLevel(1);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         super.initialiseState(initialTime);
     }
 
@@ -134,7 +121,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     @Override
     protected void initialiseVariables(Time startTime){
         try {
-            State s = (State) this.componentRef.getEmbeddingComponentStateValue("state");
+            LampState s = (LampState) this.componentRef.getEmbeddingComponentStateValue("state");
             switch(s) {
             case OFF:
                 this.currentPower.v = 0.0;
@@ -193,8 +180,8 @@ public class LampModel 	extends AtomicHIOAwithEquations {
         assert currentEvents != null && currentEvents.size() == 1;
         Event ce = (Event) currentEvents.get(0);
         assert ce instanceof AbstractLampEvent;
-
         double last = this.getPower();
+
         ce.executeOn(this);
 
         if(last != this.getPower()) {
@@ -229,7 +216,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     // Model-specific methods
     // ------------------------------------------------------------------------
 
-    public void	setState(State s){
+    public void	setState(LampState s){
         try {
             if(s != this.getState()) {
                 this.componentRef.setEmbeddingComponentStateValue("state", s);
@@ -254,9 +241,9 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     }
 
 
-    public State getState() {
+    public LampState getState() {
         try {
-            return (State) this.componentRef.getEmbeddingComponentStateValue("state");
+            return (LampState) this.componentRef.getEmbeddingComponentStateValue("state");
         }catch (Exception e) {
             throw new RuntimeException(e);
         }

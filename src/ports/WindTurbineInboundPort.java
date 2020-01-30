@@ -7,44 +7,53 @@ import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import interfaces.WindTurbineI;
 
 public class WindTurbineInboundPort extends AbstractInboundPort implements WindTurbineI{
-	
-	private static final long serialVersionUID = 1L;
 
-	public WindTurbineInboundPort(String uri, ComponentI windTurbine) throws Exception {
-	        super(uri, WindTurbineI.class, windTurbine);
+    private static final long serialVersionUID = 1L;
 
-	        assert uri != null && windTurbine instanceof WindTurbine;
-	    }
-	
+    public WindTurbineInboundPort(String uri, ComponentI windTurbine) throws Exception {
+        super(uri, WindTurbineI.class, windTurbine);
 
-	public WindTurbineInboundPort(ComponentI windTurbine) throws Exception {
-	        super(WindTurbineI.class, windTurbine);
+        assert uri != null && windTurbine instanceof WindTurbine;
+    }
 
-	        assert windTurbine instanceof WindTurbine;
-	    }
-	
 
-	@Override
-	public void switchOn() throws Exception {
-		 this.getOwner().handleRequestSync(
-	                new AbstractComponent.AbstractService<Void>() {
-	                    @Override
-	                    public Void call() throws Exception {
-	                        ((WindTurbine)this.getServiceOwner()).switchOn();
-	                        return null;
-	                    }
-	                }) ;
-	}
+    public WindTurbineInboundPort(ComponentI windTurbine) throws Exception {
+        super(WindTurbineI.class, windTurbine);
 
-	@Override
-	public int getEnergyProduced() throws Exception {
-		 return this.getOwner().handleRequestSync(
-	                owner -> ((WindTurbine)owner).getEnergyProduced());
-	}
+        assert windTurbine instanceof WindTurbine;
+    }
 
-	@Override
-	public int getWindSpeed() throws Exception {
-		 return this.getOwner().handleRequestSync(
-	                owner -> ((WindTurbine)owner).getWindSpeed());
-	}
+
+    @Override
+    public boolean isOn() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((WindTurbine)owner).isOn());
+    }
+
+
+    @Override
+    public boolean isOnBreak() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((WindTurbine)owner).isOnBreak());
+    }
+
+
+    @Override
+    public void switchBreak() throws Exception {
+        this.getOwner().handleRequestSync(
+                new AbstractComponent.AbstractService<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        ((WindTurbine)this.getServiceOwner()).switchBreak();
+                        return null;
+                    }
+                }) ;
+    }
+
+
+    @Override
+    public double getWindSpeed() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((WindTurbine)owner).getWindSpeed());
+    }
 }

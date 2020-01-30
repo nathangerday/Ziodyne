@@ -23,6 +23,6 @@ public class LampMedium extends AbstractLampEvent {
     public void	executeOn(AtomicModel model) {
         assert	model instanceof LampModel;
         LampModel m = (LampModel)model;
-        m.setState(Lamp.State.MEDIUM);
+        m.setState(Lamp.LampState.MEDIUM);
     }
 }

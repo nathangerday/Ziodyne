@@ -1,10 +1,10 @@
 package interfaces;
 
-import components.Lamp.State;
+import components.Lamp.LampState;
 import fr.sorbonne_u.components.interfaces.RequiredI;
 
 public interface LampControllerI extends RequiredI {
     
-    public State getState() throws Exception;
+    public LampState getState() throws Exception;
   
 }

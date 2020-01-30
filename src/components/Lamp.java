@@ -17,23 +17,23 @@ import simulation.sil.lamp.plugin.LampSimulatorPlugin;
 
 public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingComponentAccessI{
 
-    public enum State{OFF,LOW,MEDIUM,HIGH}
+    public enum LampState{OFF,LOW,MEDIUM,HIGH}
 
     protected LampInboundPort lampInboundPort;
-    protected State state;
+    protected LampState state;
 
     protected LampSimulatorPlugin asp ;
 
     protected Lamp(String uri, String lampInboundPortURI) throws Exception {
         super(uri, 1, 0);
-        this.state = State.OFF;
+        this.state = LampState.OFF;
         this.addOfferedInterface(LampI.class);
         this.lampInboundPort = new LampInboundPort(lampInboundPortURI, this);
         this.lampInboundPort.publishPort();
 
         this.initialise();
 
-        assert this.state == State.OFF :
+        assert this.state == LampState.OFF :
             new PostconditionException("The lamp's state has not been initialised correctly !");
         assert this.isPortExisting(lampInboundPort.getPortURI()):
             new PostconditionException("The component must have a "
@@ -74,6 +74,7 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
         HashMap<String,Object> simParams = new HashMap<String,Object>();
         simParams.put(LampModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME, pd);
         this.asp.setSimulationRunParameters(simParams);
+        asp.setDebugLevel(0);
         asp.doStandAloneSimulation(0.0, 500.0);
     }
 
@@ -98,7 +99,7 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
     }
 
     @Override
-    public State getState() {
+    public LampState getState() {
         return state;
     }
 
@@ -109,13 +110,17 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
 
     @Override
     public Object getEmbeddingComponentStateValue(String name) throws Exception{
-        return state;
+        if(name.equals("state")) {
+            return state;
+        } else {
+            throw new RuntimeException();
+        }
     }
 
     @Override
     public void setEmbeddingComponentStateValue(String name , Object value) {
         if(name.equals("state")) {
-            this.state = (State) value;
+            this.state = (LampState) value;
         } else {
             throw new RuntimeException();
         }

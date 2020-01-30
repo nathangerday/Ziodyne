@@ -1,7 +1,7 @@
 package ports;
 
 import components.Lamp;
-import components.Lamp.State;
+import components.Lamp.LampState;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import interfaces.LampI;
@@ -23,7 +23,7 @@ public class LampInboundPort extends AbstractInboundPort implements LampI{
     }
 
     @Override
-    public State getState() throws Exception {
+    public LampState getState() throws Exception {
         return this.getOwner().handleRequestSync(
                 owner -> ((Lamp)owner).getState());
     }

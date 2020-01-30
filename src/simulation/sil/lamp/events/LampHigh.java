@@ -23,6 +23,6 @@ public class LampHigh extends AbstractLampEvent {
         assert	model instanceof LampModel;
 
         LampModel m = (LampModel)model;
-        m.setState(Lamp.State.HIGH);
+        m.setState(Lamp.LampState.HIGH);
     }
 }

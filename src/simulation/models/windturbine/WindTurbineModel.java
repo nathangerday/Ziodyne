@@ -132,6 +132,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     @Override
     public void userDefinedInternalTransition(Duration elapsedTime) {
         if(elapsedTime.greaterThan(Duration.zero(getSimulatedTimeUnit()))) {
+            this.logMessage("" + this.getCurrentStateTime().getSimulatedTime());
             if(getState() == State.ON) {
                 setPower(COEFF * Math.pow(speed, 3));
             }

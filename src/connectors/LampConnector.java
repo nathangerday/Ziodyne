@@ -1,6 +1,6 @@
 package connectors;
 
-import components.Lamp.State;
+import components.Lamp.LampState;
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 import interfaces.LampControllerI;
 import interfaces.LampI;
@@ -8,7 +8,7 @@ import interfaces.LampI;
 public class LampConnector extends AbstractConnector implements LampControllerI{
 
 	@Override
-	public State getState() throws Exception {
+	public LampState getState() throws Exception {
 		return ((LampI)this.offering).getState();
 	}
 }
