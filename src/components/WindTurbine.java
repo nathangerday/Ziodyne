@@ -70,10 +70,10 @@ public class WindTurbine extends AbstractCyPhyComponent implements WindTurbineI,
 
         //Parameter of TicModel
         simParams.put(TicModel.URI_WINDTURBINE + ":" + TicModel.DELAY_PARAMETER_NAME,
-                new Duration(10.0, TimeUnit.SECONDS));
+                new Duration(5.0, TimeUnit.SECONDS));
         //Parameters of WindModel
         simParams.put(WindModel.URI + ":" + WindModel.MAX_WIND,15.0);
-        simParams.put(WindModel.URI + ":" + WindModel.WMASSF,0.03);
+        simParams.put(WindModel.URI + ":" + WindModel.WMASSF,0.05);
         simParams.put(WindModel.URI + ":" + WindModel.WIS,1.0);
         simParams.put(
                 WindModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,

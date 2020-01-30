@@ -49,7 +49,6 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     public static final String COMPONENT_REF = URI + ":componentRef";
     public static final String MAX_SPEED = "max-speed";
     public static final String MIN_SPEED = "min-speed";
-    public static final double  PEEK_DELAY = 0.5 ; // in seconds
 
     private static final double RHO = 1.23;
     private static final double R = 2;
@@ -162,22 +161,16 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     @Override
     public Duration timeAdvance() {
-//        if (this.productionHasChanged) {
-//            return Duration.zero(this.getSimulatedTimeUnit());
-//        } else {
-//            return new Duration(PEEK_DELAY, this.getSimulatedTimeUnit()) ;
-//        }
         return Duration.INFINITY;
     }
 
 
     @Override
     public void userDefinedInternalTransition(Duration elapsedTime) {
-        this.logMessage("" + this.getCurrentStateTime().getSimulatedTime());
         if(elapsedTime.greaterThan(Duration.zero(getSimulatedTimeUnit()))) {
             if(this.isOnBreak() && this.getPower() != 0) {
                 setPower(0);
-            }else if(isOn()) {
+            }else if(!this.isOnBreak() && this.isOn()) {
                 setPower(COEFF * Math.pow(speed, 3));
             }
         }
@@ -245,12 +238,12 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
         if(this.currentPower.v != v) {
             this.currentPower.v = v;
             this.productionHasChanged = true;
-            this.powerPlotter.addData(
-                    SERIES,
-                    this.getCurrentStateTime().getSimulatedTime(),
-                    this.getPower()
-                    );
         }
+        this.powerPlotter.addData(
+                SERIES,
+                this.getCurrentStateTime().getSimulatedTime(),
+                this.getPower()
+                );
     }
 
     public double getPower() {
@@ -276,7 +269,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     }
 
     /**
-     * Return true if the wind turbine has to be off (from the controller/user)
+     * Return true if the wind turbine has to be off (order from the controller/user)
      * @return
      */
     private boolean isOnBreak() {
