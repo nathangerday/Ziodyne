@@ -1,6 +1,6 @@
 package simulation;
 
-import components.Fridge;
+import components.Lamp;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
@@ -19,20 +19,20 @@ extends AbstractCVM
     public void			deploy() throws Exception
     {
         @SuppressWarnings("unused")
-//        String componentLampURI =
-//        AbstractComponent.createComponent(
-//                Lamp.class.getCanonicalName(),
-//                new Object[]{URI.COMPONENT_LAMP,URI.LAMP_INBOUND_PORT}) ;
+        String componentLampURI =
+        AbstractComponent.createComponent(
+                Lamp.class.getCanonicalName(),
+                new Object[]{URI.COMPONENT_LAMP,URI.LAMP_INBOUND_PORT}) ;
         
 //        String componentWindTurbineURI =
 //                AbstractComponent.createComponent(
 //                        WindTurbine.class.getCanonicalName(),
 //                        new Object[]{URI.COMPONENT_WINDTURBINE,URI.WINDTURBINE_INBOUND_PORT}) ;
         
-        String componentFridgeURI =
-                AbstractComponent.createComponent(
-                        Fridge.class.getCanonicalName(),
-                        new Object[]{URI.COMPONENT_FRIDGE,URI.FRIDGE_INBOUND_PORT}) ;
+//        String componentFridgeURI =
+//                AbstractComponent.createComponent(
+//                        Fridge.class.getCanonicalName(),
+//                        new Object[]{URI.COMPONENT_FRIDGE,URI.FRIDGE_INBOUND_PORT}) ;
 
         super.deploy();
     }

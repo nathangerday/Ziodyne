@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import components.Lamp;
-import components.Lamp.LampState;   
+import components.Lamp.LampState;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
 import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
@@ -69,6 +69,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     /** current power in watts.			*/
     private final Value<Double> currentPower = new Value<Double>(this, 0.0, 0);
     private boolean consumptionHasChanged;
+    private double lastPower;
 
     /** plotter for the power level over time.							*/
     protected XYPlotter powerPlotter;
@@ -136,6 +137,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
                 this.currentPower.v = HIGH_MODE_CONSUMPTION;
                 break;
             }
+            this.lastPower = this.currentPower.v;
         }catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -169,7 +171,29 @@ public class LampModel 	extends AtomicHIOAwithEquations {
         if (this.consumptionHasChanged) {
             return Duration.zero(this.getSimulatedTimeUnit());
         } else {
-            return Duration.INFINITY;
+            return new Duration(1.0, TimeUnit.SECONDS);
+        }
+    }
+    
+    
+    @Override
+    public void userDefinedInternalTransition(Duration elapsedTime) {
+        super.userDefinedInternalTransition(elapsedTime);
+        if(powerPlotter != null) {
+            if(lastPower != this.getPower()) {
+                this.powerPlotter.addData(
+                        SERIES,
+                        this.getCurrentStateTime().getSimulatedTime(),
+                        lastPower);
+            }
+            this.powerPlotter.addData(
+                    SERIES,
+                    this.getCurrentStateTime().getSimulatedTime(),
+                    this.getPower());
+        }
+        if(lastPower != this.getPower()) {
+            this.consumptionHasChanged = true;
+            lastPower = this.getPower();
         }
     }
 
@@ -180,14 +204,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
         assert currentEvents != null && currentEvents.size() == 1;
         Event ce = (Event) currentEvents.get(0);
         assert ce instanceof AbstractLampEvent;
-        double last = this.getPower();
-
         ce.executeOn(this);
-
-        if(last != this.getPower()) {
-            this.consumptionHasChanged = true;
-        }
-
         super.userDefinedExternalTransition(elapsedTime);
     }
 
@@ -251,23 +268,23 @@ public class LampModel 	extends AtomicHIOAwithEquations {
 
 
     public void setPower(double v) {
-        if(powerPlotter != null) {
-            this.powerPlotter.addData(
-                    SERIES,
-                    this.getCurrentStateTime().getSimulatedTime(),
-                    this.getPower());
-        }
         this.currentPower.v = v;
-        if(powerPlotter != null) {
-            this.powerPlotter.addData(
-                    SERIES,
-                    this.getCurrentStateTime().getSimulatedTime(),
-                    this.getPower());
-        }
     }
 
 
     public double getPower(){
+        if(this.isOnBreak()) {
+            return 0.0;
+        }
         return this.currentPower.v;
+    }
+    
+    
+    public boolean isOnBreak() {
+        try {
+            return (boolean) this.componentRef.getEmbeddingComponentStateValue("break");
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

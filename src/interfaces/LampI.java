@@ -5,4 +5,6 @@ import fr.sorbonne_u.components.interfaces.OfferedI;
 
 public interface LampI extends OfferedI{
     public LampState getState() throws Exception;
+    public void switchBreak() throws Exception;
+    public boolean isOnBreak() throws Exception;
 }

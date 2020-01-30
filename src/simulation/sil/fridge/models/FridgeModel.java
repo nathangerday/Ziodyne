@@ -214,7 +214,7 @@ public class FridgeModel extends AtomicHIOAwithEquations{
         if(this.consumptionHasChanged) {
             return Duration.zero(this.getSimulatedTimeUnit());
         } else {
-            return new Duration(0.1, TimeUnit.SECONDS);
+            return new Duration(1.0, TimeUnit.SECONDS);
         }
     }
 

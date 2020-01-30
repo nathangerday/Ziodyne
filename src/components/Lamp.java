@@ -21,12 +21,14 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
 
     protected LampInboundPort lampInboundPort;
     protected LampState state;
+    protected boolean isOnBreak;
 
     protected LampSimulatorPlugin asp ;
 
     protected Lamp(String uri, String lampInboundPortURI) throws Exception {
         super(uri, 1, 0);
         this.state = LampState.OFF;
+        this.isOnBreak = false;
         this.addOfferedInterface(LampI.class);
         this.lampInboundPort = new LampInboundPort(lampInboundPortURI, this);
         this.lampInboundPort.publishPort();
@@ -104,6 +106,16 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
     }
 
     @Override
+    public void switchBreak() throws Exception{
+        this.isOnBreak = !this.isOnBreak;
+    }
+
+    @Override
+    public boolean isOnBreak() throws Exception{
+        return this.isOnBreak;
+    }
+
+    @Override
     protected Architecture createLocalArchitecture(String modelURI) throws Exception{
         return LampCoupledModel.build();
     }
@@ -112,6 +124,8 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
     public Object getEmbeddingComponentStateValue(String name) throws Exception{
         if(name.equals("state")) {
             return state;
+        } else if(name.equals("break")){ 
+            return isOnBreak;
         } else {
             throw new RuntimeException();
         }

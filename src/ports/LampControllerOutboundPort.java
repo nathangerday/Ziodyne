@@ -26,4 +26,14 @@ public class LampControllerOutboundPort extends AbstractOutboundPort implements 
     public LampState getState() throws Exception{
         return ((LampControllerI)this.connector).getState();
     }
+
+    @Override
+    public boolean isOnBreak() throws Exception{
+        return ((LampControllerI)this.connector).isOnBreak();
+    }
+
+    @Override
+    public void switchBreak() throws Exception{
+        ((LampControllerI)this.connector).switchBreak();
+    }
 }
