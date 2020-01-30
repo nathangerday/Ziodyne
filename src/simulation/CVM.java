@@ -1,7 +1,6 @@
 package simulation;
 
-import components.Lamp;
-import components.WindTurbine;
+import components.Fridge;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
@@ -25,10 +24,15 @@ extends AbstractCVM
 //                Lamp.class.getCanonicalName(),
 //                new Object[]{URI.COMPONENT_LAMP,URI.LAMP_INBOUND_PORT}) ;
         
-        String componentWindTurbineURI =
+//        String componentWindTurbineURI =
+//                AbstractComponent.createComponent(
+//                        WindTurbine.class.getCanonicalName(),
+//                        new Object[]{URI.COMPONENT_WINDTURBINE,URI.WINDTURBINE_INBOUND_PORT}) ;
+        
+        String componentFridgeURI =
                 AbstractComponent.createComponent(
-                        WindTurbine.class.getCanonicalName(),
-                        new Object[]{URI.COMPONENT_WINDTURBINE,URI.WINDTURBINE_INBOUND_PORT}) ;
+                        Fridge.class.getCanonicalName(),
+                        new Object[]{URI.COMPONENT_FRIDGE,URI.FRIDGE_INBOUND_PORT}) ;
 
         super.deploy();
     }
