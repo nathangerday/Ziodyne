@@ -62,16 +62,13 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     private final Value<Double> currentPower = new Value<Double>(this, 0.0, 0);
 
     private boolean productionHasChanged;
+    private double lastPower;
     private double maxSpeed;
     private double minSpeed;
     private double speed;
 
-
     private XYPlotter powerPlotter;
     private WindTurbine componentRef;
-
-
-
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -121,7 +118,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
             this.powerPlotter.showPlotter();
         }
         this.productionHasChanged = false;
-
+        this.lastPower = this.getPower();
         try {
             this.setDebugLevel(1);
         } catch (Exception e) {
@@ -148,14 +145,17 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     @Override
     public ArrayList<EventI> output() {
+        this.logMessage("Debut output");
         if (this.productionHasChanged) {
             this.logMessage("Windturbine production sent");
             ArrayList<EventI> ret = new ArrayList<EventI>();
             Time currentTime = this.getCurrentStateTime().add(this.getNextTimeAdvance());
             ret.add(new WindTurbineProduction(currentTime, this.getPower()));
             this.productionHasChanged = false;
+            this.logMessage("Fin output envoie");
             return ret;
         } else {
+            this.logMessage("Fin output rien");
             return null;
         }
     }
@@ -163,30 +163,51 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     @Override
     public Duration timeAdvance() {
-        return Duration.INFINITY;
+        if (this.productionHasChanged) {
+            this.logMessage("timeadvance : 0");
+            return Duration.zero(this.getSimulatedTimeUnit());
+        } else {
+            this.logMessage("timeadvance : 5");
+            return new Duration(5.0, TimeUnit.SECONDS);
+        }
     }
 
 
     @Override
     public void userDefinedInternalTransition(Duration elapsedTime) {
+        this.logMessage("Debut internal");
         if(elapsedTime.greaterThan(Duration.zero(getSimulatedTimeUnit()))) {
-            if(this.isOnBreak() && this.getPower() != 0) {
-                setPower(0);
+            if(this.isOnBreak() && this.isOn()) {
+                this.setState(false);
             }else if(!this.isOnBreak() && this.isOn()) {
                 setPower(COEFF * Math.pow(speed, 3));
             }
+            if(this.powerPlotter != null) {
+                this.powerPlotter.addData(
+                        SERIES,
+                        this.getCurrentStateTime().getSimulatedTime(),
+                        this.getPower()
+                        );
+            }
+            if(this.lastPower != this.getPower()) {
+                this.lastPower = this.getPower();
+                this.productionHasChanged = true;
+            }
         }
         super.userDefinedInternalTransition(elapsedTime);
+        this.logMessage("Fin internal");
     }
 
 
     @Override
     public void userDefinedExternalTransition(Duration elapsedTime) {
+        this.logMessage("Debut external");
         ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
         for(EventI e : currentEvents) {
             e.executeOn(this);
         }
         super.userDefinedExternalTransition(elapsedTime);
+        this.logMessage("Fin external");
     }
 
 
@@ -226,9 +247,9 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
             if(this.isOn() != state) {
                 this.componentRef.setEmbeddingComponentStateValue("state", state);
                 if(state) {
-                    this.setPower(0);
-                }else {
                     this.setPower(COEFF * Math.pow(speed, 3));
+                }else {
+                    this.setPower(0);
                 }
             }
         }catch (Exception e) {
@@ -237,15 +258,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     }
 
     private void setPower(double v) {
-        if(this.currentPower.v != v) {
-            this.currentPower.v = v;
-            this.productionHasChanged = true;
-        }
-        this.powerPlotter.addData(
-                SERIES,
-                this.getCurrentStateTime().getSimulatedTime(),
-                this.getPower()
-                );
+        this.currentPower.v = v;
     }
 
     public double getPower() {
@@ -253,11 +266,13 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     }
 
     private void checkSpeed() {
-        boolean on = this.isOn();
-        if(!on && speed >= minSpeed && speed <= maxSpeed) {
-            this.setState(true);
-        }else if(on && (speed < minSpeed || speed > maxSpeed)) {
-            this.setState(false);
+        if(!this.isOnBreak()) {
+            boolean on = this.isOn();
+            if(!on && speed >= minSpeed && speed <= maxSpeed) {
+                this.setState(true);
+            }else if(on && (speed < minSpeed || speed > maxSpeed)) {
+                this.setState(false);
+            }
         }
     }
 
@@ -267,6 +282,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
 
     public void setSpeed(double s) {
         this.speed = s;
+        //Change state following the speed of the wind
         this.checkSpeed();
     }
 

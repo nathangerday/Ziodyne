@@ -1,6 +1,6 @@
 package simulation;
 
-import components.Dishwasher;
+import components.WindTurbine;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
@@ -24,10 +24,10 @@ extends AbstractCVM
         //                Lamp.class.getCanonicalName(),
         //                new Object[]{URI.COMPONENT_LAMP,URI.LAMP_INBOUND_PORT}) ;
 
-        //        String componentWindTurbineURI =
-        //                AbstractComponent.createComponent(
-        //                        WindTurbine.class.getCanonicalName(),
-        //                        new Object[]{URI.COMPONENT_WINDTURBINE,URI.WINDTURBINE_INBOUND_PORT}) ;
+        String componentWindTurbineURI =
+        AbstractComponent.createComponent(
+                WindTurbine.class.getCanonicalName(),
+                new Object[]{URI.COMPONENT_WINDTURBINE,URI.WINDTURBINE_INBOUND_PORT}) ;
 
         //        String componentFridgeURI =
         //                AbstractComponent.createComponent(
@@ -44,10 +44,10 @@ extends AbstractCVM
         //                ElectricMeter.class.getCanonicalName(),
         //                new Object[]{URI.COMPONENT_ELECTRICMETER,URI.ELECTRICMETER_INBOUND_PORT}) ;
 
-        String componentDishWasherURI =
-        AbstractComponent.createComponent(
-                Dishwasher.class.getCanonicalName(),
-                new Object[]{URI.COMPONENT_DISHWASHER,URI.DISHWASHER_INBOUND_PORT}) ;
+        //        String componentDishWasherURI =
+        //        AbstractComponent.createComponent(
+        //                Dishwasher.class.getCanonicalName(),
+        //                new Object[]{URI.COMPONENT_DISHWASHER,URI.DISHWASHER_INBOUND_PORT}) ;
 
         super.deploy();
     }
