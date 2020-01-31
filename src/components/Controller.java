@@ -1,40 +1,37 @@
 package components;
 
-import connectors.*;
-import fr.sorbonne_u.components.AbstractComponent;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import connectors.BatteryConnector;
+import connectors.DishwasherConnector;
+import connectors.ElectricMeterConnector;
+import connectors.FridgeConnector;
+import connectors.LampConnector;
+import connectors.WindTurbineConnector;
+import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
+import fr.sorbonne_u.components.cyphy.plugins.devs.AtomicSimulatorPlugin;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import fr.sorbonne_u.devs_simulation.architectures.Architecture;
+import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
+import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDescriptor;
+import fr.sorbonne_u.devs_simulation.models.architectures.AtomicModelDescriptor;
 import interfaces.DishwasherControllerI;
 import interfaces.FridgeControllerI;
 import interfaces.LampControllerI;
 import interfaces.WindTurbineControllerI;
-import ports.*;
+import ports.BatteryControllerOutboundPort;
+import ports.DishwasherControllerOutboundPort;
+import ports.ElectricMeterControllerOutboundPort;
+import ports.FridgeControllerOutboundPort;
+import ports.LampControllerOutboundPort;
+import ports.WindTurbineControllerOutboundPort;
+import simulation.sil.controller.models.ControllerModel;
 
-//-----------------------------------------------------------------------------
-/**
- * The class <code>Controller</code> implements a component that can control a Lamp
- * from Lamp component.
- *
- * <p><strong>Description</strong></p>
- * 
- * The component declares its required service through the required interface
- * <code>LampI</code> which has a <code>isLampOn</code> requested service
- * signature.  The internal method <code>switchLamp</code> implements the
- * main task of the component, as it calls the provider component through the
- * outbound port implementing the connection.  It switches the button On and Off. The <code>start</code> method initiates
- * this process.
- * 
- * <p><strong>Invariant</strong></p>
- * 
- * <pre>
- * invariant		true
- * </pre>
- * 
- * <p>Created on : 2018-10-18</p>
- *
- */
-
-public class Controller extends AbstractComponent{
+public class Controller extends AbstractCyPhyComponent implements EmbeddingComponentAccessI {
     //equipements ports
     private LampControllerOutboundPort lampOutboundPort;
     private FridgeControllerOutboundPort fridgeOutboundPort;
@@ -50,6 +47,8 @@ public class Controller extends AbstractComponent{
     private String dishwasherInboundPortURI;
     private String electricMeterInboundPortURI;
     private String batteryInboundPortURI;
+
+    protected AtomicSimulatorPlugin asp;
 
     protected Controller(
             String uri,
@@ -92,6 +91,31 @@ public class Controller extends AbstractComponent{
         this.electricMeterOutboundPort.publishPort();
         this.batteryOutboundPort = new BatteryControllerOutboundPort(batteryOutboundPortURI,this);
         this.batteryOutboundPort.publishPort();
+
+        this.initialise();
+    }
+
+    private void initialise() throws Exception {
+        Architecture localArchitecture = this.createLocalArchitecture(null);
+        Controller ref = this;
+        this.asp = new AtomicSimulatorPlugin() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void setSimulationRunParameters(
+                    Map<String, Object> simParams
+                    ) throws Exception{
+                simParams.put(ControllerModel.COMPONENT_REF,ref);
+                super.setSimulationRunParameters(simParams);
+                simParams.remove(ControllerModel.COMPONENT_REF);
+            }
+        };
+        this.asp.setPluginURI(localArchitecture.getRootModelURI());
+        this.asp.setSimulationArchitecture(localArchitecture);
+        this.installPlugin(this.asp);
+        this.tracer.setTitle("Controller");
+        this.tracer.setRelativePosition(1, 0);
+        this.toggleTracing();
     }
 
 
@@ -143,142 +167,9 @@ public class Controller extends AbstractComponent{
             throw new ComponentStartException(e);
         }
     }
-    
-    
-    public void scenario2() throws Exception {
-//        if(this.windTurbineOutboundPort.getEnergyProduced() == 0) {
-//            System.out.println("Windturbine not producing any energy, setting battery mode to \"producing\" ");
-//            this.batteryOutboundPort.setMode(BatteryState.Producing);
-//        }
-//        
-//        
-//        if(this.electricMeterOutboundPort.getConsommation() == 0) {
-//            System.out.println("No energy being consumed, switching on some devices");
-//            if(!this.fridgeOutboundPort.isFridgeOn()) {
-//                System.out.println("Switching fridge on");
-//                this.fridgeOutboundPort.switchFridge();
-//            }
-//            
-//            if(!this.fridgeOutboundPort.isFreezerOn()) {
-//                System.out.println("Switching freezer on");
-//                this.fridgeOutboundPort.switchFreezer();
-//            }
-//        }else if(this.electricMeterOutboundPort.getConsommation() > 50) {
-//            System.out.println("Too much energy being consumed, switching off some devices");
-//            if(this.fridgeOutboundPort.isFridgeOn()) {
-//                System.out.println("Switching fridge off");
-//                this.fridgeOutboundPort.switchFridge();
-//            }
-//            
-//            if(this.fridgeOutboundPort.isFreezerOn()) {
-//                System.out.println("Switching freezer off");
-//                this.fridgeOutboundPort.switchFreezer();
-//            }
-//        }
-//        
-//        System.out.println("Is fridge on ? " + this.fridgeOutboundPort.isFridgeOn());
-//        System.out.println("Is freezer on ? " + this.fridgeOutboundPort.isFreezerOn());
-//        
-//        
-//        System.out.println("Setting the dishwasher to eco mode");
-//        this.dishwasherOutboundPort.setDishwasherModeEco(true);
-//        System.out.println("Is the dishwasher on ecode mode ? " + this.dishwasherOutboundPort.isDishwasherModeEco());
-//        
-//        
-//        System.out.println("Starting the dishwasher");
-//        this.dishwasherOutboundPort.startDishwasherProgram();
-//        System.out.println("The time left on the dishwasher program is : " + this.dishwasherOutboundPort.getDishwasherTimeLeft());
-//        
-//        int lampIntensity = this.lampOutboundPort.getState();
-//        System.out.println("The lamp intensity is : " + lampIntensity);
-//        
-//        if(lampIntensity > 5 && this.fridgeOutboundPort.isFridgeOn()) {
-//            System.out.println("Switching off the fridge to have enough energy for the lamp");
-//            this.fridgeOutboundPort.switchFridge();
-//        }
-//        
-//        System.out.println("Is fridge on ? " + this.fridgeOutboundPort.isFridgeOn());
-//        System.out.println("Is freezer on ? " + this.fridgeOutboundPort.isFreezerOn());
-//        
-    }
-    
-    
-    
-    public void scenario1() throws Exception {
-//    	/*
-//    	 *i want to turn off the fridge, turn it on and set the fridge temperature  
-//    	 */	
-//    	if(this.fridgeOutboundPort.isFridgeOn() && this.fridgeOutboundPort.isFreezerOn()) {
-//    		System.out.println("Turning the fridge off");
-//	    	//switch fridge compartment off
-//	    	this.fridgeOutboundPort.switchFridge();
-//	   
-//	    	//switch freezer comparment off
-//	    	this.fridgeOutboundPort.switchFreezer();
-//	    	
-//	    	System.out.println("Is the fridge compartment turned off ? "+this.fridgeOutboundPort.isFridgeOn());
-//	    	System.out.println("Is the freezer compartment turned off ? "+this.fridgeOutboundPort.isFreezerOn());
-//    	}
-//    	
-//    	System.out.println("Turning the fridge on");
-//    	
-//    	//switch fridge compartment on
-//    	this.fridgeOutboundPort.switchFridge();
-//    	System.out.println("Is the fridge compartment turned on ? "+this.fridgeOutboundPort.isFridgeOn());
-//    	
-//    	//switch freezer comparment on
-//    	this.fridgeOutboundPort.switchFreezer();
-//    	System.out.println("Is the freezer compartment turned off ? "+this.fridgeOutboundPort.isFreezerOn());
-//    	
-//    	//Check is the fridge and freezer temperature
-//    	System.out.println("Fridge temperature : "+this.fridgeOutboundPort.getFridgeTemp());
-//    	System.out.println("Freezer temperature : "+this.fridgeOutboundPort.getFreezerTemp());
-//    	
-//    	System.out.println("Setting fridge temperature");
-//    	//fridge compartment is too hot
-//    	this.fridgeOutboundPort.setFridgeTemp(2);
-//    	
-//    	//freezer compartment is not cold enough
-//    	this.fridgeOutboundPort.setFreezerTemp(-20);
-//    	
-//    	//Check is the fridge and freezer temperature
-//      	System.out.println("Fridge temperature : "+this.fridgeOutboundPort.getFridgeTemp());
-//    	System.out.println("Freezer temperature : "+this.fridgeOutboundPort.getFreezerTemp());
-//    	
-//    	/*
-//    	 * do the laundry with dishwasher in eco mode
-//    	 */
-//    	
-//    	if(!this.dishwasherOutboundPort.isDishwasherModeEco()) {
-//    		this.dishwasherOutboundPort.setDishwasherModeEco(true);
-//    		System.out.println("Starting dishwasher in eco mode");
-//    		this.dishwasherOutboundPort.startDishwasherProgram();
-//    		
-//    	}
-//    	
-//    	System.out.println("Time left : "+this.dishwasherOutboundPort.getDishwasherTimeLeft() );
-    	
-    	
-    
-    }
 
-    @Override
-    public void execute() throws Exception{
-        super.execute();
-        scenario2();
-     /*   System.out.print("Lampe état : ");
-        switch(this.lampOutboundPort.getState()) {
-        case 0 : System.out.println("éteint");break;
-        case 1 : System.out.println("tamisé"); break;
-        case 2 : System.out.println("normal"); break;
-        case 3 : System.out.println("fort"); break;
-        }
-        System.out.println("Fridge temp : " + this.fridgeOutboundPort.getFreezerTemp());
-        System.out.println("wind speed : " + this.windTurbineOutboundPort.getWindSpeed());
-        System.out.println("Dishwasher time left : "+ this.dishwasherOutboundPort.getDishwasherTimeLeft());
-        System.out.println("Electric consommation : "+ this.electricMeterOutboundPort.getConsommation());
-        System.out.println("Battery max capacity : "+ this.batteryOutboundPort.getMaxCapacity());*/
-    }
+
+
 
     @Override
     public void shutdown() throws ComponentShutdownException {
@@ -319,5 +210,34 @@ public class Controller extends AbstractComponent{
         this.doPortDisconnection(this.electricMeterOutboundPort.getPortURI());
         this.doPortDisconnection(this.batteryOutboundPort.getPortURI());
         super.finalise();
+    }
+
+    public double getControlPeriod() {
+        return 1.0;
+    }
+
+    public void controlTask(double simulatedTime) throws Exception {
+    }
+
+    @Override
+    protected Architecture createLocalArchitecture(String modelURI) throws Exception {
+        Map<String,AbstractAtomicModelDescriptor> atomicModelDescriptors =
+                new HashMap<>() ;
+
+        atomicModelDescriptors.put(
+                ControllerModel.URI,
+                AtomicModelDescriptor.create(
+                        ControllerModel.class,
+                        ControllerModel.URI,
+                        TimeUnit.SECONDS,
+                        null,
+                        SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
+        Architecture localArchitecture =
+                new Architecture(
+                        ControllerModel.URI,
+                        atomicModelDescriptors,
+                        new HashMap<>(),
+                        TimeUnit.SECONDS) ;
+        return localArchitecture ;
     }
 }
