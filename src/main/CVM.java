@@ -1,8 +1,26 @@
 package main;
 
-import components.*;
+import java.util.HashMap;
+
+import components.Battery;
+import components.Controller;
+import components.Coordinator;
+import components.Dishwasher;
+import components.ElectricMeter;
+import components.Fridge;
+import components.Lamp;
+import components.Supervisor;
+import components.WindTurbine;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
+import simulation.overall.SGCoupledModel;
+import simulation.sil.battery.models.BatteryModel;
+import simulation.sil.controller.models.ControllerModel;
+import simulation.sil.dishwasher.models.DishwasherCoupledModel;
+import simulation.sil.electricmeter.models.ElectricMeterModel;
+import simulation.sil.fridge.models.FridgeCoupledModel;
+import simulation.sil.lamp.models.LampCoupledModel;
+import simulation.sil.windturbine.models.WindTurbineCoupledModel;
 
 
 
@@ -11,32 +29,15 @@ public class CVM extends AbstractCVM{
         super();
     }
 
-    public static void main(String[] args) throws Exception{
-        CVM a = new CVM();
-        a.startStandardLifeCycle(1000L);
-        Thread.sleep(5000L);
-        System.exit(1);
-    }
-
-    /**
-     * instantiate the components, publish their port and interconnect them.
-     * 
-     * <p><strong>Contract</strong></p>
-     * 
-     * <pre>
-     * pre	!this.deploymentDone()
-     * post	this.deploymentDone()
-     * </pre>
-     * 
-     * @see fr.sorbonne_u.components.cvm.AbstractCVM#deploy()
-     */
     @Override
     public void deploy() throws Exception{
 
         assert	!this.deploymentDone() ;
 
+        HashMap<String,String> hm = new HashMap<>() ;
+
         // Create the controller
-        AbstractComponent.createComponent(Controller.class.getCanonicalName(),
+        String controllerComponent = AbstractComponent.createComponent(Controller.class.getCanonicalName(),
                 new Object[] {
                         URI.COMPONENT_CONTROLLER,
                         URI.LAMP_CONTROLLER_OUTBOUND_PORT,
@@ -51,57 +52,71 @@ public class CVM extends AbstractCVM{
                         URI.ELECTRICMETER_INBOUND_PORT,
                         URI.BATTERY_CONTROLLER_OUTBOUND_PORT,
                         URI.BATTERY_INBOUND_PORT});
+        hm.put(ControllerModel.URI, controllerComponent);
 
         // Create the lamp
-        AbstractComponent.createComponent(Lamp.class.getCanonicalName(),
+        String lampComponent = AbstractComponent.createComponent(Lamp.class.getCanonicalName(),
                 new Object[] {
                         URI.COMPONENT_LAMP,
                         URI.LAMP_INBOUND_PORT});
+        hm.put(LampCoupledModel.URI, lampComponent);
 
         // Create the fridge
-        AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
+        String fridgeComponent = AbstractComponent.createComponent(Fridge.class.getCanonicalName(),
                 new Object[] {
                         URI.COMPONENT_FRIDGE,
                         URI.FRIDGE_INBOUND_PORT});
+        hm.put(FridgeCoupledModel.URI, fridgeComponent);
 
         // Create the wind turbine
-        AbstractComponent.createComponent(WindTurbine.class.getCanonicalName(),
+        String WTComponent = AbstractComponent.createComponent(WindTurbine.class.getCanonicalName(),
                 new Object[] {
                         URI.COMPONENT_WINDTURBINE,
                         URI.WINDTURBINE_INBOUND_PORT});
+        hm.put(WindTurbineCoupledModel.URI, WTComponent);
 
         // Create the dishwasher
-        AbstractComponent.createComponent(Dishwasher.class.getCanonicalName(),
+        String DWComponent = AbstractComponent.createComponent(Dishwasher.class.getCanonicalName(),
                 new Object[] {
                         URI.COMPONENT_DISHWASHER,
                         URI.DISHWASHER_INBOUND_PORT});
+        hm.put(DishwasherCoupledModel.URI, DWComponent);
 
         // Create the electric meter
-        AbstractComponent.createComponent(ElectricMeter.class.getCanonicalName(),
+        String EMComponent = AbstractComponent.createComponent(ElectricMeter.class.getCanonicalName(),
                 new Object[] {
                         URI.COMPONENT_ELECTRICMETER,
                         URI.ELECTRICMETER_INBOUND_PORT});
+        hm.put(ElectricMeterModel.URI, EMComponent);
 
         //Create the battery
-        AbstractComponent.createComponent(Battery.class.getCanonicalName(),
+        String batteryComponent = AbstractComponent.createComponent(Battery.class.getCanonicalName(),
                 new Object[] {
                         URI.COMPONENT_BATTERY,
-                        URI.BATTERY_INBOUND_PORT
-                });
+                        URI.BATTERY_INBOUND_PORT});
+        hm.put(BatteryModel.URI, batteryComponent);
+
+        //Create the coordinator
+        String coordinatorComponent = AbstractComponent.createComponent(Coordinator.class.getCanonicalName(),
+                new Object[] {});
+        hm.put(SGCoupledModel.URI, coordinatorComponent);
+
+        //Create the supervisor
+        AbstractComponent.createComponent(
+                Supervisor.class.getCanonicalName(),
+                new Object[]{hm}) ;
+
         super.deploy();
-
-        assert this.deploymentDone();
     }
 
-
-    /**
-     * @see fr.sorbonne_u.components.cvm.AbstractCVM#finalise()
-     */
-    @Override
-    public void finalise() throws Exception{
-        super.finalise();
+    public static void main(String[] args) throws Exception{
+        try {
+            CVM c = new CVM() ;
+            c.startStandardLifeCycle(75000L) ;
+            Thread.sleep(10000L) ;
+            System.exit(0) ;
+        } catch (Exception e) {
+            throw new RuntimeException(e) ;
+        }
     }
-
-
-
 }

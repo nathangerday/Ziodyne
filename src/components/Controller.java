@@ -115,7 +115,6 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
         this.installPlugin(this.asp);
         this.tracer.setTitle("Controller");
         this.tracer.setRelativePosition(1, 0);
-        this.toggleTracing();
     }
 
 
@@ -151,14 +150,17 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
                     this.windTurbineOutboundPort.getPortURI(),
                     this.windTurbineInboundPortURI,
                     WindTurbineConnector.class.getCanonicalName());
+            //connect with the dish washer
             this.doPortConnection(
                     this.dishwasherOutboundPort.getPortURI(),
                     this.dishwasherInboundPortURI,
                     DishwasherConnector.class.getCanonicalName());
+            //connect with the electric meter
             this.doPortConnection(
                     this.electricMeterOutboundPort.getPortURI(),
                     this.electricMeterInboundPortURI,
                     ElectricMeterConnector.class.getCanonicalName());
+            //connect with the battery
             this.doPortConnection(
                     this.batteryOutboundPort.getPortURI(),
                     this.batteryInboundPortURI,
@@ -167,8 +169,6 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
             throw new ComponentStartException(e);
         }
     }
-
-
 
 
     @Override

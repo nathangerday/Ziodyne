@@ -10,10 +10,8 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.PreconditionException;
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
-import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDescriptor;
 import fr.sorbonne_u.devs_simulation.models.architectures.AtomicModelDescriptor;
-import fr.sorbonne_u.utils.PlotterDescription;
 import interfaces.BatteryI;
 import ports.BatteryInboundPort;
 import simulation.sil.battery.models.BatteryModel;
@@ -67,46 +65,46 @@ public class Battery extends AbstractCyPhyComponent implements BatteryI,Embeddin
         this.toggleLogging();
     }
 
-    @Override
-    public void execute() throws Exception {
-        // @remove A garder que en standalone
-        HashMap<String,Object> simParams = new HashMap<String,Object>();
-        simParams.put(
-                BatteryModel.URI + ":" + BatteryModel.SERIES_CAPACITY + PlotterDescription.PLOTTING_PARAM_NAME,
-                new PlotterDescription(
-                        "Battery Capacity",
-                        "Time (sec)",
-                        "Capacity (W)",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth(),
-                        SimulationMain.getPlotterHeight())) ;
-        simParams.put(
-                BatteryModel.URI + ":" + BatteryModel.SERIES_CONSUMPTION + PlotterDescription.PLOTTING_PARAM_NAME,
-                new PlotterDescription(
-                        "Battery Consumption",
-                        "Time (sec)",
-                        "Power (watt)",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + 2 * SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth(),
-                        SimulationMain.getPlotterHeight())) ;
-
-        simParams.put(
-                BatteryModel.URI + ":" + BatteryModel.SERIES_PRODUCTION + PlotterDescription.PLOTTING_PARAM_NAME,
-                new PlotterDescription(
-                        "Battery Production",
-                        "Time (sec)",
-                        "Power (W)",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + 3 * SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth(),
-                        SimulationMain.getPlotterHeight())) ;
-
-        this.asp.setSimulationRunParameters(simParams);
-        asp.setDebugLevel(0);
-        asp.doStandAloneSimulation(0.0, 500.0);
-    }
+//    @Override
+//    public void execute() throws Exception {
+//        // @remove A garder que en standalone
+//        HashMap<String,Object> simParams = new HashMap<String,Object>();
+//        simParams.put(
+//                BatteryModel.URI + ":" + BatteryModel.SERIES_CAPACITY + PlotterDescription.PLOTTING_PARAM_NAME,
+//                new PlotterDescription(
+//                        "Battery Capacity",
+//                        "Time (sec)",
+//                        "Capacity (W)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth(),
+//                        SimulationMain.getPlotterHeight())) ;
+//        simParams.put(
+//                BatteryModel.URI + ":" + BatteryModel.SERIES_CONSUMPTION + PlotterDescription.PLOTTING_PARAM_NAME,
+//                new PlotterDescription(
+//                        "Battery Consumption",
+//                        "Time (sec)",
+//                        "Power (watt)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + 2 * SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth(),
+//                        SimulationMain.getPlotterHeight())) ;
+//
+//        simParams.put(
+//                BatteryModel.URI + ":" + BatteryModel.SERIES_PRODUCTION + PlotterDescription.PLOTTING_PARAM_NAME,
+//                new PlotterDescription(
+//                        "Battery Production",
+//                        "Time (sec)",
+//                        "Power (W)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + 3 * SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth(),
+//                        SimulationMain.getPlotterHeight())) ;
+//
+//        this.asp.setSimulationRunParameters(simParams);
+//        asp.setDebugLevel(0);
+//        asp.doStandAloneSimulation(0.0, 500.0);
+//    }
 
     @Override
     public double getMaxCapacity() throws Exception {

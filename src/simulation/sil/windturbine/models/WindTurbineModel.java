@@ -121,6 +121,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
             this.powerPlotter.showPlotter();
         }
         this.productionHasChanged = false;
+
         try {
             this.setDebugLevel(1);
         } catch (Exception e) {
@@ -148,6 +149,7 @@ public class WindTurbineModel extends AtomicHIOAwithEquations {
     @Override
     public ArrayList<EventI> output() {
         if (this.productionHasChanged) {
+            this.logMessage("Windturbine production sent");
             ArrayList<EventI> ret = new ArrayList<EventI>();
             Time currentTime = this.getCurrentStateTime().add(this.getNextTimeAdvance());
             ret.add(new WindTurbineProduction(currentTime, this.getPower()));

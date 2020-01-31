@@ -1,18 +1,13 @@
 package components;
 
-import java.util.HashMap;
-
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.PostconditionException;
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
-import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
-import fr.sorbonne_u.utils.PlotterDescription;
 import interfaces.LampI;
 import ports.LampInboundPort;
 import simulation.sil.lamp.models.LampCoupledModel;
-import simulation.sil.lamp.models.LampModel;
 import simulation.sil.lamp.plugin.LampSimulatorPlugin;
 
 public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingComponentAccessI{
@@ -60,25 +55,25 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
         this.toggleLogging() ;
     }
 
-    @Override
-    public void execute() throws Exception {
-        // @remove A garder que en standalone
-        PlotterDescription pd =
-                new PlotterDescription(
-                        "Lamp Power",
-                        "Time (sec)",
-                        "Power (Watt)",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth()*2,
-                        SimulationMain.getPlotterHeight()*2);
-
-        HashMap<String,Object> simParams = new HashMap<String,Object>();
-        simParams.put(LampModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME, pd);
-        this.asp.setSimulationRunParameters(simParams);
-        asp.setDebugLevel(0);
-        asp.doStandAloneSimulation(0.0, 500.0);
-    }
+    //    @Override
+    //    public void execute() throws Exception {
+    //        // @remove A garder que en standalone
+    //        PlotterDescription pd =
+    //                new PlotterDescription(
+    //                        "Lamp Power",
+    //                        "Time (sec)",
+    //                        "Power (Watt)",
+    //                        SimulationMain.ORIGIN_X,
+    //                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+    //                        SimulationMain.getPlotterWidth()*2,
+    //                        SimulationMain.getPlotterHeight()*2);
+    //
+    //        HashMap<String,Object> simParams = new HashMap<String,Object>();
+    //        simParams.put(LampModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME, pd);
+    //        this.asp.setSimulationRunParameters(simParams);
+    //        asp.setDebugLevel(0);
+    //        asp.doStandAloneSimulation(0.0, 500.0);
+    //    }
 
     @Override
     public void shutdown() throws ComponentShutdownException {

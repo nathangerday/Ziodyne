@@ -1,22 +1,13 @@
 package components;
 
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
-
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.PostconditionException;
 import fr.sorbonne_u.components.exceptions.PreconditionException;
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
-import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
-import fr.sorbonne_u.devs_simulation.models.time.Duration;
-import fr.sorbonne_u.utils.PlotterDescription;
 import interfaces.WindTurbineI;
 import ports.WindTurbineInboundPort;
-import simulation.models.common.TicModel;
-import simulation.sil.windturbine.models.WindModel;
-import simulation.sil.windturbine.models.WindSensorModel;
 import simulation.sil.windturbine.models.WindTurbineCoupledModel;
 import simulation.sil.windturbine.models.WindTurbineModel;
 import simulation.sil.windturbine.plugin.WindTurbineSimulatorPlugin;
@@ -63,58 +54,58 @@ public class WindTurbine extends AbstractCyPhyComponent implements WindTurbineI,
     }
 
 
-    @Override
-    public void execute() throws Exception {
-        // @remove A garder que en standalone
-        HashMap<String,Object> simParams = new HashMap<String,Object>();
-
-        //Parameter of TicModel
-        simParams.put(TicModel.URI_WINDTURBINE + ":" + TicModel.DELAY_PARAMETER_NAME,
-                new Duration(5.0, TimeUnit.SECONDS));
-        //Parameters of WindModel
-        simParams.put(WindModel.URI + ":" + WindModel.MAX_WIND,15.0);
-        simParams.put(WindModel.URI + ":" + WindModel.WMASSF,0.05);
-        simParams.put(WindModel.URI + ":" + WindModel.WIS,1.0);
-        simParams.put(
-                WindModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
-                new PlotterDescription(
-                        "Wind Speed Model",
-                        "Time (sec)",
-                        "Speed (m/s)",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + 2*SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth(),
-                        SimulationMain.getPlotterHeight())) ;
-        //Parameters of WindSendsorModel
-        simParams.put(
-                WindSensorModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
-                new PlotterDescription(
-                        "Wind Sensor Speed Model",
-                        "Time (sec)",
-                        "Speed (m/s)",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + 3*SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth(),
-                        SimulationMain.getPlotterHeight())) ;
-        //Parameters of WindTurbineModel
-        simParams.put(WindTurbineModel.URI + ":" + WindTurbineModel.MAX_SPEED,10.0);
-        simParams.put(WindTurbineModel.URI + ":" + WindTurbineModel.MIN_SPEED,3.0);
-        simParams.put(
-                WindTurbineModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
-                new PlotterDescription(
-                        "Wind Turbine Power Production",
-                        "Time (sec)",
-                        "Power (watt)",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth(),
-                        SimulationMain.getPlotterHeight()));
-
-
-        this.asp.setSimulationRunParameters(simParams);
-        asp.setDebugLevel(0);
-        asp.doStandAloneSimulation(0.0, 500.0);
-    }
+//    @Override
+//    public void execute() throws Exception {
+//        // @remove A garder que en standalone
+//        HashMap<String,Object> simParams = new HashMap<String,Object>();
+//
+//        //Parameter of TicModel
+//        simParams.put(TicModel.URI_WINDTURBINE + ":" + TicModel.DELAY_PARAMETER_NAME,
+//                new Duration(5.0, TimeUnit.SECONDS));
+//        //Parameters of WindModel
+//        simParams.put(WindModel.URI + ":" + WindModel.MAX_WIND,15.0);
+//        simParams.put(WindModel.URI + ":" + WindModel.WMASSF,0.05);
+//        simParams.put(WindModel.URI + ":" + WindModel.WIS,1.0);
+//        simParams.put(
+//                WindModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
+//                new PlotterDescription(
+//                        "Wind Speed Model",
+//                        "Time (sec)",
+//                        "Speed (m/s)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + 2*SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth(),
+//                        SimulationMain.getPlotterHeight())) ;
+//        //Parameters of WindSendsorModel
+//        simParams.put(
+//                WindSensorModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
+//                new PlotterDescription(
+//                        "Wind Sensor Speed Model",
+//                        "Time (sec)",
+//                        "Speed (m/s)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + 3*SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth(),
+//                        SimulationMain.getPlotterHeight())) ;
+//        //Parameters of WindTurbineModel
+//        simParams.put(WindTurbineModel.URI + ":" + WindTurbineModel.MAX_SPEED,10.0);
+//        simParams.put(WindTurbineModel.URI + ":" + WindTurbineModel.MIN_SPEED,3.0);
+//        simParams.put(
+//                WindTurbineModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
+//                new PlotterDescription(
+//                        "Wind Turbine Power Production",
+//                        "Time (sec)",
+//                        "Power (watt)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth(),
+//                        SimulationMain.getPlotterHeight()));
+//
+//
+//        this.asp.setSimulationRunParameters(simParams);
+//        asp.setDebugLevel(0);
+//        asp.doStandAloneSimulation(0.0, 500.0);
+//    }
 
 
     @Override

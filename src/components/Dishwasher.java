@@ -1,13 +1,9 @@
 package components;
 
-import java.util.HashMap;
-
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
-import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
-import fr.sorbonne_u.utils.PlotterDescription;
 import interfaces.DishwasherI;
 import ports.DishwasherInboundPort;
 import simulation.sil.dishwasher.models.DishwasherCoupledModel;
@@ -46,25 +42,25 @@ public class Dishwasher extends AbstractCyPhyComponent implements DishwasherI,Em
         this.toggleLogging() ;
     }
 
-    @Override
-    public void execute() throws Exception {
-        // @remove A garder que en standalone
-        PlotterDescription pd =
-                new PlotterDescription(
-                        "DishWasher Consumption",
-                        "Time (sec)",
-                        "Power (W)",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth()*2,
-                        SimulationMain.getPlotterHeight()*2);
-
-        HashMap<String,Object> simParams = new HashMap<String,Object>();
-        simParams.put(DishwasherModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME, pd);
-        this.asp.setSimulationRunParameters(simParams);
-        asp.setDebugLevel(0);
-        asp.doStandAloneSimulation(0.0, 500.0);
-    }
+//    @Override
+//    public void execute() throws Exception {
+//        // @remove A garder que en standalone
+//        PlotterDescription pd =
+//                new PlotterDescription(
+//                        "DishWasher Consumption",
+//                        "Time (sec)",
+//                        "Power (W)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth()*2,
+//                        SimulationMain.getPlotterHeight()*2);
+//
+//        HashMap<String,Object> simParams = new HashMap<String,Object>();
+//        simParams.put(DishwasherModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME, pd);
+//        this.asp.setSimulationRunParameters(simParams);
+//        asp.setDebugLevel(0);
+//        asp.doStandAloneSimulation(0.0, 500.0);
+//    }
 
     @Override
     public void shutdown() throws ComponentShutdownException {

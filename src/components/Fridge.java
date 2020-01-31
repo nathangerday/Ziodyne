@@ -1,18 +1,13 @@
 package components;
 
-import java.util.HashMap;
-
 import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.PreconditionException;
 import fr.sorbonne_u.devs_simulation.architectures.Architecture;
-import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
-import fr.sorbonne_u.utils.PlotterDescription;
 import interfaces.FridgeI;
 import ports.FridgeInboundPort;
 import simulation.sil.fridge.models.FridgeCoupledModel;
-import simulation.sil.fridge.models.FridgeModel;
 import simulation.sil.fridge.plugin.FridgeSimulatorPlugin;
 
 public class Fridge extends AbstractCyPhyComponent implements FridgeI,EmbeddingComponentAccessI{
@@ -56,45 +51,45 @@ public class Fridge extends AbstractCyPhyComponent implements FridgeI,EmbeddingC
         this.toggleLogging() ;
     }
 
-    @Override
-    public void execute() throws Exception {
-        // @remove A garder que en standalone
-        HashMap<String,Object> simParams = new HashMap<String,Object>();
-        simParams.put(
-                FridgeModel.URI + ":" + FridgeModel.SERIES_FRIDGE + PlotterDescription.PLOTTING_PARAM_NAME,
-                new PlotterDescription(
-                        "Fridge Temperature Model",
-                        "Time (sec)",
-                        "Celsius",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth(),
-                        SimulationMain.getPlotterHeight())) ;
-        simParams.put(
-                FridgeModel.URI + ":" + FridgeModel.SERIES_FREEZER + PlotterDescription.PLOTTING_PARAM_NAME,
-                new PlotterDescription(
-                        "Freezer Temperature Model",
-                        "Time (sec)",
-                        "Celsius",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + 2*SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth(),
-                        SimulationMain.getPlotterHeight())) ;
-        simParams.put(
-                FridgeModel.URI + ":" + FridgeModel.SERIES_POWER + PlotterDescription.PLOTTING_PARAM_NAME,
-                new PlotterDescription(
-                        "Fridge Power Model",
-                        "Time (sec)",
-                        "Power (Watt)",
-                        SimulationMain.ORIGIN_X,
-                        SimulationMain.ORIGIN_Y + 3*SimulationMain.getPlotterHeight(),
-                        SimulationMain.getPlotterWidth(),
-                        SimulationMain.getPlotterHeight())) ;
-
-        this.asp.setSimulationRunParameters(simParams);
-        asp.setDebugLevel(0);
-        asp.doStandAloneSimulation(0.0, 500.0);
-    }
+    //    @Override
+    //    public void execute() throws Exception {
+    //        // @remove A garder que en standalone
+    //        HashMap<String,Object> simParams = new HashMap<String,Object>();
+    //        simParams.put(
+    //                FridgeModel.URI + ":" + FridgeModel.SERIES_FRIDGE + PlotterDescription.PLOTTING_PARAM_NAME,
+    //                new PlotterDescription(
+    //                        "Fridge Temperature Model",
+    //                        "Time (sec)",
+    //                        "Celsius",
+    //                        SimulationMain.ORIGIN_X,
+    //                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+    //                        SimulationMain.getPlotterWidth(),
+    //                        SimulationMain.getPlotterHeight())) ;
+    //        simParams.put(
+    //                FridgeModel.URI + ":" + FridgeModel.SERIES_FREEZER + PlotterDescription.PLOTTING_PARAM_NAME,
+    //                new PlotterDescription(
+    //                        "Freezer Temperature Model",
+    //                        "Time (sec)",
+    //                        "Celsius",
+    //                        SimulationMain.ORIGIN_X,
+    //                        SimulationMain.ORIGIN_Y + 2*SimulationMain.getPlotterHeight(),
+    //                        SimulationMain.getPlotterWidth(),
+    //                        SimulationMain.getPlotterHeight())) ;
+    //        simParams.put(
+    //                FridgeModel.URI + ":" + FridgeModel.SERIES_POWER + PlotterDescription.PLOTTING_PARAM_NAME,
+    //                new PlotterDescription(
+    //                        "Fridge Power Model",
+    //                        "Time (sec)",
+    //                        "Power (Watt)",
+    //                        SimulationMain.ORIGIN_X,
+    //                        SimulationMain.ORIGIN_Y + 3*SimulationMain.getPlotterHeight(),
+    //                        SimulationMain.getPlotterWidth(),
+    //                        SimulationMain.getPlotterHeight())) ;
+    //
+    //        this.asp.setSimulationRunParameters(simParams);
+    //        asp.setDebugLevel(0);
+    //        asp.doStandAloneSimulation(0.0, 500.0);
+    //    }
 
     @Override
     public void shutdown() throws ComponentShutdownException {
