@@ -197,9 +197,6 @@ public class ElectricMeterModel extends AtomicModel {
         ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
         for(EventI e : currentEvents) {
             e.executeOn(this);
-            if(e instanceof WindTurbineProduction) {
-                this.logMessage("reçu : " + e.getClass());
-            }
         }
         if(consumptionPlotter != null) {
             this.consumptionPlotter.addData(

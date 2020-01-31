@@ -590,6 +590,100 @@ public class Supervisor extends	AbstractComponent{
         return simParams;
     }
 
+    private HashMap<String,Object> getSimulationRunParameters2(){
+        HashMap<String,Object> simParams = new HashMap<String,Object>();
+
+        //Electric meter
+        simParams.put(
+                ElectricMeterModel.URI + ":" + ElectricMeterModel.SERIES_AVAILABLE + PlotterDescription.PLOTTING_PARAM_NAME,
+                new PlotterDescription(
+                        "Available Energy",
+                        "Time (sec)",
+                        "Power (W)",
+                        SimulationMain.ORIGIN_X + SimulationMain.getPlotterWidth(),
+                        SimulationMain.ORIGIN_Y + 50,
+                        SimulationMain.getPlotterWidth(),
+                        SimulationMain.getPlotterHeight())) ;
+
+        //Lamp
+        simParams.put(
+                LampModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
+                new PlotterDescription(
+                        "Lamp Power",
+                        "Time (sec)",
+                        "Power (Watt)",
+                        SimulationMain.ORIGIN_X ,
+                        SimulationMain.ORIGIN_Y + 50 + SimulationMain.getPlotterHeight(),
+                        SimulationMain.getPlotterWidth(),
+                        SimulationMain.getPlotterHeight()));
+
+        //Dishwasher
+        simParams.put(
+                DishwasherModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
+                new PlotterDescription(
+                        "DishWasher Consumption",
+                        "Time (sec)",
+                        "Power (W)",
+                        SimulationMain.ORIGIN_X + SimulationMain.getPlotterWidth(),
+                        SimulationMain.ORIGIN_Y + 50 + SimulationMain.getPlotterHeight(),
+                        SimulationMain.getPlotterWidth(),
+                        SimulationMain.getPlotterHeight()));
+
+
+
+        //Fridge
+
+        simParams.put(
+                FridgeModel.URI + ":" + FridgeModel.SERIES_POWER + PlotterDescription.PLOTTING_PARAM_NAME,
+                new PlotterDescription(
+                        "Fridge Power Model",
+                        "Time (sec)",
+                        "Power (Watt)",
+                        SimulationMain.ORIGIN_X + 2 * SimulationMain.getPlotterWidth() ,
+                        SimulationMain.ORIGIN_Y + 50 + SimulationMain.getPlotterHeight(),
+                        SimulationMain.getPlotterWidth(),
+                        SimulationMain.getPlotterHeight())) ;
+
+        //Battery
+        simParams.put(
+                BatteryModel.URI + ":" + BatteryModel.SERIES_CAPACITY + PlotterDescription.PLOTTING_PARAM_NAME,
+                new PlotterDescription(
+                        "Battery Capacity",
+                        "Time (sec)",
+                        "Capacity (W)",
+                        SimulationMain.ORIGIN_X,
+                        SimulationMain.ORIGIN_Y + 50 + 2 * SimulationMain.getPlotterHeight(),
+                        SimulationMain.getPlotterWidth(),
+                        SimulationMain.getPlotterHeight())) ;
+
+        //-----------------------
+        //Wind Turbine
+        //-----------------------
+
+        //Parameter of TicModel
+        simParams.put(TicModel.URI_WINDTURBINE + ":" + TicModel.DELAY_PARAMETER_NAME,
+                new Duration(5.0, TimeUnit.SECONDS));
+        //Parameters of WindModel
+        simParams.put(WindModel.URI + ":" + WindModel.MAX_WIND,15.0);
+        simParams.put(WindModel.URI + ":" + WindModel.WMASSF,0.05);
+        simParams.put(WindModel.URI + ":" + WindModel.WIS,1.0);
+        //Parameters of WindTurbineModel
+        simParams.put(WindTurbineModel.URI + ":" + WindTurbineModel.MAX_SPEED,10.0);
+        simParams.put(WindTurbineModel.URI + ":" + WindTurbineModel.MIN_SPEED,4.0);
+        simParams.put(
+                WindTurbineModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME,
+                new PlotterDescription(
+                        "Wind Turbine Power Production",
+                        "Time (sec)",
+                        "Power (watt)",
+                        SimulationMain.ORIGIN_X + SimulationMain.getPlotterWidth(),
+                        SimulationMain.ORIGIN_Y + 50 + 2 * SimulationMain.getPlotterHeight(),
+                        SimulationMain.getPlotterWidth(),
+                        SimulationMain.getPlotterHeight()));
+
+        return simParams;
+    }
+
     /**
      * @see fr.sorbonne_u.components.AbstractComponent#execute()
      */
@@ -602,7 +696,7 @@ public class Supervisor extends	AbstractComponent{
         Thread.sleep(1000L) ;
         this.logMessage("supervisor component begins simulation.") ;
         long start = System.currentTimeMillis() ;
-        this.sp.setSimulationRunParameters(getSimulationRunParameters());
+        this.sp.setSimulationRunParameters(getSimulationRunParameters2());
         this.sp.doStandAloneSimulation(0, 5000.0) ;
         long end = System.currentTimeMillis() ;
         this.logMessage("supervisor component ends simulation. " +

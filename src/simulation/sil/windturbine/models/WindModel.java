@@ -146,11 +146,13 @@ public class WindModel extends AtomicHIOAwithDE{
             this.plotter.initialise();
             this.plotter.showPlotter();
         }
+
         try {
             this.setDebugLevel(1);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         super.initialiseState(initialTime);
     }
 
@@ -205,6 +207,7 @@ public class WindModel extends AtomicHIOAwithDE{
     public void userDefinedInternalTransition(Duration elapsedTime){
         if (elapsedTime.greaterThan(Duration.zero(getSimulatedTimeUnit()))) {
             super.userDefinedInternalTransition(elapsedTime);
+
             double oldWind = this.wind.v;
             this.wind.v = this.nextWind;
             this.wind.time = this.getCurrentStateTime();

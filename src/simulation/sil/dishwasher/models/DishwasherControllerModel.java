@@ -41,7 +41,7 @@ public class DishwasherControllerModel extends AtomicES_Model {
     @Override
     public void	initialiseState(Time initialTime){
         this.initialDelay = 10.0 ;
-        this.interdayDelay = 180.0 ;
+        this.interdayDelay = 500.0 ;
         
         try {
             this.setDebugLevel(3);

@@ -101,7 +101,7 @@ public class WindTurbineCoupledModel extends CoupledModel{
                         SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
         atomicModelDescriptors.put(
                 WindTurbineModel.URI,
-                AtomicHIOA_Descriptor.create(
+                AtomicModelDescriptor.create(
                         WindTurbineModel.class,
                         WindTurbineModel.URI,
                         TimeUnit.SECONDS,
@@ -129,17 +129,18 @@ public class WindTurbineCoupledModel extends CoupledModel{
         //*********************************** 
         //Reexported events
         //***********************************
-        
+
         Map<Class<? extends EventI>,ReexportedEvent> reexported =
                 new HashMap<Class<? extends EventI>,ReexportedEvent>();
         reexported.put(WindTurbineProduction.class,
                 new ReexportedEvent(WindTurbineModel.URI,WindTurbineProduction.class));
-        
+
         //*********************************** 
         //Connections Event between submodels
         //***********************************
 
         Map<EventSource,EventSink[]> connections = new HashMap<EventSource,EventSink[]>() ;
+
         EventSource from = new EventSource(TicModel.URI_WINDTURBINE, TicEvent.class) ;
         EventSink[] to = new EventSink[] {new EventSink(WindSensorModel.URI, TicEvent.class)};
         connections.put(from, to);

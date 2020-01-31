@@ -23,7 +23,6 @@ import simulation.sil.windturbine.events.WindReading;
 
 @ModelExternalEvents(imported = {TicEvent.class},
 exported = {WindReading.class})
-
 public class WindSensorModel extends AtomicHIOAwithEquations{
 
     public static class WindSensorReport extends AbstractSimulationReport{
@@ -149,17 +148,8 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
 
     @Override
     public void userDefinedExternalTransition(Duration elapsedTime) {
+        this.triggerReading = true;
         super.userDefinedExternalTransition(elapsedTime);
-        ArrayList<EventI> current = this.getStoredEventAndReset();
-        boolean ticReceived = false;
-        for (int i = 0; !ticReceived && i < current.size(); i++) {
-            if (current.get(i) instanceof TicEvent) {
-                ticReceived = true;
-            }
-        }
-        if (ticReceived) {
-            this.triggerReading = true;
-        }
     }
 
     @Override

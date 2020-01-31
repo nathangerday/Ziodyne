@@ -13,6 +13,7 @@ import components.Supervisor;
 import components.WindTurbine;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
+import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
 import simulation.overall.SGCoupledModel;
 import simulation.sil.battery.models.BatteryModel;
 import simulation.sil.controller.models.ControllerModel;
@@ -27,6 +28,7 @@ import simulation.sil.windturbine.models.WindTurbineCoupledModel;
 public class CVM extends AbstractCVM{
     public CVM() throws Exception{
         super();
+        SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 1L ;
     }
 
     @Override

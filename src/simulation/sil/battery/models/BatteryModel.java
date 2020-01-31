@@ -114,7 +114,7 @@ public class BatteryModel extends AtomicModel {
     public void initialiseState(Time initialTime){
         this.consumptionHasChanged = false;
         this.productionHasChanged = false;
-        this.currentCapacity = 0.0;
+        this.currentCapacity = 40000.0;
         switch(this.getState()) {
         case STANDBY:
             this.setConsumption(0.0);
