@@ -1,6 +1,6 @@
 package simulation;
 
-import components.Battery;
+import components.ElectricMeter;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import fr.sorbonne_u.devs_simulation.simulators.SimulationEngine;
@@ -34,10 +34,15 @@ extends AbstractCVM
         //                        Fridge.class.getCanonicalName(),
         //                        new Object[]{URI.COMPONENT_FRIDGE,URI.FRIDGE_INBOUND_PORT}) ;
 
-        String componentBatteryURI =
+        //        String componentBatteryURI =
+        //        AbstractComponent.createComponent(
+        //                Battery.class.getCanonicalName(),
+        //                new Object[]{URI.COMPONENT_BATTERY,URI.BATTERY_INBOUND_PORT}) ;
+        
+        String componentElectricMeterURI =
         AbstractComponent.createComponent(
-                Battery.class.getCanonicalName(),
-                new Object[]{URI.COMPONENT_BATTERY,URI.BATTERY_INBOUND_PORT}) ;
+                ElectricMeter.class.getCanonicalName(),
+                new Object[]{URI.COMPONENT_ELECTRICMETER,URI.ELECTRICMETER_INBOUND_PORT}) ;
 
         super.deploy();
     }

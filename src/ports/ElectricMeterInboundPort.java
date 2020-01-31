@@ -21,8 +21,20 @@ public class ElectricMeterInboundPort extends AbstractInboundPort implements Ele
     }
 
     @Override
-    public int getConsommation() throws Exception {
+    public double getAvailableEnergy() throws Exception {
         return this.getOwner().handleRequestSync(
-                owner -> ((ElectricMeter)owner).getConsommation());
+                owner -> ((ElectricMeter)owner).getAvailableEnergy());
+    }
+
+    @Override
+    public double getProduction() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((ElectricMeter)owner).getProduction());
+    }
+
+    @Override
+    public double getConsumption() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((ElectricMeter)owner).getConsumption());
     }
 }
