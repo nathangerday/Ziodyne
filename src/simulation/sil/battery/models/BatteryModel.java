@@ -6,9 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import components.Battery;
 import components.Battery.BState;
-import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
-import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
 import fr.sorbonne_u.devs_simulation.interfaces.SimulationReportI;
+import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
@@ -22,7 +21,7 @@ import simulation.sil.battery.events.BatteryConsumption;
 import simulation.sil.battery.events.BatteryProduction;
 
 @ModelExternalEvents(exported = {BatteryConsumption.class,BatteryProduction.class})
-public class BatteryModel extends AtomicHIOAwithEquations{
+public class BatteryModel extends AtomicModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,9 +49,9 @@ public class BatteryModel extends AtomicHIOAwithEquations{
     public static final String SERIES_CAPACITY = "capacity" ;
     private static final double BATTERY_MODIF = 500;
 
-    protected final Value<Double> currentConsumption = new Value<Double>(this, 0.0, 0);
-    protected final Value<Double> currentProduction = new Value<Double>(this, 0.0, 0);
-    protected final Value<Double> currentCapacity = new Value<Double>(this, 0.0, 0);
+    protected double currentConsumption;
+    protected double currentProduction;
+    protected double currentCapacity;
 
     private double maxCapacity = 100000;
     private boolean consumptionHasChanged;
@@ -75,7 +74,7 @@ public class BatteryModel extends AtomicHIOAwithEquations{
             TimeUnit simulatedTimeUnit,
             SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
-        this.setLogger(new StandardLogger()) ;
+        this.setLogger(new StandardLogger());
     }
 
 
@@ -113,31 +112,9 @@ public class BatteryModel extends AtomicHIOAwithEquations{
 
     @Override
     public void initialiseState(Time initialTime){
-        if(this.capacityPlotter != null) {
-            this.capacityPlotter.initialise();
-            this.capacityPlotter.showPlotter();
-        }
-        if(this.consumptionPlotter != null) {
-            this.consumptionPlotter.initialise();
-            this.consumptionPlotter.showPlotter();
-        }
-        if(this.productionPlotter != null) {
-            this.productionPlotter.initialise();
-            this.productionPlotter.showPlotter();
-        }
         this.consumptionHasChanged = false;
         this.productionHasChanged = false;
-
-        try {
-            this.setDebugLevel(1) ;
-        } catch (Exception e) {
-            throw new RuntimeException(e) ;
-        }
-        super.initialiseState(initialTime) ;
-    }
-
-    @Override
-    protected void initialiseVariables(Time startTime) {
+        this.currentCapacity = 0.0;
         switch(this.getState()) {
         case STANDBY:
             this.setConsumption(0.0);
@@ -152,28 +129,42 @@ public class BatteryModel extends AtomicHIOAwithEquations{
             this.setProduction(BATTERY_MODIF);
             break;
         }
+        this.lastConsumption = this.getConsumption();
+        this.lastProduction = this.getProduction();
+
         if(this.capacityPlotter != null) {
+            this.capacityPlotter.initialise();
+            this.capacityPlotter.showPlotter();
             this.capacityPlotter.addData(
                     SERIES_CAPACITY,
-                    this.getCurrentStateTime().getSimulatedTime(),
+                    initialTime.getSimulatedTime(),
                     this.getCapacity());
         }
         if(this.consumptionPlotter != null) {
+            this.consumptionPlotter.initialise();
+            this.consumptionPlotter.showPlotter();
             this.consumptionPlotter.addData(
                     SERIES_CONSUMPTION,
-                    this.getCurrentStateTime().getSimulatedTime(),
+                    initialTime.getSimulatedTime(),
                     this.getConsumption());
         }
         if(this.productionPlotter != null) {
+            this.productionPlotter.initialise();
+            this.productionPlotter.showPlotter();
             this.productionPlotter.addData(
                     SERIES_PRODUCTION,
-                    this.getCurrentStateTime().getSimulatedTime(),
+                    initialTime.getSimulatedTime(),
                     this.getProduction());
         }
-        this.lastConsumption = this.getConsumption();
-        this.lastProduction = this.getProduction();
-        super.initialiseVariables(startTime);
+
+        try {
+            this.setDebugLevel(1) ;
+        } catch (Exception e) {
+            throw new RuntimeException(e) ;
+        }
+        super.initialiseState(initialTime) ;
     }
+
 
     @Override
     public ArrayList<EventI> output() {
@@ -211,10 +202,10 @@ public class BatteryModel extends AtomicHIOAwithEquations{
 
             //change capacity
             if(state == BState.CONSUMING) {
-                currentCapacity.v = Math.min(maxCapacity, currentCapacity.v +
+                currentCapacity = Math.min(maxCapacity, currentCapacity +
                         BATTERY_MODIF * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
             }else if(state == BState.PRODUCING){
-                currentCapacity.v = Math.max(0, currentCapacity.v -
+                currentCapacity = Math.max(0, currentCapacity -
                         BATTERY_MODIF * (elapsedTime.getSimulatedDuration()/timeAdvance().getSimulatedDuration()));
             }
 
@@ -326,23 +317,23 @@ public class BatteryModel extends AtomicHIOAwithEquations{
     }
 
     public double getCapacity() {
-        return this.currentCapacity.v;
+        return currentCapacity;
     }
 
     private double getProduction() {
-        return this.currentProduction.v;
+        return currentProduction;
     }
 
     private void setProduction(double v) {
-        this.currentProduction.v = v;
-    }
-
-    private void setConsumption(double v) {
-        this.currentConsumption.v = v;
+        this.currentProduction = v;
     }
 
     private double getConsumption() {
-        return this.currentConsumption.v;
+        return this.currentConsumption;
+    }
+
+    private void setConsumption(double v) {
+        this.currentConsumption = v;
     }
 
     private BState getState() {

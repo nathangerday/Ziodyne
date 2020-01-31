@@ -63,11 +63,8 @@ public class Battery extends AbstractCyPhyComponent implements BatteryI,Embeddin
         this.asp = new BatterySimulatorPlugin();
         this.asp.setPluginURI(localArchitecture.getRootModelURI()) ;
         this.asp.setSimulationArchitecture(localArchitecture) ;
-        System.out.println("gregergg");
         this.installPlugin(this.asp) ;
-        System.out.println("gregerfffgg");
         this.toggleLogging();
-        this.toggleTracing();
     }
 
     @Override
