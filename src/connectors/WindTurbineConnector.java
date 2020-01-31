@@ -8,19 +8,22 @@ import interfaces.WindTurbineI;
 public class WindTurbineConnector extends AbstractConnector implements WindTurbineControllerI {
 
 	@Override
-	public void switchOn() throws Exception {
-		((WindTurbineI)this.offering).switchOn();
-	}
+    public boolean isOn() throws Exception {
+        return ((WindTurbineI)this.offering).isOn();
+    }
+	
+	@Override
+    public boolean isOnBreak() throws Exception {
+        return ((WindTurbineI)this.offering).isOnBreak();
+    }
+	
+	@Override
+    public void switchBreak() throws Exception {
+        ((WindTurbineI)this.offering).switchBreak();
+    }
 
 	@Override
-	public int getEnergyProduced() throws Exception {
-		return ((WindTurbineI)this.offering).getEnergyProduced();
-	}
-
-	@Override
-	public int getWindSpeed() throws Exception {
+	public double getWindSpeed() throws Exception {
 		return ((WindTurbineI)this.offering).getWindSpeed();
 	}
-
-
 }

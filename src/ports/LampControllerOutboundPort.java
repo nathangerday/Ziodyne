@@ -1,6 +1,7 @@
 package ports;
 
 import components.Controller;
+import components.Lamp.LampState;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import interfaces.LampControllerI;
@@ -22,7 +23,17 @@ public class LampControllerOutboundPort extends AbstractOutboundPort implements 
     }
 
     @Override
-    public int getState() throws Exception{
+    public LampState getState() throws Exception{
         return ((LampControllerI)this.connector).getState();
+    }
+
+    @Override
+    public boolean isOnBreak() throws Exception{
+        return ((LampControllerI)this.connector).isOnBreak();
+    }
+
+    @Override
+    public void switchBreak() throws Exception{
+        ((LampControllerI)this.connector).switchBreak();
     }
 }

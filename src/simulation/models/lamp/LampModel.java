@@ -1,6 +1,11 @@
 package simulation.models.lamp;
 
-import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentStateAccessI;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
+import fr.sorbonne_u.devs_simulation.examples.molene.SimulationMain;
 import fr.sorbonne_u.devs_simulation.hioa.annotations.ExportedVariable;
 import fr.sorbonne_u.devs_simulation.hioa.models.AtomicHIOAwithEquations;
 import fr.sorbonne_u.devs_simulation.hioa.models.vars.Value;
@@ -15,26 +20,30 @@ import fr.sorbonne_u.devs_simulation.utils.AbstractSimulationReport;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
-import simulation.events.lamp.*;
-
-import java.util.Map;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
+import simulation.events.lamp.AbstractLampEvent;
+import simulation.events.lamp.LampHigh;
+import simulation.events.lamp.LampLow;
+import simulation.events.lamp.LampMedium;
+import simulation.events.lamp.LampOff;
+import simulation.events.lamp.LampOn;
 
 
 // -----------------------------------------------------------------------------
-@ModelExternalEvents(imported = {SwitchOn.class,
-        SwitchOff.class,
-        SetLow.class,
-        SetMedium.class,
-        SetHigh.class})
+@ModelExternalEvents(imported = {LampOn.class,
+        LampOff.class,
+        LampLow.class,
+        LampMedium.class,
+        LampHigh.class})
 // -----------------------------------------------------------------------------
 public class LampModel 	extends AtomicHIOAwithEquations {
 
+    private static final long serialVersionUID = 1L;
 
-    public enum State{ ON,OFF,LOW, MEDIUM,HIGH}
+    public enum State{OFF,LOW, MEDIUM,HIGH}
 
     public static class LampReport extends AbstractSimulationReport{
+
+        private static final long serialVersionUID = 1L;
 
         /**
          * create a simulation report.
@@ -65,29 +74,25 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     // -------------------------------------------------------------------------
 
     public static final String	URI = "LampModel" ;
-    private static final String	SERIES = "intensity" ;
+    private static final String	SERIES = "power" ;
 
     /** energy consumption (in Watts) of the lamp in LOW mode.		*/
-    protected static final double	LOW_MODE_CONSUMPTION = 16.0 ; // Watts
+    protected static final double	LOW_MODE_CONSUMPTION = 20.0 ; // Watts
     /** energy consumption (in Watts) of the lamp in MEDIUM mode.		*/
-    protected static final double	MEDIUM_MODE_CONSUMPTION = 60.0 ; // Watts
+    protected static final double	MEDIUM_MODE_CONSUMPTION = 40.0 ; // Watts
     /** energy consumption (in Watts) of the lamp in HIGH mode.		*/
     protected static final double	HIGH_MODE_CONSUMPTION = 60.0 ; // Watts
-    /** nominal tension (in Volts) of the hair dryer.						*/
-    protected static final double	TENSION = 12.0 ; // Volts
 
-
-    /** current intensity in Amperes; intensity is power/tension.			*/
+    /** current power in watts.			*/
     @ExportedVariable(type = Double.class)
-    protected final Value<Double> currentIntensity =
-            new Value<Double>(this, 0.0, 0) ;
+    protected final Value<Double> currentPower = new Value<Double>(this, 0.0, 0) ;
     /** current state (OFF, LOW, HIGH) of the lamp.					*/
     protected State					currentState ;
     /** plotter for the intensity level over time.							*/
-    protected XYPlotter intensityPlotter ;
+    protected XYPlotter powerPlotter ;
     /** reference on the object representing the component that holds the
      *  model; enables the model to access the state of this component.		*/
-    protected EmbeddingComponentStateAccessI componentRef ;
+    protected EmbeddingComponentAccessI componentRef ;
 
 
     /**
@@ -120,16 +125,16 @@ public class LampModel 	extends AtomicHIOAwithEquations {
 
         PlotterDescription pd =
                 new PlotterDescription(
-                        "Lamp intensity",
+                        "Lamp Power",
                         "Time (sec)",
-                        "Intensity (Amp)",
-                        100,
-                        0,
-                        600,
-                        400) ;
+                        "Power (Watt)",
+                        SimulationMain.ORIGIN_X,
+                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+                        SimulationMain.getPlotterWidth(),
+                        SimulationMain.getPlotterHeight()) ;
 
-        this.intensityPlotter = new XYPlotter(pd) ;
-        this.intensityPlotter.createSeries(SERIES) ;
+        this.powerPlotter = new XYPlotter(pd) ;
+        this.powerPlotter.createSeries(SERIES) ;
 
         // create a standard logger (logging on the terminal)
         this.setLogger(new StandardLogger()) ;
@@ -141,19 +146,19 @@ public class LampModel 	extends AtomicHIOAwithEquations {
 
         // The reference to the embedding component
         this.componentRef =
-                (EmbeddingComponentStateAccessI) simParams.get("componentRef") ;
+                (EmbeddingComponentAccessI) simParams.get("componentRef") ;
     }
 
     @Override
     public void	initialiseState(Time initialTime)
     {
-        // the hair dryer starts in mode OFF
+        // the lamp starts in mode OFF
         this.currentState = LampModel.State.OFF ;
 
         // initialisation of the intensity plotter
-        this.intensityPlotter.initialise() ;
+        this.powerPlotter.initialise() ;
         // show the plotter on the screen
-        this.intensityPlotter.showPlotter() ;
+        this.powerPlotter.showPlotter() ;
 
         try {
             // set the debug level triggering the production of log messages.
@@ -169,21 +174,21 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     @Override
     protected void		initialiseVariables(Time startTime)
     {
-        // as the hair dryer starts in mode OFF, its power consumption is 0
-        this.currentIntensity.v = 0.0 ;
+        // as the lamp starts in mode OFF, its power consumption is 0
+        this.currentPower.v = 0.0 ;
 
         // first data in the plotter to start the plot.
-        this.intensityPlotter.addData(
+        this.powerPlotter.addData(
                 SERIES,
                 this.getCurrentStateTime().getSimulatedTime(),
-                this.getIntensity());
+                this.getPower());
 
         super.initialiseVariables(startTime);
     }
 
 
     @Override
-    public Vector<EventI> output() {
+    public ArrayList<EventI> output() {
         return null;
     }
 
@@ -224,11 +229,10 @@ public class LampModel 	extends AtomicHIOAwithEquations {
         if (this.hasDebugLevel(2)) {
             this.logMessage("LampModel::userDefinedExternalTransition 1");
         }
-
         // get the vector of current external events
-        Vector<EventI> currentEvents = this.getStoredEventAndReset();
+        ArrayList<EventI> currentEvents = this.getStoredEventAndReset();
         // when this method is called, there is at least one external event,
-        // and for the hair dryer model, there will be exactly one by
+        // and for the lamp model, there will be exactly one by
         // construction.
         assert currentEvents != null && currentEvents.size() == 1;
 
@@ -239,27 +243,47 @@ public class LampModel 	extends AtomicHIOAwithEquations {
                     + ce.getClass().getCanonicalName());
         }
 
-        this.intensityPlotter.addData(
+        this.powerPlotter.addData(
                 SERIES,
                 this.getCurrentStateTime().getSimulatedTime(),
-                this.getIntensity());
+                this.getPower());
 
         if (this.hasDebugLevel(2)) {
             this.logMessage("LampModel::userDefinedExternalTransition 3 "
                     + this.getState());
         }
+
+        // execute the current external event on this model, changing its state
+        // and intensity level
+        ce.executeOn(this);
+
+        if (this.hasDebugLevel(2)) {
+            this.logMessage("LampModel::userDefinedExternalTransition 4 "
+                    + this.getState()) ;
+        }
+
+        // add a new data on the plotter; this data will open a new piece
+        this.powerPlotter.addData(
+                SERIES,
+                this.getCurrentStateTime().getSimulatedTime(),
+                this.getPower());
+
+        super.userDefinedExternalTransition(elapsedTime) ;
+        if (this.hasDebugLevel(2)) {
+            this.logMessage("LampModel::userDefinedExternalTransition 5") ;
+        }
     }
 
     @Override
     public void	endSimulation(Time endTime) throws Exception {
-            this.intensityPlotter.addData(
-                    SERIES,
-                    endTime.getSimulatedTime(),
-                    this.getIntensity());
-            Thread.sleep(10000L);
-            this.intensityPlotter.dispose();
+        this.powerPlotter.addData(
+                SERIES,
+                endTime.getSimulatedTime(),
+                this.getPower());
+        Thread.sleep(10000L);
+        this.powerPlotter.dispose();
 
-            super.endSimulation(endTime);
+        super.endSimulation(endTime);
     }
 
     @Override
@@ -290,12 +314,18 @@ public class LampModel 	extends AtomicHIOAwithEquations {
         this.currentState = s ;
         switch (s)
         {
-            case OFF : this.currentIntensity.v = 0.0 ; break ;
-            case LOW :
-                this.currentIntensity.v = LOW_MODE_CONSUMPTION/TENSION ;
-                break ;
-            case HIGH :
-                this.currentIntensity.v = HIGH_MODE_CONSUMPTION/TENSION ;
+        case OFF :
+            this.currentPower.v = 0.0 ;
+            break ;
+        case LOW :
+            this.currentPower.v = LOW_MODE_CONSUMPTION;
+            break ;
+        case MEDIUM :
+            this.currentPower.v = MEDIUM_MODE_CONSUMPTION;
+            break;
+        case HIGH :
+            this.currentPower.v = HIGH_MODE_CONSUMPTION;
+            break;
         }
     }
 
@@ -317,7 +347,7 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     }
 
     /**
-     * return the current intensity of electricity consumption in amperes.
+     * return the current power of electricity consumption in amperes.
      *
      * <p><strong>Contract</strong></p>
      *
@@ -326,11 +356,10 @@ public class LampModel 	extends AtomicHIOAwithEquations {
      * post	{@code ret >= 0.0 and ret <= 1200.0/220.0}
      * </pre>
      *
-     * @return	the current intensity of electricity consumption in amperes.
+     * @return	the current power of electricity consumption in amperes.
      */
-    public double	getIntensity()
-    {
-        return this.currentIntensity.v ;
+    public double getPower(){
+        return this.currentPower.v ;
     }
 
 }

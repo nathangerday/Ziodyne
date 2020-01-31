@@ -1,96 +1,124 @@
 package components;
 
-import fr.sorbonne_u.components.AbstractComponent;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
-import fr.sorbonne_u.components.exceptions.PostconditionException;
 import fr.sorbonne_u.components.exceptions.PreconditionException;
+import fr.sorbonne_u.devs_simulation.architectures.Architecture;
+import fr.sorbonne_u.devs_simulation.architectures.SimulationEngineCreationMode;
+import fr.sorbonne_u.devs_simulation.models.architectures.AbstractAtomicModelDescriptor;
+import fr.sorbonne_u.devs_simulation.models.architectures.AtomicModelDescriptor;
 import interfaces.BatteryI;
 import ports.BatteryInboundPort;
+import simulation.sil.battery.models.BatteryModel;
+import simulation.sil.battery.plugin.BatterySimulatorPlugin;
 
-public class Battery extends AbstractComponent implements BatteryI {
+public class Battery extends AbstractCyPhyComponent implements BatteryI,EmbeddingComponentAccessI {
 
-    //port that exposes the offered interface with the
-    // given URI to ease the connection from controller components.
+    public enum BState {STANDBY,PRODUCING,CONSUMING}
+
+    /** mode of the battery : idle(0), producing energy(1) or charging(2) */
+    protected BState mode;
+
+    /** port that exposes the offered interface with the
+     *  given URI to ease the connection from controller components.*/
     protected BatteryInboundPort batteryInboundPort;
-    //an integer value that reports the quantity of energy produced
-    protected int energyProduced;
-    //an integer value indicating the maximum value of energy the battery can stock
-    protected int maxCapacity;
-    //an integer value indicating the current value of energy inside the battery
-    protected int currentCapacity;
-    //a boolean value On/Off
-    protected boolean isOn;
-    //mode of the battery : idle(0), producing energy(1) or charging(2)
-    protected BatteryState mode;
+
+    /** the plugin in order to acces the model*/
+    protected BatterySimulatorPlugin asp;
 
 
     protected Battery(String uri, String batteryInboundPortURI) throws Exception{
         super(uri,1,0);
         assert uri != null :new PreconditionException("uri can't be null!");
-        this.energyProduced =0;
-        this.maxCapacity =1000;
-        this.currentCapacity = 0;
-        this.isOn = false;
-        this.mode = BatteryState.Idle;
+        this.mode = BState.STANDBY;
         this.addOfferedInterface(BatteryI.class);
         batteryInboundPort = new BatteryInboundPort(batteryInboundPortURI, this);
         batteryInboundPort.publishPort();
 
-        assert this.energyProduced == 0 :
-                new PostconditionException("The battery's state has not been initialised correctly !");
-        assert this.maxCapacity == 1000 :
-                new PostconditionException("The battery's state has not been initialised correctly !");
-        assert this.currentCapacity == 0 :
-                new PostconditionException("The battery's state has not been initialised correctly !");
-        assert this.isOn == false :
-                new PostconditionException("The battery's state has not been initialised correctly !");
-        assert this.mode == BatteryState.Idle :
-                new PostconditionException("The battery's state has not been initialised correctly !");
-        assert this.isPortExisting(batteryInboundPort.getPortURI()):
-                new PostconditionException("The component must have a "
-                        + "port with URI " + batteryInboundPort.getPortURI()) ;
-        assert	this.findPortFromURI(batteryInboundPort.getPortURI()).
-                getImplementedInterface().equals(BatteryI.class) :
-                new PostconditionException("The component must have a "
-                        + "port with implemented interface BatteryI") ;
-        assert	this.findPortFromURI(batteryInboundPort.getPortURI()).isPublished() :
-                new PostconditionException("The component must have a "
-                        + "port published with URI " + batteryInboundPort.getPortURI()) ;
+        //        assert this.mode == BState.STANDBY :
+        //            new PostconditionException("The battery's state has not been initialised correctly !");
+        //        assert this.isPortExisting(batteryInboundPort.getPortURI()):
+        //            new PostconditionException("The component must have a "
+        //                    + "port with URI " + batteryInboundPort.getPortURI());
+        //        assert	this.findPortFromURI(batteryInboundPort.getPortURI()).
+        //        getImplementedInterface().equals(BatteryI.class) :
+        //            new PostconditionException("The component must have a "
+        //                    + "port with implemented interface BatteryI");
+        //        assert	this.findPortFromURI(batteryInboundPort.getPortURI()).isPublished() :
+        //            new PostconditionException("The component must have a "
+        //                    + "port published with URI " + batteryInboundPort.getPortURI());
 
+        this.initialise();
+    }
+
+    private void initialise() throws Exception{
+        Architecture localArchitecture = this.createLocalArchitecture(null);
+        this.asp = new BatterySimulatorPlugin();
+        this.asp.setPluginURI(localArchitecture.getRootModelURI()) ;
+        this.asp.setSimulationArchitecture(localArchitecture) ;
+        this.installPlugin(this.asp) ;
+        this.toggleLogging();
+    }
+
+//    @Override
+//    public void execute() throws Exception {
+//        // @remove A garder que en standalone
+//        HashMap<String,Object> simParams = new HashMap<String,Object>();
+//        simParams.put(
+//                BatteryModel.URI + ":" + BatteryModel.SERIES_CAPACITY + PlotterDescription.PLOTTING_PARAM_NAME,
+//                new PlotterDescription(
+//                        "Battery Capacity",
+//                        "Time (sec)",
+//                        "Capacity (W)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth(),
+//                        SimulationMain.getPlotterHeight())) ;
+//        simParams.put(
+//                BatteryModel.URI + ":" + BatteryModel.SERIES_CONSUMPTION + PlotterDescription.PLOTTING_PARAM_NAME,
+//                new PlotterDescription(
+//                        "Battery Consumption",
+//                        "Time (sec)",
+//                        "Power (watt)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + 2 * SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth(),
+//                        SimulationMain.getPlotterHeight())) ;
+//
+//        simParams.put(
+//                BatteryModel.URI + ":" + BatteryModel.SERIES_PRODUCTION + PlotterDescription.PLOTTING_PARAM_NAME,
+//                new PlotterDescription(
+//                        "Battery Production",
+//                        "Time (sec)",
+//                        "Power (W)",
+//                        SimulationMain.ORIGIN_X,
+//                        SimulationMain.ORIGIN_Y + 3 * SimulationMain.getPlotterHeight(),
+//                        SimulationMain.getPlotterWidth(),
+//                        SimulationMain.getPlotterHeight())) ;
+//
+//        this.asp.setSimulationRunParameters(simParams);
+//        asp.setDebugLevel(0);
+//        asp.doStandAloneSimulation(0.0, 500.0);
+//    }
+
+    @Override
+    public double getMaxCapacity() throws Exception {
+        return (double) asp.getModelStateValue(BatteryModel.URI, "max capacity");
     }
 
     @Override
-    public void switchOn() throws Exception {
-        assert !isOn : new PreconditionException("battery is already on") ;
-        isOn = true;
+    public double getCurrentCapacity() throws Exception {
+        return (double) asp.getModelStateValue(BatteryModel.URI, "capacity");
     }
 
     @Override
-    public int getEnergyProduced() throws Exception {
-        return energyProduced;
-    }
-
-    @Override
-    public int getMaxCapacity() throws Exception {
-        return maxCapacity;
-    }
-
-    @Override
-    public int getCurrentCapacity() throws Exception {
-        return currentCapacity;
-    }
-
-    @Override
-    public void setMode(BatteryState mode) throws Exception {
-        switch (mode){
-            case Idle : System.out.println("Now idling"); break;
-            case Producing : System.out.println("Now producing"); break;
-            case Charging : System.out.println("Now charging"); break;
-            default : System.out.println("Mode doesn't exist");
-        }
+    public void setMode(BState mode) throws Exception {
         this.mode = mode;
-
-        assert this.mode == mode : new PostconditionException("Mode hasn't been correctly affected");
     }
 
     @Override
@@ -112,5 +140,44 @@ public class Battery extends AbstractComponent implements BatteryI {
             throw new ComponentShutdownException(e);
         }
         super.shutdownNow();
+    }
+
+    @Override
+    protected Architecture createLocalArchitecture(String modelURI) throws Exception{
+        Map<String,AbstractAtomicModelDescriptor> atomicModelDescriptors =
+                new HashMap<>() ;
+        atomicModelDescriptors.put(
+                BatteryModel.URI,
+                AtomicModelDescriptor.create(
+                        BatteryModel.class,
+                        BatteryModel.URI,
+                        TimeUnit.SECONDS,
+                        null,
+                        SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
+        Architecture localArchitecture =
+                new Architecture(
+                        BatteryModel.URI,
+                        atomicModelDescriptors,
+                        new HashMap<>(),
+                        TimeUnit.SECONDS) ;
+        return localArchitecture ;  
+    }
+
+    @Override
+    public Object getEmbeddingComponentStateValue(String name) throws Exception{
+        if(name.equals("state")) {
+            return mode;
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void setEmbeddingComponentStateValue(String name , Object value) {
+        if(name.equals("state")) {
+            this.mode = (BState) value;
+        } else {
+            throw new RuntimeException();
+        }
     }
 }

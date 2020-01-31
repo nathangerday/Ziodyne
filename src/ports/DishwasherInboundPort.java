@@ -1,14 +1,15 @@
 package ports;
 
 import components.Dishwasher;
+import components.Dishwasher.DWMode;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import interfaces.DishwasherI;
 
 public class DishwasherInboundPort extends AbstractInboundPort implements DishwasherI {
-	
-	private static final long serialVersionUID = 4328509908271704575L;
+
+    private static final long serialVersionUID = 4328509908271704575L;
 
     public DishwasherInboundPort(String uri, ComponentI dishwasher) throws Exception {
         super(uri, DishwasherI.class, dishwasher);
@@ -21,43 +22,48 @@ public class DishwasherInboundPort extends AbstractInboundPort implements Dishwa
     @Override
     public boolean isOn() throws Exception {
         return this.getOwner().handleRequestSync(
-            owner -> ((Dishwasher)owner).isOn());
+                owner -> ((Dishwasher)owner).isOn());
     }
 
     @Override
-    public boolean isModeEco() throws Exception {
+    public double getTimeLeft() throws Exception {
         return this.getOwner().handleRequestSync(
-            owner -> ((Dishwasher)owner).isModeEco());
+                owner -> ((Dishwasher)owner).getTimeLeft());
     }
 
     @Override
-    public void setModeEco(boolean on) throws Exception {
-        this.getOwner().handleRequestSync(
-            new AbstractComponent.AbstractService<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    ((Dishwasher)this.getServiceOwner()).setModeEco(on);
-                    return null;
-                }
-            }) ;
-    }
-
-    @Override
-    public int getTimeLeft() throws Exception {
+    public DWMode getMode() throws Exception {
         return this.getOwner().handleRequestSync(
-            owner -> ((Dishwasher)owner).getTimeLeft());
+                owner -> ((Dishwasher)owner).getMode());
     }
 
     @Override
-    public void startProgram() throws Exception {
+    public void setMode(DWMode mode) throws Exception {
         this.getOwner().handleRequestSync(
-            new AbstractComponent.AbstractService<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    ((Dishwasher)this.getServiceOwner()).startProgram();
-                    return null;
-                }
-            }) ;
+                new AbstractComponent.AbstractService<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        ((Dishwasher)this.getServiceOwner()).setMode(mode);
+                        return null;
+                    }
+                }) ;
     }
-    
+
+    @Override
+    public void switchBreak() throws Exception {
+        this.getOwner().handleRequestSync(
+                new AbstractComponent.AbstractService<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        ((Dishwasher)this.getServiceOwner()).switchBreak();
+                        return null;
+                    }
+                }) ;
+    }
+
+    @Override
+    public boolean isOnBreak() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((Dishwasher)owner).isOnBreak());
+    }
 }

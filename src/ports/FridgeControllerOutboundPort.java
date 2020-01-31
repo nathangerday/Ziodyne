@@ -22,13 +22,23 @@ public class FridgeControllerOutboundPort extends AbstractOutboundPort implement
     }
 
     @Override
-    public void switchFridge() throws Exception{
-        ((FridgeControllerI)this.connector).switchFridge();
+    public void switchFridgeBreak() throws Exception{
+        ((FridgeControllerI)this.connector).switchFridgeBreak();
     }
 
     @Override
-    public void switchFreezer() throws Exception{
-        ((FridgeControllerI)this.connector).switchFreezer();
+    public boolean isFridgeOnBreak() throws Exception{
+        return ((FridgeControllerI)this.connector).isFridgeOnBreak();
+    }
+
+    @Override
+    public void switchFreezerBreak() throws Exception{
+        ((FridgeControllerI)this.connector).switchFreezerBreak();
+    }
+
+    @Override
+    public boolean isFreezerOnBreak() throws Exception{
+        return ((FridgeControllerI)this.connector).isFreezerOnBreak();
     }
 
     @Override
@@ -39,25 +49,5 @@ public class FridgeControllerOutboundPort extends AbstractOutboundPort implement
     @Override
     public boolean isFreezerOn() throws Exception{
         return ((FridgeControllerI)this.connector).isFreezerOn();
-    }
-
-    @Override
-    public float getFridgeTemp() throws Exception{
-        return ((FridgeControllerI)this.connector).getFridgeTemp();
-    }
-
-    @Override
-    public float getFreezerTemp() throws Exception{
-        return ((FridgeControllerI)this.connector).getFreezerTemp();
-    }
-
-    @Override
-    public void setFridgeTemp(float t) throws Exception{
-        ((FridgeControllerI)this.connector).setFridgeTemp(t);
-    }
-
-    @Override
-    public void setFreezerTemp(float t) throws Exception{
-        ((FridgeControllerI)this.connector).setFreezerTemp(t);
     }
 }

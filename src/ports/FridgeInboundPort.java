@@ -21,29 +21,41 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeI{
 
         assert owner instanceof Fridge;
     }
-
+    
     @Override
-    public void switchFridge() throws Exception {
+    public void switchFridgeBreak() throws Exception {
         this.getOwner().handleRequestSync(
                 new AbstractComponent.AbstractService<Void>() {
                     @Override
                     public Void call() throws Exception {
-                        ((Fridge)this.getServiceOwner()).switchFridge();
+                        ((Fridge)this.getServiceOwner()).switchFridgeBreak();
                         return null;
                     }
                 }) ;
     }
-
+    
     @Override
-    public void switchFreezer() throws Exception {
+    public boolean isFridgeOnBreak() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((Fridge)owner).isFridgeOnBreak());
+    }
+    
+    @Override
+    public void switchFreezerBreak() throws Exception {
         this.getOwner().handleRequestSync(
                 new AbstractComponent.AbstractService<Void>() {
                     @Override
                     public Void call() throws Exception {
-                        ((Fridge)this.getServiceOwner()).switchFreezer();
+                        ((Fridge)this.getServiceOwner()).switchFreezerBreak();
                         return null;
                     }
                 }) ;
+    }
+    
+    @Override
+    public boolean isFreezerOnBreak() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((Fridge)owner).isFreezerOnBreak());
     }
 
     @Override
@@ -58,39 +70,5 @@ public class FridgeInboundPort extends AbstractInboundPort implements FridgeI{
                 owner -> ((Fridge)owner).isFreezerOn());
     }
 
-    @Override
-    public float getFridgeTemp() throws Exception {
-        return this.getOwner().handleRequestSync(
-                owner -> ((Fridge)owner).getFridgeTemp());
-    }
 
-    @Override
-    public float getFreezerTemp() throws Exception {
-        return this.getOwner().handleRequestSync(
-                owner -> ((Fridge)owner).getFreezerTemp());
-    }
-
-    @Override
-    public void setFridgeTemp(float t) throws Exception {
-        this.getOwner().handleRequestSync(
-                new AbstractComponent.AbstractService<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        ((Fridge)this.getServiceOwner()).setFridgeTemp(t);
-                        return null;
-                    }
-                }) ;
-    }
-
-    @Override
-    public void setFreezerTemp(float t) throws Exception {
-        this.getOwner().handleRequestSync(
-                new AbstractComponent.AbstractService<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        ((Fridge)this.getServiceOwner()).setFreezerTemp(t);
-                        return null;
-                    }
-                }) ;
-    }
 }

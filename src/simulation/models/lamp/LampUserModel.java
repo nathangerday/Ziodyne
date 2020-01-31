@@ -1,5 +1,10 @@
 package simulation.models.lamp;
 
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.math3.random.RandomDataGenerator;
+
 import fr.sorbonne_u.devs_simulation.es.models.AtomicES_Model;
 import fr.sorbonne_u.devs_simulation.models.annotations.ModelExternalEvents;
 import fr.sorbonne_u.devs_simulation.models.events.EventI;
@@ -7,14 +12,14 @@ import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
-import org.apache.commons.math3.random.RandomDataGenerator;
-import simulation.events.lamp.*;
+import simulation.events.lamp.LampHigh;
+import simulation.events.lamp.LampLow;
+import simulation.events.lamp.LampMedium;
+import simulation.events.lamp.LampOff;
+import simulation.events.lamp.LampOn;
 
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
 
-
-@ModelExternalEvents(exported = {SwitchOn.class, SwitchOff.class, SetHigh.class, SetMedium.class, SetLow.class})
+@ModelExternalEvents(exported = {LampOn.class, LampOff.class, LampHigh.class, LampMedium.class, LampLow.class})
 public class LampUserModel extends AtomicES_Model {
 
 
@@ -31,11 +36,11 @@ public class LampUserModel extends AtomicES_Model {
     protected double	interdayDelay ;
     /** mean time between uses of the lamp in the same day.			*/
     protected double	meanTimeBetweenUsages ;
-    /** during one use, mean time the lamp is at high temperature.	*/
+    /** during one use, mean time the lamp is at high setting.	*/
     protected double	meanTimeAtHigh ;
-    /** during one use, mean time the lamp is at medium temperature.	*/
+    /** during one use, mean time the lamp is at medium setting.	*/
     protected double	meanTimeAtMedium ;
-    /** during one use, mean time the lamp is at low temperature.		*/
+    /** during one use, mean time the lamp is at low setting.		*/
     protected double	meanTimeAtLow ;
     /** next event to be sent.												*/
     protected Class<?>	nextEvent ;
@@ -43,7 +48,7 @@ public class LampUserModel extends AtomicES_Model {
     /**	a random number generator from common math library.					*/
     protected final RandomDataGenerator rg ;
     /** the current state of the lamp simulation model.				*/
-    protected LampModel.State hds ;
+    protected LampModel.State ls ;
     /**
      * create an atomic event scheduling model with the given URI (if null,
      * one will be generated) and to be run by the given simulator (or by the
@@ -90,7 +95,7 @@ public class LampUserModel extends AtomicES_Model {
         this.meanTimeAtHigh = 8.0 ;
         this.meanTimeAtMedium = 4.0;
         this.meanTimeAtLow = 2.0 ;
-        this.hds = LampModel.State.OFF ;
+        this.ls = LampModel.State.OFF ;
 
         this.rg.reSeedSecure() ;
 
@@ -104,10 +109,10 @@ public class LampUserModel extends AtomicES_Model {
         Duration d2 =
                 new Duration(
                         2.0 * this.meanTimeBetweenUsages *
-                                this.rg.nextBeta(1.75, 1.75),
+                        this.rg.nextBeta(1.75, 1.75),
                         this.getSimulatedTimeUnit()) ;
         Time t = this.getCurrentStateTime().add(d1).add(d2) ;
-        this.scheduleEvent(new SwitchOn(t)) ;
+        this.scheduleEvent(new LampOn(t)) ;
 
         // Redo the initialisation to take into account the initial event
         // just scheduled.
@@ -143,7 +148,7 @@ public class LampUserModel extends AtomicES_Model {
      * @see fr.sorbonne_u.devs_simulation.es.models.AtomicES_Model#output()
      */
     @Override
-    public Vector<EventI> output()
+    public ArrayList<EventI> output()
     {
         // output is called just before executing an internal transition
         // in ES models, this corresponds to having at least one event in
@@ -154,7 +159,7 @@ public class LampUserModel extends AtomicES_Model {
         // be sent to other models when they are external events.
         assert	!this.eventList.isEmpty() ;
         // produce the set of such events by calling the super method
-        Vector<EventI> ret = super.output() ;
+        ArrayList<EventI> ret = super.output() ;
         // by construction, there will be only one such event
         assert	ret.size() == 1 ;
 
@@ -165,7 +170,7 @@ public class LampUserModel extends AtomicES_Model {
         // to keep it for the internal transition)
         this.nextEvent = ret.get(0).getClass() ;
 
-        this.logMessage("HairDryerUserModel::output() " +
+        this.logMessage("LampUserModel::output() " +
                 this.nextEvent.getCanonicalName()) ;
         return ret ;
     }
@@ -176,44 +181,30 @@ public class LampUserModel extends AtomicES_Model {
     @Override
     public void				userDefinedInternalTransition(
             Duration elapsedTime
-    )
+            )
     {
-        // This method implements a usage scenario for the hair dryer.
-        // Here, we assume that the hair dryer is used once each cycle (day)
-        // and then it starts in low mode, is set in high mode shortly after,
-        // used for a while in high mode and then set back in low mode to
-        // complete the drying.
-
         Duration d ;
-        // See what is the type of event to be executed
-        if (this.nextEvent.equals(SwitchOn.class)) {
-            // when a switch on event has been issued, plan the next event as
-            // a set high (the hair dryer is switched on in low mode
+        if (this.nextEvent.equals(LampOn.class)) {
             d = new Duration(2.0 * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            // compute the time of occurrence (in the future)
             Time t = this.getCurrentStateTime().add(d) ;
-            // schedule the event
-            this.scheduleEvent(new SetHigh(t)) ;
+            this.scheduleEvent(new LampHigh(t)) ;
             // also, plan the next switch on for the next day
             d = new Duration(this.interdayDelay, this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(
-                    new SwitchOn(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetHigh.class)) {
-            // when a set high event has been issued, plan the next set low
-            // after some time of usage
-            d =	new Duration(
-                    2.0 * this.meanTimeAtHigh * this.rg.nextBeta(1.75, 1.75),
+            this.scheduleEvent(new LampOn(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(LampHigh.class)) {
+            d =	new Duration(2.0 * this.meanTimeAtHigh * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(new SetLow(this.getCurrentStateTime().add(d))) ;
-        } else if (this.nextEvent.equals(SetLow.class)) {
-            // when a set high event has been issued, plan the next switch off
-            // after some time of usage
-            d =	new Duration(
-                    2.0 * this.meanTimeAtLow * this.rg.nextBeta(1.75, 1.75),
+            this.scheduleEvent(new LampMedium(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(LampMedium.class)) {
+            d = new Duration(
+                    2.0 * this.meanTimeAtMedium * this.rg.nextBeta(1.75, 1.75),
                     this.getSimulatedTimeUnit()) ;
-            this.scheduleEvent(
-                    new SwitchOff(this.getCurrentStateTime().add(d))) ;
+            this.scheduleEvent(new LampLow(this.getCurrentStateTime().add(d))) ;
+        } else if (this.nextEvent.equals(LampLow.class)) {
+            d =	new Duration(2.0 * this.meanTimeAtLow * this.rg.nextBeta(1.75, 1.75),
+                    this.getSimulatedTimeUnit()) ;
+            this.scheduleEvent(new LampOff(this.getCurrentStateTime().add(d))) ;
         }
     }
 }

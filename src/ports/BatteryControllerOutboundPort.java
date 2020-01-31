@@ -1,6 +1,6 @@
 package ports;
 
-import components.BatteryState;
+import components.Battery.BState;
 import components.Controller;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
@@ -21,26 +21,17 @@ public class BatteryControllerOutboundPort extends AbstractOutboundPort implemen
     }
 
     @Override
-    public void switchOn() throws Exception {
-        ((BatteryControllerI)this.connector).switchOn();
-    }
-
-    @Override
-    public int getEnergyProduced() throws Exception {
-        return ((BatteryControllerI)this.connector).getEnergyProduced();
-    }
-    @Override
-    public int getMaxCapacity() throws Exception {
+    public double getMaxCapacity() throws Exception {
         return ((BatteryControllerI)this.connector).getMaxCapacity();
     }
 
     @Override
-    public int getCurrentCapacity() throws Exception {
+    public double getCurrentCapacity() throws Exception {
         return ((BatteryControllerI)this.connector).getCurrentCapacity();
     }
 
     @Override
-    public void setMode(BatteryState mode) throws Exception {
+    public void setMode(BState mode) throws Exception {
         ((BatteryControllerI)this.connector).setMode(mode);
     }
 }

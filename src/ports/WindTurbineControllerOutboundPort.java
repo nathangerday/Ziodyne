@@ -14,7 +14,7 @@ public class WindTurbineControllerOutboundPort extends AbstractOutboundPort impl
 
         assert uri != null && owner instanceof Controller;
     }
-    
+
 
     public WindTurbineControllerOutboundPort(ComponentI owner) throws Exception {
         super(WindTurbineControllerI.class, owner);
@@ -23,18 +23,25 @@ public class WindTurbineControllerOutboundPort extends AbstractOutboundPort impl
 
 
     @Override
-    public void switchOn() throws Exception {
-        ((WindTurbineControllerI)this.connector).switchOn();
-
+    public boolean isOn() throws Exception {
+        return ((WindTurbineControllerI)this.connector).isOn();
     }
 
-    @Override
-    public int getEnergyProduced() throws Exception {
-        return ((WindTurbineControllerI)this.connector).getEnergyProduced();
-    }
 
     @Override
-    public int getWindSpeed() throws Exception {
+    public boolean isOnBreak() throws Exception {
+        return ((WindTurbineControllerI)this.connector).isOnBreak();
+    }
+
+
+    @Override
+    public void switchBreak() throws Exception {
+        ((WindTurbineControllerI)this.connector).switchBreak();
+    }
+
+
+    @Override
+    public double getWindSpeed() throws Exception {
         return ((WindTurbineControllerI)this.connector).getWindSpeed();
     }
 }

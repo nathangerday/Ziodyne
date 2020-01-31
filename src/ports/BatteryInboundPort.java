@@ -1,7 +1,7 @@
 package ports;
 
 import components.Battery;
-import components.BatteryState;
+import components.Battery.BState;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
@@ -23,37 +23,19 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryI 
     }
 
     @Override
-    public void switchOn() throws Exception {
-        this.getOwner().handleRequestSync(
-                new AbstractComponent.AbstractService<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        ((Battery)this.getServiceOwner()).switchOn();
-                        return null;
-                    }
-                }) ;
-    }
-
-    @Override
-    public int getEnergyProduced() throws Exception {
-        return this.getOwner().handleRequestSync(
-                owner -> ((Battery)owner).getEnergyProduced());
-    }
-
-    @Override
-    public int getMaxCapacity() throws Exception {
+    public double getMaxCapacity() throws Exception {
         return this.getOwner().handleRequestSync(
                 owner -> ((Battery)owner).getMaxCapacity());
     }
 
     @Override
-    public int getCurrentCapacity() throws Exception {
+    public double getCurrentCapacity() throws Exception {
         return this.getOwner().handleRequestSync(
                 owner -> ((Battery)owner).getCurrentCapacity());
     }
 
     @Override
-    public void setMode(BatteryState mode) throws Exception {
+    public void setMode(BState mode) throws Exception {
         this.getOwner().handleRequestSync(
                 new AbstractComponent.AbstractService<Void>() {
                     @Override

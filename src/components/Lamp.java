@@ -1,61 +1,79 @@
 package components;
 
-import fr.sorbonne_u.components.AbstractComponent;
+import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
+import fr.sorbonne_u.components.cyphy.interfaces.EmbeddingComponentAccessI;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.PostconditionException;
-import fr.sorbonne_u.components.exceptions.PreconditionException;
+import fr.sorbonne_u.devs_simulation.architectures.Architecture;
 import interfaces.LampI;
 import ports.LampInboundPort;
+import simulation.sil.lamp.models.LampCoupledModel;
+import simulation.sil.lamp.plugin.LampSimulatorPlugin;
 
-public class Lamp extends AbstractComponent implements LampI{
+public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingComponentAccessI{
 
-    //port that exposes the offered interface with the
-	// given URI to ease the connection from controller components.
+    public enum LampState{OFF,LOW,MEDIUM,HIGH}
+
     protected LampInboundPort lampInboundPort;
-    //integer indicating the lamp's state
-    protected int state;
-    
-    /**
-	 * create a component Lamp with a given uri prefix and that will expose its
-	 * service through a port of the given URI.
-	 * 
-	 * <p><strong>Contract</strong></p>
-	 * 
-	 * <pre>
-	 * pre	uri != null
-	 * post	this.uri.equals(uri)
-	 * post this.isOn = false
-	 * post	this.p(providerPortURI)
-	 * post	this.findPortFromURI(providerPortURI).getImplementedInterface().equals(URIProviderI.class)
-	 * post	this.findPortFromURI(providerPortURI).isPublished()
-	 * </pre>
-	 *
-	 * @param uriPrefix			the URI prefix of the lamp
-	 * @throws Exception			<i>todo.</i>
-	 */
+    protected LampState state;
+    protected boolean isOnBreak;
+
+    protected LampSimulatorPlugin asp ;
+
     protected Lamp(String uri, String lampInboundPortURI) throws Exception {
         super(uri, 1, 0);
-        assert uri != null :  new PreconditionException("uri can't be null!") ;
-        this.state = 0;
+        this.state = LampState.OFF;
+        this.isOnBreak = false;
         this.addOfferedInterface(LampI.class);
         this.lampInboundPort = new LampInboundPort(lampInboundPortURI, this);
         this.lampInboundPort.publishPort();
-        
-        assert this.state == 0 :
-        	new PostconditionException("The lamp's state has not been initialised correctly !");
+
+        this.initialise();
+
+        assert this.state == LampState.OFF :
+            new PostconditionException("The lamp's state has not been initialised correctly !");
         assert this.isPortExisting(lampInboundPort.getPortURI()):
-			new PostconditionException("The component must have a "
-					+ "port with URI " + lampInboundPort.getPortURI()) ;
-		
+            new PostconditionException("The component must have a "
+                    + "port with URI " + lampInboundPort.getPortURI()) ;
+
         assert	this.findPortFromURI(lampInboundPort.getPortURI()).
-		getImplementedInterface().equals(LampI.class) :
-		new PostconditionException("The component must have a "
-				+ "port with implemented interface LampI") ;
-		
-		assert	this.findPortFromURI(lampInboundPort.getPortURI()).isPublished() :
-		new PostconditionException("The component must have a "
-				+ "port published with URI " + lampInboundPort.getPortURI()) ;
+        getImplementedInterface().equals(LampI.class) :
+            new PostconditionException("The component must have a "
+                    + "port with implemented interface LampI") ;
+
+        assert	this.findPortFromURI(lampInboundPort.getPortURI()).isPublished() :
+            new PostconditionException("The component must have a "
+                    + "port published with URI " + lampInboundPort.getPortURI()) ;
     }
+
+    private void initialise() throws Exception{
+        Architecture localArchitecture = this.createLocalArchitecture(null) ;
+        this.asp = new LampSimulatorPlugin() ;
+        this.asp.setPluginURI(localArchitecture.getRootModelURI()) ;
+        this.asp.setSimulationArchitecture(localArchitecture) ;
+        this.installPlugin(this.asp) ;
+        this.toggleLogging() ;
+    }
+
+    //    @Override
+    //    public void execute() throws Exception {
+    //        // @remove A garder que en standalone
+    //        PlotterDescription pd =
+    //                new PlotterDescription(
+    //                        "Lamp Power",
+    //                        "Time (sec)",
+    //                        "Power (Watt)",
+    //                        SimulationMain.ORIGIN_X,
+    //                        SimulationMain.ORIGIN_Y + SimulationMain.getPlotterHeight(),
+    //                        SimulationMain.getPlotterWidth()*2,
+    //                        SimulationMain.getPlotterHeight()*2);
+    //
+    //        HashMap<String,Object> simParams = new HashMap<String,Object>();
+    //        simParams.put(LampModel.URI + ":" + PlotterDescription.PLOTTING_PARAM_NAME, pd);
+    //        this.asp.setSimulationRunParameters(simParams);
+    //        asp.setDebugLevel(0);
+    //        asp.doStandAloneSimulation(0.0, 500.0);
+    //    }
 
     @Override
     public void shutdown() throws ComponentShutdownException {
@@ -77,8 +95,43 @@ public class Lamp extends AbstractComponent implements LampI{
         super.shutdownNow();
     }
 
-	@Override
-	public int getState() {
-		return state;
-	}
+    @Override
+    public LampState getState() {
+        return state;
+    }
+
+    @Override
+    public void switchBreak() throws Exception{
+        this.isOnBreak = !this.isOnBreak;
+    }
+
+    @Override
+    public boolean isOnBreak() throws Exception{
+        return this.isOnBreak;
+    }
+
+    @Override
+    protected Architecture createLocalArchitecture(String modelURI) throws Exception{
+        return LampCoupledModel.build();
+    }
+
+    @Override
+    public Object getEmbeddingComponentStateValue(String name) throws Exception{
+        if(name.equals("state")) {
+            return state;
+        } else if(name.equals("break")){ 
+            return isOnBreak;
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void setEmbeddingComponentStateValue(String name , Object value) {
+        if(name.equals("state")) {
+            this.state = (LampState) value;
+        } else {
+            throw new RuntimeException();
+        }
+    }
 }

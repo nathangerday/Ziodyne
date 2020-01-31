@@ -22,7 +22,17 @@ public class ElectricMeterControllerOutboundPort extends AbstractOutboundPort im
     }
 
     @Override
-    public int getConsommation() throws Exception{
-        return ((ElectricMeterControllerI)this.connector).getConsommation();
+    public double getAvailableEnergy() throws Exception{
+        return ((ElectricMeterControllerI)this.connector).getAvailableEnergy();
+    }
+
+    @Override
+    public double getProduction() throws Exception{
+        return ((ElectricMeterControllerI)this.connector).getProduction();
+    }
+
+    @Override
+    public double getConsumption() throws Exception{
+        return ((ElectricMeterControllerI)this.connector).getConsumption();
     }
 }

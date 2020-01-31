@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 public class LampCoupledModel extends CoupledModel {
 
+    private static final long serialVersionUID = 1L;
     // -------------------------------------------------------------------------
     // Constants and variables
     // -------------------------------------------------------------------------
@@ -38,7 +39,17 @@ public class LampCoupledModel extends CoupledModel {
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
-    public LampCoupledModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine, ModelDescriptionI[] submodels, Map<Class<? extends EventI>, EventSink[]> imported, Map<Class<? extends EventI>, ReexportedEvent> reexported, Map<EventSource, EventSink[]> connections, Map<StaticVariableDescriptor, VariableSink[]> importedVars, Map<VariableSource, StaticVariableDescriptor> reexportedVars, Map<VariableSource, VariableSink[]> bindings) throws Exception {
+    public LampCoupledModel(
+            String uri,
+            TimeUnit simulatedTimeUnit,
+            SimulatorI simulationEngine,
+            ModelDescriptionI[] submodels,
+            Map<Class<? extends EventI>, EventSink[]> imported,
+            Map<Class<? extends EventI>, ReexportedEvent> reexported,
+            Map<EventSource, EventSink[]> connections,
+            Map<StaticVariableDescriptor, VariableSink[]> importedVars,
+            Map<VariableSource, StaticVariableDescriptor> reexportedVars,
+            Map<VariableSource, VariableSink[]> bindings) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine, submodels, imported, reexported, connections, importedVars, reexportedVars, bindings);
     }
 
@@ -104,31 +115,31 @@ public class LampCoupledModel extends CoupledModel {
         Map<EventSource,EventSink[]> connections =
                 new HashMap<EventSource,EventSink[]>() ;
         EventSource from1 =
-                new EventSource(LampUserModel.URI, SwitchOn.class) ;
+                new EventSource(LampUserModel.URI, LampOn.class) ;
         EventSink[] to1 =
                 new EventSink[] {
-                        new EventSink(LampModel.URI, SwitchOn.class)} ;
+                        new EventSink(LampModel.URI, LampOn.class)} ;
         connections.put(from1, to1) ;
         EventSource from2 =
-                new EventSource(LampUserModel.URI, SwitchOff.class) ;
+                new EventSource(LampUserModel.URI, LampOff.class) ;
         EventSink[] to2 = new EventSink[] {
-                new EventSink(LampModel.URI, SwitchOff.class)} ;
+                new EventSink(LampModel.URI, LampOff.class)} ;
         connections.put(from2, to2) ;
         EventSource from3 =
-                new EventSource(LampUserModel.URI, SetLow.class) ;
+                new EventSource(LampUserModel.URI, LampLow.class) ;
         EventSink[] to3 = new EventSink[] {
-                new EventSink(LampModel.URI, SetLow.class)} ;
+                new EventSink(LampModel.URI, LampLow.class)} ;
         connections.put(from3, to3) ;
         EventSource from4 =
-                new EventSource(LampUserModel.URI, SetHigh.class) ;
+                new EventSource(LampUserModel.URI, LampHigh.class) ;
         EventSink[] to4 = new EventSink[] {
-                new EventSink(LampModel.URI, SetHigh.class)} ;
+                new EventSink(LampModel.URI, LampHigh.class)} ;
         connections.put(from4, to4) ;
         EventSource from5 =
-                new EventSource(LampUserModel.URI, SetMedium.class) ;
+                new EventSource(LampUserModel.URI, LampMedium.class) ;
         EventSink[] to5 = new EventSink[] {
-                new EventSink(LampModel.URI, SetMedium.class)} ;
-        connections.put(from4, to4) ;
+                new EventSink(LampModel.URI, LampMedium.class)} ;
+        connections.put(from5, to5) ;
 
         coupledModelDescriptors.put(
                LampCoupledModel.URI,
