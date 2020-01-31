@@ -366,27 +366,4 @@ public class BatteryModel extends AtomicModel {
             throw new RuntimeException(e);
         }
     }
-
-    //    public static Architecture build() throws Exception {
-    //        Map<String,AbstractAtomicModelDescriptor> atomicModelDescriptors =
-    //                new HashMap<>() ;
-    //
-    //        atomicModelDescriptors.put(
-    //                BatteryModel.URI,
-    //                AtomicModelDescriptor.create(
-    //                        BatteryModel.class,
-    //                        BatteryModel.URI,
-    //                        TimeUnit.SECONDS,
-    //                        null,
-    //                        SimulationEngineCreationMode.ATOMIC_ENGINE)) ;
-    //
-    //        Architecture localArchitecture =
-    //                new Architecture(
-    //                        BatteryModel.URI,
-    //                        atomicModelDescriptors,
-    //                        new HashMap<>(),
-    //                        TimeUnit.SECONDS) ;
-    //
-    //        return localArchitecture;
-    //    }
 }

@@ -1,5 +1,6 @@
 package ports;
 
+import components.Dishwasher.DWMode;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import interfaces.DishwasherControllerI;
@@ -12,35 +13,38 @@ public class DishwasherControllerOutboundPort extends AbstractOutboundPort imple
             throws Exception {
         super(uri, DishwasherControllerI.class, owner);
     }
-    
+
     public DishwasherControllerOutboundPort(ComponentI owner) throws Exception{
         super(DishwasherControllerI.class, owner);
     }
 
-
     @Override
-    public boolean isDishwasherOn() throws Exception {
-        return ((DishwasherControllerI)this.connector).isDishwasherOn();
+    public boolean isOn() throws Exception {
+        return ((DishwasherControllerI)this.connector).isOn();
     }
 
     @Override
-    public boolean isDishwasherModeEco() throws Exception {
-        return ((DishwasherControllerI)this.connector).isDishwasherModeEco();
+    public double getTimeLeft() throws Exception {
+        return ((DishwasherControllerI)this.connector).getTimeLeft();
     }
 
     @Override
-    public void setDishwasherModeEco(boolean on) throws Exception {
-        ((DishwasherControllerI)this.connector).setDishwasherModeEco(on);
+    public DWMode getMode() throws Exception {
+        return ((DishwasherControllerI)this.connector).getMode();
     }
 
     @Override
-    public int getDishwasherTimeLeft() throws Exception {
-        return ((DishwasherControllerI)this.connector).getDishwasherTimeLeft();
+    public void setMode(DWMode mode) throws Exception {
+        ((DishwasherControllerI)this.connector).setMode(mode);        
     }
 
     @Override
-    public void startDishwasherProgram() throws Exception {
-        ((DishwasherControllerI)this.connector).startDishwasherProgram();
+    public void switchBreak() throws Exception {
+        ((DishwasherControllerI)this.connector).switchBreak();
     }
 
+    @Override
+    public boolean isOnBreak() throws Exception {
+        return ((DishwasherControllerI)this.connector).isOnBreak();
+    }
 }
