@@ -13,7 +13,7 @@ public class FridgeConnector extends AbstractConnector implements FridgeControll
 
     @Override
     public boolean isFridgeOnBreak() throws Exception{
-        return ((FridgeI)this.offering).isFreezerOnBreak();
+        return ((FridgeI)this.offering).isFridgeOnBreak();
     }
 
     @Override
@@ -28,7 +28,7 @@ public class FridgeConnector extends AbstractConnector implements FridgeControll
 
     @Override
     public boolean isFridgeOn() throws Exception{
-        return ((FridgeI)this.offering).isFreezerOn();
+        return ((FridgeI)this.offering).isFridgeOn();
     }
 
     @Override

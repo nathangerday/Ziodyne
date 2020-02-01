@@ -60,11 +60,11 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     public static final String COMPONENT_REF = URI + ":componentRef";
 
     /** energy consumption (in Watts) of the lamp in LOW mode.		*/
-    private static final double LOW_MODE_CONSUMPTION = 20.0; // Watts
+    public static final double LOW_MODE_CONSUMPTION = 20.0; // Watts
     /** energy consumption (in Watts) of the lamp in MEDIUM mode.		*/
-    private static final double MEDIUM_MODE_CONSUMPTION = 40.0; // Watts
+    public static final double MEDIUM_MODE_CONSUMPTION = 40.0; // Watts
     /** energy consumption (in Watts) of the lamp in HIGH mode.		*/
-    private static final double HIGH_MODE_CONSUMPTION = 60.0; // Watts
+    public static final double HIGH_MODE_CONSUMPTION = 60.0; // Watts
 
     /** current power in watts.			*/
     private final Value<Double> currentPower = new Value<Double>(this, 0.0, 0);

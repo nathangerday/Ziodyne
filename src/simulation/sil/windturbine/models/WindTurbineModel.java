@@ -49,7 +49,7 @@ public class WindTurbineModel extends AtomicModel {
     public static final String MIN_SPEED = "min-speed";
 
     private static final double RHO = 1.23;
-    private static final double R = 1.2;
+    private static final double R = 0.8;
     private static final double COEFF = 0.5 * RHO * R * R * Math.PI;
 
     /** Puissance en Watt

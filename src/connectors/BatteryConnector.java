@@ -21,4 +21,9 @@ public class BatteryConnector extends AbstractConnector implements BatteryContro
     public void setMode(BState mode) throws Exception {
         ((BatteryI)this.offering).setMode(mode);
     }
+    
+    @Override
+    public BState getMode() throws Exception {
+        return ((BatteryI)this.offering).getMode();
+    }
 }

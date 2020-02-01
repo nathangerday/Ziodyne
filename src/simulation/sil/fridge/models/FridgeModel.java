@@ -60,9 +60,9 @@ public class FridgeModel extends AtomicHIOAwithEquations{
     public static final String COMPONENT_REF = URI + ":componentRef";
 
     /** energy consumption (in Watts) of the freezer.		*/
-    protected static final double	FREEZER_ON_CONSUMPTION = 80.0 ;
+    public static final double	FREEZER_ON_CONSUMPTION = 80.0 ;
     /** energy consumption (in Watts) of the fridge.		*/
-    protected static final double	FRIDGE_ON_CONSUMPTION = 300.0 ;
+    public static final double	FRIDGE_ON_CONSUMPTION = 300.0 ;
 
     protected static final double FREEZER_TEMP_MODIF = 0.01 ; 
     protected static final double FRIDGE_TEMP_MODIF = 0.005 ;

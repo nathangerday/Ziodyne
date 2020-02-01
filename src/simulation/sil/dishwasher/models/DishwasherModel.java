@@ -51,12 +51,12 @@ public class DishwasherModel extends AtomicModel{
 
     private static final double ECO_MODE_DURATION = 60;
     private static final double STANDARD_MODE_DURATION = 30;
-    private static final double	ECO_MODE_CONSUMPTION = 600.0 ; // Watts
-    private static final double	STANDARD_MODE_CONSUMPTION = 1300.0 ; // Watts
+    public static final double	ECO_MODE_CONSUMPTION = 350.0 ; // Watts
+    public static final double	STANDARD_MODE_CONSUMPTION = 700.0 ; // Watts
 
-    private double currentPower;
     private double lastPower;
     private double endCycle;
+    private DWMode lastMode;
     private boolean consumptionHasChanged;
 
     protected XYPlotter powerPlotter ;
@@ -101,10 +101,10 @@ public class DishwasherModel extends AtomicModel{
 
     @Override
     public void	initialiseState(Time initialTime){
-        this.currentPower = 0.0;
         this.lastPower = 0.0;
         this.endCycle = 0.0;
         this.consumptionHasChanged = false;
+        this.lastMode = this.getMode();
         if(this.powerPlotter != null) {
             this.powerPlotter.initialise();
             this.powerPlotter.showPlotter();
@@ -152,14 +152,28 @@ public class DishwasherModel extends AtomicModel{
     public void	userDefinedInternalTransition(Duration elapsedTime){
         super.userDefinedInternalTransition(elapsedTime);
         if(elapsedTime.greaterThan(Duration.zero(getSimulatedTimeUnit()))){
-            DWState state = this.getState();
             double currentTime = this.getCurrentStateTime().getSimulatedTime();
 
             //Change State to OFF if the dishwasher if on break
             //or it's the end of the cycle
-            if(this.isOnBreak() && state == DWState.ON ||
-                    state == DWState.ON && currentTime >= endCycle) {
+            if(this.isOnBreak() && this.getState() == DWState.ON ||
+                    this.getState() == DWState.ON && currentTime >= endCycle) {
                 this.setState(DWState.OFF);
+            }
+            
+            //Check if the mode has changed
+            //If yes, change the endCycle following the remaining time
+            if(this.getState() == DWState.ON &&
+                    this.lastMode != this.getMode()) {
+                double remaining = endCycle - currentTime;
+                double r;
+                if(this.getMode() == DWMode.ECO) {
+                    r = ECO_MODE_DURATION/STANDARD_MODE_DURATION;
+                } else {
+                    r = STANDARD_MODE_DURATION/ECO_MODE_DURATION;
+                }
+                endCycle = currentTime + r * remaining;
+                this.lastMode = this.getMode();
             }
 
             //Plotter
@@ -228,23 +242,18 @@ public class DishwasherModel extends AtomicModel{
         try {
             if(this.getState() != s) {
                 this.componentRef.setEmbeddingComponentStateValue("state", s);
-                switch(s) {
-                case ON :
-                    if(getMode() == DWMode.ECO) {
-                        this.setPower(ECO_MODE_CONSUMPTION);
+                if(s == DWState.ON) {
+                    DWMode m = this.getMode();
+                    if(m == DWMode.ECO) {
                         this.endCycle =
                                 this.getCurrentStateTime().getSimulatedTime() +
                                 ECO_MODE_DURATION;
-                    } else if(getMode() == DWMode.STANDARD) {
-                        this.setPower(STANDARD_MODE_CONSUMPTION);
+                    } else if(m == DWMode.STANDARD) {
                         this.endCycle =
                                 this.getCurrentStateTime().getSimulatedTime() +
                                 STANDARD_MODE_DURATION;
                     }
-                    break;
-                case OFF :
-                    this.setPower(0.0);
-                    break;
+                    this.lastMode = m;
                 }
             }
         } catch (Exception e) {
@@ -269,13 +278,17 @@ public class DishwasherModel extends AtomicModel{
     }
 
     public double getPower(){
-        return this.currentPower;
+        if(this.getState() == DWState.ON) {
+            if(this.getMode() == DWMode.ECO) {
+                return ECO_MODE_CONSUMPTION;
+            } else {
+                return STANDARD_MODE_CONSUMPTION;
+            }
+        } else {
+            return 0;
+        }
     }
 
-    private void setPower(double v) {
-        this.currentPower = v;
-    }
-    
     public double getTimeLeft() {
         if(this.getState() == DWState.ON) {
             return endCycle - this.getCurrentStateTime().getSimulatedTime();

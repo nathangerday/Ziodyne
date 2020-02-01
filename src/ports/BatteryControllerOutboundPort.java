@@ -34,4 +34,9 @@ public class BatteryControllerOutboundPort extends AbstractOutboundPort implemen
     public void setMode(BState mode) throws Exception {
         ((BatteryControllerI)this.connector).setMode(mode);
     }
+    
+    @Override
+    public BState getMode() throws Exception {
+        return ((BatteryControllerI)this.connector).getMode();
+    }
 }

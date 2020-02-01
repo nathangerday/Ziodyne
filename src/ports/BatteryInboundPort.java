@@ -45,4 +45,10 @@ public class BatteryInboundPort extends AbstractInboundPort implements BatteryI 
                     }
                 }) ;
     }
+    
+    @Override
+    public BState getMode() throws Exception {
+        return this.getOwner().handleRequestSync(
+                owner -> ((Battery)owner).getMode());
+    }
 }

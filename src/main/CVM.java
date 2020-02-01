@@ -28,7 +28,7 @@ import simulation.sil.windturbine.models.WindTurbineCoupledModel;
 public class CVM extends AbstractCVM{
     public CVM() throws Exception{
         super();
-        SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 1L ;
+        SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 2L ;
     }
 
     @Override

@@ -107,21 +107,6 @@ public class Battery extends AbstractCyPhyComponent implements BatteryI,Embeddin
 //    }
 
     @Override
-    public double getMaxCapacity() throws Exception {
-        return (double) asp.getModelStateValue(BatteryModel.URI, "max capacity");
-    }
-
-    @Override
-    public double getCurrentCapacity() throws Exception {
-        return (double) asp.getModelStateValue(BatteryModel.URI, "capacity");
-    }
-
-    @Override
-    public void setMode(BState mode) throws Exception {
-        this.mode = mode;
-    }
-
-    @Override
     public void shutdown() throws ComponentShutdownException {
         try {
             batteryInboundPort.unpublishPort();
@@ -140,6 +125,26 @@ public class Battery extends AbstractCyPhyComponent implements BatteryI,Embeddin
             throw new ComponentShutdownException(e);
         }
         super.shutdownNow();
+    }
+    
+    @Override
+    public double getMaxCapacity() throws Exception {
+        return (double) asp.getModelStateValue(BatteryModel.URI, "max capacity");
+    }
+
+    @Override
+    public double getCurrentCapacity() throws Exception {
+        return (double) asp.getModelStateValue(BatteryModel.URI, "capacity");
+    }
+
+    @Override
+    public void setMode(BState mode) throws Exception {
+        this.mode = mode;
+    }
+    
+    @Override
+    public BState getMode() throws Exception {
+        return mode;
     }
 
     @Override

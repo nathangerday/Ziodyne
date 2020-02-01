@@ -47,10 +47,8 @@ public class BatteryModel extends AtomicModel {
     public static final String SERIES_CONSUMPTION = "consumption" ;
     public static final String SERIES_PRODUCTION = "production" ;
     public static final String SERIES_CAPACITY = "capacity" ;
-    private static final double BATTERY_MODIF = 500;
+    public static final double BATTERY_MODIF = 500;
 
-    protected double currentConsumption;
-    protected double currentProduction;
     protected double currentCapacity;
 
     private double maxCapacity = 100000;
@@ -115,20 +113,6 @@ public class BatteryModel extends AtomicModel {
         this.consumptionHasChanged = false;
         this.productionHasChanged = false;
         this.currentCapacity = 40000.0;
-        switch(this.getState()) {
-        case STANDBY:
-            this.setConsumption(0.0);
-            this.setProduction(0.0);
-            break;
-        case CONSUMING:
-            this.setConsumption(BATTERY_MODIF);
-            this.setProduction(0.0);
-            break;
-        case PRODUCING:
-            this.setConsumption(0.0);
-            this.setProduction(BATTERY_MODIF);
-            break;
-        }
         this.lastConsumption = this.getConsumption();
         this.lastProduction = this.getProduction();
 
@@ -321,20 +305,22 @@ public class BatteryModel extends AtomicModel {
     }
 
     private double getProduction() {
-        return currentProduction;
+        if(this.getState() == BState.PRODUCING) {
+            return BATTERY_MODIF;
+        } else {
+            return 0.0;
+        }
     }
 
-    private void setProduction(double v) {
-        this.currentProduction = v;
-    }
 
     private double getConsumption() {
-        return this.currentConsumption;
+        if(this.getState() == BState.CONSUMING) {
+            return BATTERY_MODIF;
+        } else {
+            return 0.0;
+        }
     }
 
-    private void setConsumption(double v) {
-        this.currentConsumption = v;
-    }
 
     private BState getState() {
         try {
@@ -348,19 +334,6 @@ public class BatteryModel extends AtomicModel {
         try {
             if(this.getState() != s) {
                 this.componentRef.setEmbeddingComponentStateValue("state", s);
-                switch(s) {
-                case STANDBY :
-                    this.setProduction(0.0);
-                    this.setConsumption(0.0);
-                    break;
-                case PRODUCING :
-                    this.setProduction(BATTERY_MODIF);
-                    this.setConsumption(0.0);
-                    break;
-                case CONSUMING :
-                    this.setConsumption(BATTERY_MODIF);
-                    this.setProduction(0.0);
-                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
