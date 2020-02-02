@@ -63,8 +63,8 @@ public class DishwasherModel extends AtomicModel{
 
     private static final double ECO_MODE_DURATION = 60;
     private static final double STANDARD_MODE_DURATION = 30;
-    public static final double	ECO_MODE_CONSUMPTION = 350.0 ; // Watts
-    public static final double	STANDARD_MODE_CONSUMPTION = 700.0 ; // Watts
+    public static final double	ECO_MODE_CONSUMPTION = 200.0 ; // Watts
+    public static final double	STANDARD_MODE_CONSUMPTION = 420.0 ; // Watts
 
     private double lastPower;
     private double endCycle;

@@ -207,8 +207,8 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
         this.asp.setPluginURI(localArchitecture.getRootModelURI());
         this.asp.setSimulationArchitecture(localArchitecture);
         this.installPlugin(this.asp);
-        this.toggleTracing();
-        this.tracer.setTitle("Controller");
+//        this.toggleTracing();
+//        this.tracer.setTitle("Controller");
     }
 
 
