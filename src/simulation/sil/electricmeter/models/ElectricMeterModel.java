@@ -97,7 +97,13 @@ public class ElectricMeterModel extends AtomicModel {
     // -------------------------------------------------------------------------
 
 
-
+    /**
+     * Creates an ElectricMeterModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public ElectricMeterModel(String uri,
             TimeUnit simulatedTimeUnit,
             SimulatorI simulationEngine) throws Exception {

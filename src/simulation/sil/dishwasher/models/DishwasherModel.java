@@ -79,7 +79,13 @@ public class DishwasherModel extends AtomicModel{
     // Constructor
     // -------------------------------------------------------------------------
 
-
+    /**
+     * Creates a DishwasherModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public DishwasherModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
         this.setLogger(new StandardLogger()) ;

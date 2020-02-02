@@ -23,7 +23,12 @@ public class DishwasherConsumption extends Event {
             this.value = value;
         }
     }
-
+    
+    /**
+     * Creates a DishwasherConsumption event
+     * @param timeOfOccurrence time of the event
+     * @param power value of the consumption at the time of the event
+     */
     public DishwasherConsumption(Time timeOfOccurrence, double power) {
         super(timeOfOccurrence, new Reading(power));
     }

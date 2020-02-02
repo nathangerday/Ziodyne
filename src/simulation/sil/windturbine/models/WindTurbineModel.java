@@ -85,7 +85,14 @@ public class WindTurbineModel extends AtomicModel {
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
-
+    
+    /**
+     * Creates a WindTurbineModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public WindTurbineModel(
             String uri,
             TimeUnit simulatedTimeUnit,

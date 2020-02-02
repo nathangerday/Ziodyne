@@ -52,6 +52,7 @@ public class DishwasherCoupledModel extends CoupledModel {
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
+
     public DishwasherCoupledModel(
             String uri,
             TimeUnit simulatedTimeUnit,

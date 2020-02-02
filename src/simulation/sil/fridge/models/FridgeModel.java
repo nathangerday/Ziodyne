@@ -117,7 +117,13 @@ public class FridgeModel extends AtomicHIOAwithEquations{
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
-
+    /**
+     * Creates a FridgeModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public FridgeModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
         this.setLogger(new StandardLogger()) ;

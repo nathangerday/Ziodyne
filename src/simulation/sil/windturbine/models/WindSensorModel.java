@@ -87,7 +87,14 @@ public class WindSensorModel extends AtomicHIOAwithEquations{
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
-
+    
+    /**
+     * Creates a WindSensorModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public WindSensorModel(
             String uri,
             TimeUnit simulatedTimeUnit,

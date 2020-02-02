@@ -12,7 +12,12 @@ import simulation.sil.dishwasher.models.DishwasherModel;
 public class DishwasherOn extends AbstractDishwasherEvent{
 
     private static final long serialVersionUID = 1L;
-
+    
+    
+    /**
+     * Creates a DishwasherOn event
+     * @param timeOfOccurrence time of the event
+     */
     public DishwasherOn(Time timeOfOccurrence) {
         super(timeOfOccurrence, null);
     }

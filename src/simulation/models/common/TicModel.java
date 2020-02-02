@@ -40,6 +40,13 @@ public class TicModel extends AtomicModel{
      *  simulation run.														*/
     protected Duration delay ;
 
+    /**
+     * Constructs a TicModel
+     * @param uri the uri for the model
+     * @param simulatedTimeUnit TimeUnit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public TicModel(
             String uri,
             TimeUnit simulatedTimeUnit,

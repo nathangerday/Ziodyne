@@ -35,7 +35,13 @@ public class ControllerModel extends AtomicModel{
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
-
+    /**
+     * Creates a ControllerModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public	ControllerModel(
             String uri,
             TimeUnit simulatedTimeUnit,

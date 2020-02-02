@@ -92,7 +92,14 @@ public class LampModel 	extends AtomicHIOAwithEquations {
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
-
+    
+    /**
+     * Creates a LampModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public LampModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
         this.setLogger(new StandardLogger());

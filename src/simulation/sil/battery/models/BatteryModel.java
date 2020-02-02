@@ -76,7 +76,13 @@ public class BatteryModel extends AtomicModel {
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
-
+    
+    /**
+     * Creates a BatteryModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     */
     public BatteryModel(
             String uri,
             TimeUnit simulatedTimeUnit,

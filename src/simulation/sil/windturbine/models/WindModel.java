@@ -103,7 +103,14 @@ public class WindModel extends AtomicHIOAwithDE{
     // ------------------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------------------
-
+    
+    /**
+     * Creates a WindModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public WindModel(
             String uri,
             TimeUnit simulatedTimeUnit,

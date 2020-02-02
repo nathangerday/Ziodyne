@@ -42,7 +42,14 @@ public class DishwasherControllerModel extends AtomicES_Model {
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
-
+    
+    /**
+     * Creates a DishwasherControllerModel
+     * @param uri uri of the model
+     * @param simulatedTimeUnit timeunit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @throws Exception
+     */
     public DishwasherControllerModel(String uri, TimeUnit simulatedTimeUnit, SimulatorI simulationEngine) throws Exception {
         super(uri, simulatedTimeUnit, simulationEngine);
         this.setLogger(new StandardLogger()) ;

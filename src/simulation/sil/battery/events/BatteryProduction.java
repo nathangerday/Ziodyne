@@ -30,7 +30,12 @@ public class BatteryProduction extends Event {
             this.value = value;
         }
     }
-
+    
+    /**
+     * Creates a BatteryProduction event
+     * @param timeOfOccurrence time of the event
+     * @param value value of the consumption at the time of the event
+     */
     public BatteryProduction(Time timeOfOccurrence, double value) {
         super(timeOfOccurrence, new Reading(value));
     }
