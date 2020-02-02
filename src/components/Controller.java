@@ -37,27 +37,103 @@ import simulation.sil.dishwasher.models.DishwasherModel;
 import simulation.sil.fridge.models.FridgeModel;
 import simulation.sil.lamp.models.LampModel;
 
+
+/**
+ *The class <code>Controller</code> implements a controller component that will
+ * hold the controller simulation model.
+ * 
+  <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ *
+ */
 public class Controller extends AbstractCyPhyComponent implements EmbeddingComponentAccessI {
-    //equipements ports
+	/**
+	 * Outbound port of the lamp
+	 */
     private LampControllerOutboundPort lampOutboundPort;
+    /**
+	 * Outbound port of the fridge
+	 */
     private FridgeControllerOutboundPort fridgeOutboundPort;
+    /**
+	 * Outbound port of the wind turbine
+	 */
     private WindTurbineControllerOutboundPort windTurbineOutboundPort;
+    /**
+	 * Outbound port of the dishwasher
+	 */
     private DishwasherControllerOutboundPort dishwasherOutboundPort;
+    /**
+	 * Outbound port of the electric meter
+	 */
     private ElectricMeterControllerOutboundPort electricMeterOutboundPort;
+    /**
+	 * Outbound port of the battery
+	 */
     private BatteryControllerOutboundPort batteryOutboundPort;
 
-    //equipments ports uri
+    /**
+     * Port uri of the lamp
+     */
     private String lampInboundPortURI;
+    /**
+     * Port uri of the fridge
+     */
     private String fridgeInboundPortURI;
+    /**
+     * Port uri of the wind turbine
+     */
     private String windTurbineInboundPortURI;
+    /**
+     * Port uri of the dishwasher
+     */
     private String dishwasherInboundPortURI;
+    /**
+     * Port uri of the electric meter
+     */
     private String electricMeterInboundPortURI;
+    /**
+     * Port uri of the battery
+     */
     private String batteryInboundPortURI;
 
+    
+	/** 
+	 * the plugin in order to access the model 
+	 */
     protected AtomicSimulatorPlugin asp;
 
+    
+	/**
+	 * Create a controller component.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	reflectionInboundPortURI != null
+	 * post	true			// no postcondition.
+	 * </pre>
+	 *
+	 * @param reflectionInboundPortURI	URI of the reflection inbound port of the controller component.
+	 * @param lampOutboundPortURI	URI of the outbound port of the lamp component.
+	 * @param lampInboundPortURI	URI of the inbound port of the lamp component.
+	 * @param fridgeOutboundPortURI	URI of the outbound port of the fridge component.
+	 * @param fridgeInboundPortURI	URI of the inbound port of the fridge component.
+	 * @param windTurbineOutboundPortURI	URI of the outbound port of the wind turbine component.
+	 * @param windTurbineInboundPortURI	URI of the inbound port of the wind turbine component.
+	 * @param dishwasherOutboundPortURI	URI of the outbound port of the dishwasher component.
+	 * @param dishwasherInboundPortURI	URI of the inbound port of the dishwasher component.
+	 * @param electricMeterpOutboundPortURI	URI of the outbound port of the electric meter component.
+	 * @param electricMeterInboundPortURI	URI of the inbound port of the electric meter component.
+	 * @param batteryOutboundPortURI	URI of the outbound port of the battery component.
+	 * @param batteryInboundPortURI	URI of the inbound port of the battery component.
+	 * @throws Exception				
+	 */
     protected Controller(
-            String uri,
+            String reflectionInboundPortURI,
             String lampOutboundPortURI,
             String lampInboundPortURI,
             String fridgeOutboundPortURI,
@@ -70,7 +146,7 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
             String electricMeterInboundPortURI,
             String batteryOutboundPortURI,
             String batteryInboundPortURI) throws Exception{
-        super(uri, 1, 0);
+        super(reflectionInboundPortURI, 1, 0);
         this.lampInboundPortURI = lampInboundPortURI;
         this.fridgeInboundPortURI = fridgeInboundPortURI;
         this.windTurbineInboundPortURI = windTurbineInboundPortURI;
@@ -101,6 +177,18 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
         this.initialise();
     }
 
+    /**
+	 * Initialise the Controller component.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	true			// no precondition.
+	 * post	true			// no postcondition.
+	 * </pre>
+	 *
+	 * @throws Exception	<i>to do</i>.
+	 */
     private void initialise() throws Exception {
         Architecture localArchitecture = this.createLocalArchitecture(null);
         Controller ref = this;
@@ -125,8 +213,7 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
 
 
     /**
-     * a component is always started by calling this method, so intercept the
-     * call and make sure the task of the component is executed.
+     * Start the controller component
      * 
      * <p><strong>Contract</strong></p>
      * 
@@ -177,6 +264,11 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
     }
 
 
+	/**
+	 * Shutdown the component
+	 * 
+	 * @throws ComponentShutdownException
+	 */
     @Override
     public void shutdown() throws ComponentShutdownException {
         try {
@@ -192,6 +284,12 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
         super.shutdown();
     }
 
+
+	/**
+	 * Shutdown the component now
+	 * 
+	 * @throws ComponentShutdownException
+	 */
     @Override
     public void shutdownNow() throws ComponentShutdownException {
         try {
@@ -207,6 +305,11 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
         super.shutdownNow();
     }
 
+    /**
+     * Finalise the component by disconnecting all the ports
+     * 
+     * @exception Exception
+     */
     @Override
     public void finalise() throws Exception{
         this.doPortDisconnection(this.lampOutboundPort.getPortURI());
@@ -218,10 +321,20 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
         super.finalise();
     }
 
+    /**
+     * Return the period of the controller
+     * @return period for advancing time
+     */
     public double getControlPeriod() {
         return 1.0;
     }
-
+    
+    /**
+     * Determine the action taken whether the current available energy level is enough or not.
+     *  
+     * @param simulatedTime
+     * @throws Exception
+     */
     public void controlTask(double simulatedTime) throws Exception {
         double energy = this.electricMeterOutboundPort.getAvailableEnergy();
         if(energy > 0) {
@@ -469,6 +582,12 @@ public class Controller extends AbstractCyPhyComponent implements EmbeddingCompo
         }
     }
 
+	/**
+	 * Create local architecture using controller URI
+	 * 
+	 * @param URI of the model
+	 * @return local architecture of the controller
+	 */
     @Override
     protected Architecture createLocalArchitecture(String modelURI) throws Exception {
         Map<String,AbstractAtomicModelDescriptor> atomicModelDescriptors =

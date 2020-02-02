@@ -10,21 +10,57 @@ import ports.FridgeInboundPort;
 import simulation.sil.fridge.models.FridgeCoupledModel;
 import simulation.sil.fridge.plugin.FridgeSimulatorPlugin;
 
+/**
+ *The class <code>Fridge</code> implements a fridge component that will
+ * hold the fridge simulation model. The fridge is composed of two compartments : 
+ * the fridge and freezer
+ * 
+  <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ *
+ */
 public class Fridge extends AbstractCyPhyComponent implements FridgeI,EmbeddingComponentAccessI{
 
+	/** State of the fridge's door*/
     public enum DoorState{OPEN,CLOSE}
+    /** State of the fridge*/
     public enum FState{ON,OFF}
-
+    
+    /** Current state of the fridge */
     protected FState fridgeState;
+    /** Current state of the freezer */
     protected FState freezerState;
+    /** Current state of the fridge door */
     protected DoorState fridgeDoor;
+    /** Current state of the freezer door */
     protected DoorState freezerDoor;
+    /** true if fridge is on break, false if not */
     protected boolean isFridgeOnBreak;
+    /** true if freezer is on break, false if not */
     protected boolean isFreezerOnBreak;
+    /** the plugin in order to access the model 	 */
     protected FridgeSimulatorPlugin asp;
-
+    /**
+	 * Port that exposes the offered interface of the fridge with the given URI to ease the
+	 * connection from controller components.
+	 */
     protected FridgeInboundPort fridgeInboundPort;
 
+    /** 
+     * Construct a fridge component.
+     * 
+     * <p><strong>Contract</strong></p>
+     * 
+     * <pre>
+     * pre  uri != null
+     * </pre>
+     * @param uri
+     * @param fridgeInboundPortURI
+     * @throws Exception
+     */
     protected Fridge(String uri, String fridgeInboundPortURI) throws Exception {
         super(uri, 1, 0);
         assert uri != null :  new PreconditionException("uri can't be null!") ;
@@ -42,6 +78,11 @@ public class Fridge extends AbstractCyPhyComponent implements FridgeI,EmbeddingC
         initialise();
     }
 
+    /**
+	 * Initialise the fridge by installing the plugin for accessing to the model.
+	 * 
+	 * @throws Exception
+	 */
     private void initialise() throws Exception{
         Architecture localArchitecture = this.createLocalArchitecture(null) ;
         this.asp = new FridgeSimulatorPlugin();
@@ -91,6 +132,11 @@ public class Fridge extends AbstractCyPhyComponent implements FridgeI,EmbeddingC
     //        asp.doStandAloneSimulation(0.0, 500.0);
     //    }
 
+    /**
+  	 * Shutdown the component
+  	 * 
+  	 * @throws ComponentShutdownException
+  	 */
     @Override
     public void shutdown() throws ComponentShutdownException {
         try {
@@ -101,6 +147,11 @@ public class Fridge extends AbstractCyPhyComponent implements FridgeI,EmbeddingC
         super.shutdown();
     }
 
+    /**
+  	 * Shutdown the component now
+  	 * 
+  	 * @throws ComponentShutdownException
+  	 */
     @Override
     public void shutdownNow() throws ComponentShutdownException {
         try {
@@ -110,43 +161,85 @@ public class Fridge extends AbstractCyPhyComponent implements FridgeI,EmbeddingC
         }
         super.shutdownNow();
     }
-
+    
+    /**
+     * Set the fridge on break or not on break
+     */
     @Override
     public void switchFridgeBreak(){
         this.isFridgeOnBreak = !this.isFridgeOnBreak;
     }
 
+    
+    /**
+     * Return isFridgeOnBreak value
+     * 
+     * @return isFridgeOnBreak
+     */
     @Override
     public boolean isFridgeOnBreak() throws Exception {
         return isFridgeOnBreak;
 
     }
 
+    /**
+     * Set the  freezer on break or not on break
+     */
     @Override
     public void switchFreezerBreak() {
         this.isFreezerOnBreak = !this.isFreezerOnBreak;
     }
 
+    
+    /**
+     * Return isFreezerOnBreak value
+     * 
+     * @return isFreezerOnBreak
+     */
     @Override
     public boolean isFreezerOnBreak() throws Exception {
         return isFreezerOnBreak;
     }
 
+    /**
+     * Check whether the fridge is on
+     * 
+     * @return true if the state of the fridge is ON, false if it is OFF
+     */
     @Override
     public boolean isFridgeOn(){
         return fridgeState == FState.ON;
     }
 
+    /**
+     * Check whether the freezer is on
+     * 
+     * @return true if the state of the fridge is ON, false if it is OFF
+     */
     @Override
     public boolean isFreezerOn(){
         return freezerState == FState.ON;
     }
 
+    /**
+ 	 * Create local architecture 
+ 	 * 
+ 	 * @param URI of the model
+ 	 * @return local architecture of the fridge
+ 	 */
     @Override
     protected Architecture createLocalArchitecture(String modelURI) throws Exception{
         return FridgeCoupledModel.build();
     }
 
+	/**
+	 * Return the embedding component state value.
+	 * 
+	 * @param name of the component
+	 * @return freezer's state, or fridge's state, or  freezer's door state, or fridge's door
+	 *  state, or if freezer is on break, or if fridge is on break
+	 * 
+	 */
     @Override
     public Object getEmbeddingComponentStateValue(String name) throws Exception{
         if(name.equals("freezer state")) {
@@ -166,6 +259,13 @@ public class Fridge extends AbstractCyPhyComponent implements FridgeI,EmbeddingC
         }
     }
 
+    /**
+ 	 * Set a new embedding component state value.
+ 	 * 
+ 	 * @param name of the component
+ 	 * @param new state value
+ 	 * 
+ 	 */
     @Override
     public void setEmbeddingComponentStateValue(String name , Object value) {
         if(name.equals("freezer door")) {

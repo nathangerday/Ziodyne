@@ -37,12 +37,10 @@ import fr.sorbonne_u.components.cyphy.AbstractCyPhyComponent;
 
 // -----------------------------------------------------------------------------
 /**
- * The class <code>CoordinatorComponent</code> implements the components that
+ * The class <code>Coordinator</code> implements the components that
  * act as the coupled model and coordinator of the global simulator in the
  * smart grid example.
  *
- * <p><strong>Description</strong></p>
- * 
  * <p><strong>Invariant</strong></p>
  * 
  * <pre>

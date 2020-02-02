@@ -10,16 +10,54 @@ import ports.LampInboundPort;
 import simulation.sil.lamp.models.LampCoupledModel;
 import simulation.sil.lamp.plugin.LampSimulatorPlugin;
 
+/**
+ *The class <code>Lamp</code> implements a lamp component that will
+ * hold the lamp simulation model.
+ * 
+  <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ *
+ */
 public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingComponentAccessI{
 
+	/** State of the lamp*/
     public enum LampState{OFF,LOW,MEDIUM,HIGH}
-
+    /**
+  	 * Port that exposes the offered interface of the dishwasher with the given URI to ease the
+  	 * connection from controller components.
+  	 */
     protected LampInboundPort lampInboundPort;
+    /** Current state of the lamp */
     protected LampState state;
+    /** true if the dishwasher is on break, false if not*/
     protected boolean isOnBreak;
-
+    /** the plugin in order to access the model  */
     protected LampSimulatorPlugin asp ;
 
+    /**
+     * Create a lamp component
+     * 
+     * <p><strong>Contract</strong></p>
+	 *  
+	 * <pre>
+	 * pre uri != null
+	 * </pre>
+	 * 
+	 * <post> 
+	 * post state == LampState.OFF
+	 * post findPortFromURI(lampInboundPort.portURI).implementedInterface == LampI.class
+	 * post isPortExisting(lampInboundPort.portURI()) == true
+	 * post findPortFromURI(lampInboundPort.getportURI).isPublished == true
+	 * </post>
+	 * 
+	 * 
+     * @param uri
+     * @param lampInboundPortURI
+     * @throws Exception
+     */
     protected Lamp(String uri, String lampInboundPortURI) throws Exception {
         super(uri, 1, 0);
         this.state = LampState.OFF;
@@ -46,6 +84,11 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
                     + "port published with URI " + lampInboundPort.getPortURI()) ;
     }
 
+    /**
+ 	 * Initialise the lamp by installing the plugin for accessing to the model.
+ 	 * 
+ 	 * @throws Exception
+ 	 */
     private void initialise() throws Exception{
         Architecture localArchitecture = this.createLocalArchitecture(null) ;
         this.asp = new LampSimulatorPlugin() ;
@@ -75,6 +118,11 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
     //        asp.doStandAloneSimulation(0.0, 500.0);
     //    }
 
+    /**
+ 	 * Shutdown the component
+ 	 * 
+ 	 * @throws ComponentShutdownException
+ 	 */
     @Override
     public void shutdown() throws ComponentShutdownException {
         try {
@@ -85,6 +133,11 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
         super.shutdown();
     }
 
+    /**
+ 	 * Shutdown the component now
+ 	 * 
+ 	 * @throws ComponentShutdownException
+ 	 */
     @Override
     public void shutdownNow() throws ComponentShutdownException {
         try {
@@ -95,26 +148,52 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
         super.shutdownNow();
     }
 
+    /**
+     * Return lamp state
+     * 
+     * @return lamp current state
+     */
     @Override
     public LampState getState() {
         return state;
     }
 
+    /**
+     * Set the lamp on break or not on break
+     */
     @Override
     public void switchBreak() throws Exception{
         this.isOnBreak = !this.isOnBreak;
     }
 
+    /**
+     * Return isOnBreak value
+     * 
+     * @return isOnBreak
+     */
     @Override
     public boolean isOnBreak() throws Exception{
         return this.isOnBreak;
     }
 
+    /**
+	 * Create local architecture 
+	 * 
+	 * @param URI of the model
+	 * @return local architecture of the dishwasher
+	 */
     @Override
     protected Architecture createLocalArchitecture(String modelURI) throws Exception{
         return LampCoupledModel.build();
     }
 
+
+	/**
+	 * Return the embedding component state value.
+	 * 
+	 * @param name of the component
+	 * @return state, or isOnBreak
+	 */
     @Override
     public Object getEmbeddingComponentStateValue(String name) throws Exception{
         if(name.equals("state")) {
@@ -126,6 +205,13 @@ public class Lamp extends AbstractCyPhyComponent implements LampI,EmbeddingCompo
         }
     }
 
+    /**
+	 * Set a new embedding component state value.
+	 * 
+	 * @param name of the component
+	 * @param new state value
+	 * 
+	 */
     @Override
     public void setEmbeddingComponentStateValue(String name , Object value) {
         if(name.equals("state")) {

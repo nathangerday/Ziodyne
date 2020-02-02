@@ -12,13 +12,51 @@ import simulation.sil.windturbine.models.WindTurbineCoupledModel;
 import simulation.sil.windturbine.models.WindTurbineModel;
 import simulation.sil.windturbine.plugin.WindTurbineSimulatorPlugin;
 
+/**
+ *The class <code>WindTurbine</code> implements a wind turbine component that will
+ * hold the wind turbine simulation model.
+ * 
+  <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ *
+ */
 public class WindTurbine extends AbstractCyPhyComponent implements WindTurbineI,EmbeddingComponentAccessI{
-
+    /**
+	 * Port that exposes the offered interface of the wind turbine with the given URI to ease the
+	 * connection from controller components.
+	 */
     protected WindTurbineInboundPort windTurbineInboundPort;
+    /** true if wind turbine is activated, false if not*/
     protected boolean isOn;
+    /** true if the wind turbine is on break, false if not*/
     protected boolean isOnBreak;
+    /** the plugin in order to access the model 	 */
     protected WindTurbineSimulatorPlugin asp;
 
+    /**
+     * Create a wind turbine  component
+     * 
+     * <p><strong>Contract</strong></p>
+	 *  
+	 * <pre>
+	 * pre uri != null
+	 * </pre>
+	 * 
+	 * <post> 
+	 * post isOn == LampState.OFF
+	 * post findPortFromURI(windTurbineInboundPort.portURI).implementedInterface == LampI.class
+	 * post isPortExisting(windTurbineInboundPort.portURI()) == true
+	 * post findPortFromURI(windTurbineInboundPort.getportURI).isPublished == true
+	 * </post>
+	 * 
+	 * 
+     * @param uri
+     * @param windInboundPortURI
+     * @throws Exception
+     */
     protected WindTurbine(String uri, String windTurbineInboundPortURI) throws Exception{
         super(uri,1,0);
         assert uri != null :new PreconditionException("uri can't be null!") ;
@@ -28,7 +66,7 @@ public class WindTurbine extends AbstractCyPhyComponent implements WindTurbineI,
         windTurbineInboundPort = new WindTurbineInboundPort(windTurbineInboundPortURI, this);
         windTurbineInboundPort.publishPort();
 
-        initialise();
+        this.initialise();
 
         assert this.isOn == false :
             new PostconditionException("The wind turbine's state has not been initialised correctly !");
@@ -44,6 +82,11 @@ public class WindTurbine extends AbstractCyPhyComponent implements WindTurbineI,
                     + "port published with URI " + windTurbineInboundPort.getPortURI()) ;
     }
 
+    /**
+ 	 * Initialise the lamp by installing the plugin for accessing to the model.
+ 	 * 
+ 	 * @throws Exception
+ 	 */
     private void initialise() throws Exception{
         Architecture localArchitecture = this.createLocalArchitecture(null) ;
         this.asp = new WindTurbineSimulatorPlugin();
@@ -108,6 +151,12 @@ public class WindTurbine extends AbstractCyPhyComponent implements WindTurbineI,
 //    }
 
 
+
+    /**
+ 	 * Shutdown the component
+ 	 * 
+ 	 * @throws ComponentShutdownException
+ 	 */
     @Override
     public void shutdown() throws ComponentShutdownException {
         try {
@@ -119,6 +168,11 @@ public class WindTurbine extends AbstractCyPhyComponent implements WindTurbineI,
     }
 
 
+    /**
+  	 * Shutdown the component now
+  	 * 
+  	 * @throws ComponentShutdownException
+  	 */
     @Override
     public void shutdownNow() throws ComponentShutdownException {
         try {
@@ -130,36 +184,65 @@ public class WindTurbine extends AbstractCyPhyComponent implements WindTurbineI,
     }
 
 
+    /**
+     * Return isOn value 
+     * 
+     * @return isOn
+     */
     @Override
     public boolean isOn() {
         return isOn;
     }
 
 
+    /**
+     * Return isOnBreak value 
+     * 
+     * @return isOnBreak
+     */
     @Override
     public boolean isOnBreak() {
         return isOnBreak;
     }
 
-
+    /**
+     * Set the wind turbine on break or not on break
+     */
     @Override
     public void switchBreak() throws Exception {
         isOnBreak = !isOnBreak;
     }
 
 
+    /** 
+     *  Return the wind speed value
+     * 
+     * @return current wind speed
+     */
     @Override
     public double getWindSpeed() throws Exception {
         return (double) asp.getModelStateValue(WindTurbineModel.URI, "speed");
     }
 
 
+    /**
+	 * Create local architecture 
+	 * 
+	 * @param URI of the model
+	 * @return local architecture of the lamp
+	 */
     @Override
     protected Architecture createLocalArchitecture(String modelURI) throws Exception{
         return WindTurbineCoupledModel.build();
     }
 
-
+	/**
+	 * Return the embedding component state value.
+	 * 
+	 * @param name of the component
+	 * @return isOn, or isOnBreak
+	 * 
+	 */
     @Override
     public Object getEmbeddingComponentStateValue(String name) throws Exception{
         if(name.equals("state")) {
@@ -171,6 +254,13 @@ public class WindTurbine extends AbstractCyPhyComponent implements WindTurbineI,
         }
     }
 
+    /**
+  	 * Set a new embedding component state value.
+  	 * 
+  	 * @param name of the component
+  	 * @param new state value
+  	 * 
+  	 */
     @Override
     public void setEmbeddingComponentStateValue(String name , Object value) {
         if(name.equals("state")) {
