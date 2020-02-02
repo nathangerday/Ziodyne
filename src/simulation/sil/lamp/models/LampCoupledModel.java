@@ -31,6 +31,18 @@ import simulation.sil.lamp.events.LampLow;
 import simulation.sil.lamp.events.LampMedium;
 import simulation.sil.lamp.events.LampOff;
 
+/**
+ * The class <code>LampCoupledModel</code> implements the 
+ * simulation coupled model for the lamp.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ */
 public class LampCoupledModel extends CoupledModel {
 
     private static final long serialVersionUID = 1L;

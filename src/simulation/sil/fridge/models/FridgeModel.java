@@ -24,7 +24,17 @@ import simulation.sil.fridge.events.FridgeClose;
 import simulation.sil.fridge.events.FridgeConsumption;
 import simulation.sil.fridge.events.FridgeOpen;
 
-
+/**
+ * The class <code>FridgeModel</code> implements a simulation model
+ * of a fridge providing the current consumption as a continuous variable
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(imported = {
         FridgeOpen.class,
         FridgeClose.class,

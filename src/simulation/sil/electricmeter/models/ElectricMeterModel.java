@@ -22,6 +22,17 @@ import simulation.sil.fridge.events.FridgeConsumption;
 import simulation.sil.lamp.events.LampConsumption;
 import simulation.sil.windturbine.events.WindTurbineProduction;
 
+/**
+ * The class <code>ElectricMeterModel</code> implements a simulation model
+ * of a meter providing the overall consumption as a continuous variable
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(imported = {
         BatteryConsumption.class,
         BatteryProduction.class,

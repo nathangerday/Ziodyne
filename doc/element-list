@@ -5,8 +5,6 @@ main
 ports
 simulation.events.common
 simulation.models.common
-simulation.models.controller
-simulation.models.electricmeter
 simulation.overall
 simulation.sil.battery.events
 simulation.sil.battery.models

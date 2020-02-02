@@ -21,6 +21,17 @@ import fr.sorbonne_u.utils.XYPlotter;
 import simulation.events.common.TicEvent;
 import simulation.sil.windturbine.events.WindReading;
 
+/**
+ * The class <code>WindSensorModel</code> implements a simulation model
+ * for the wind providing a reading of the wind speed as a continuous variable
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(imported = {TicEvent.class},
 exported = {WindReading.class})
 public class WindSensorModel extends AtomicHIOAwithEquations{

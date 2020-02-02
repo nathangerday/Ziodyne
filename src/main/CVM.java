@@ -24,13 +24,35 @@ import simulation.sil.lamp.models.LampCoupledModel;
 import simulation.sil.windturbine.models.WindTurbineCoupledModel;
 
 
-
+/**
+ * The class <code>CVM</code> deploys and executes all the components to run
+ * the simulation.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ */
 public class CVM extends AbstractCVM{
     public CVM() throws Exception{
         super();
         SimulationEngine.SIMULATION_STEP_SLEEP_TIME = 2L ;
     }
-
+    
+    
+    /**
+     * Deploys all components and connects them together
+	 * 
+	 *  <p><strong>Contract</strong></p>
+	 * <pre>
+	 * pre !deploymentDone()
+	 * </pre>
+	 * 
+	 * @throws Exception
+	 */
     @Override
     public void deploy() throws Exception{
 

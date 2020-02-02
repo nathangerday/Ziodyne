@@ -4,6 +4,17 @@ import fr.sorbonne_u.components.cyphy.plugins.devs.AtomicSimulatorPlugin;
 import fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI;
 import simulation.sil.electricmeter.models.ElectricMeterModel;
 
+/**
+ * The class <code>ElectricMeterSimulatorPlugin</code> implements the simulation
+ * plug-in for the component <code>ElectricMeter</code>.
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 public class ElectricMeterSimulatorPlugin extends AtomicSimulatorPlugin {
     
     private static final long serialVersionUID = 1L;

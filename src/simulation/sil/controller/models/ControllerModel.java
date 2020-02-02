@@ -10,6 +10,17 @@ import fr.sorbonne_u.devs_simulation.models.events.EventI;
 import fr.sorbonne_u.devs_simulation.models.time.Duration;
 import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 
+/**
+ * The class <code>ControllerModel</code> implements a simulation model
+ * of a controller
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 public class ControllerModel extends AtomicModel{
     // -------------------------------------------------------------------------
     // Constants and variables

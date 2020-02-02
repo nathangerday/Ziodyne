@@ -17,7 +17,17 @@ import simulation.sil.fridge.events.FreezerOpen;
 import simulation.sil.fridge.events.FridgeClose;
 import simulation.sil.fridge.events.FridgeOpen;
 
-
+/**
+ * The class <code>FridgeUserModel</code> implements a simulation model
+ * of a user for the fridge simulationg some interactions over time
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(exported = {
         FridgeOpen.class,
         FridgeClose.class,

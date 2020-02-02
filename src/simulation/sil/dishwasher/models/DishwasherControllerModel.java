@@ -12,6 +12,17 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import simulation.sil.dishwasher.events.DishwasherOn;
 
+/**
+ * The class <code>DishwasherControllerModel</code> implements a simulation model
+ * of a controller for the dishwasher
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(exported = {DishwasherOn.class})
 public class DishwasherControllerModel extends AtomicES_Model {
 

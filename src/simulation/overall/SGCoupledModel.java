@@ -56,16 +56,23 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
  * <pre>
  * invariant		true
  * </pre>
- * 
- * <p>Created on : 2020-01-20</p>
- * 
- * @author	<a href="mailto:Jacques.Malenfant@lip6.fr">Jacques Malenfant</a>
  */
 public class SGCoupledModel extends	CoupledModel {
 
     private static final long serialVersionUID = 1L;
     public static final String	URI = "SGCoupledModel" ;
-
+    
+    /**
+     * Constructs the SGCoupledModel
+     * @param uri the uri for the coupledModel
+     * @param simulatedTimeUnit time unit of the simulation
+     * @param simulationEngine engine for the simulation
+     * @param submodels array of all submodels
+     * @param imported map of imported events
+     * @param reexported map of reexported events
+     * @param connections map of event connections
+     * @throws Exception
+     */
     public SGCoupledModel(
             String uri,
             TimeUnit simulatedTimeUnit,

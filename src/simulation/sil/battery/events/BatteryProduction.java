@@ -6,6 +6,17 @@ import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.sil.electricmeter.models.ElectricMeterModel;
 
+/**
+ * The class <code>BatteryProduction</code> represents the fact that
+ * the battery production changed
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 public class BatteryProduction extends Event {
 
     private static final long serialVersionUID = 1L;

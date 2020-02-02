@@ -31,6 +31,19 @@ import simulation.sil.fridge.events.FridgeClose;
 import simulation.sil.fridge.events.FridgeConsumption;
 import simulation.sil.fridge.events.FridgeOpen;
 
+
+/**
+ * The class <code>FridgeCoupledModel</code> implements the 
+ * simulation coupled model for the fridge.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ */
 public class FridgeCoupledModel extends CoupledModel{
 
     private static final long serialVersionUID = 1L;

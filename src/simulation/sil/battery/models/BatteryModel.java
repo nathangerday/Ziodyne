@@ -20,6 +20,16 @@ import fr.sorbonne_u.utils.XYPlotter;
 import simulation.sil.battery.events.BatteryConsumption;
 import simulation.sil.battery.events.BatteryProduction;
 
+/**
+ * The class <code>BatteryModel</code> implements a simulation model
+ * of a battery providing the current capacity as a continous variable 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(exported = {BatteryConsumption.class,BatteryProduction.class})
 public class BatteryModel extends AtomicModel {
 

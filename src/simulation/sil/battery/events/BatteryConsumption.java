@@ -6,6 +6,18 @@ import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.sil.electricmeter.models.ElectricMeterModel;
 
+
+/**
+ * The class <code>BatteryConsumption</code> represents the fact that
+ * the battery consumption changed
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 public class BatteryConsumption extends Event {
 
     private static final long serialVersionUID = 1L;
@@ -23,12 +35,13 @@ public class BatteryConsumption extends Event {
     public BatteryConsumption(Time timeOfOccurrence, double value) {
         super(timeOfOccurrence, new Reading(value));
     }
+    
 
     @Override
     public String eventAsString() {
         return "BatteryConsumption(" + this.getTimeOfOccurrence().getSimulatedTime() + ")";
     }
-
+    
     @Override
     public String eventContentAsString() {
         return "power = " + ((Reading)this.getEventInformation()).value +" Watts "+

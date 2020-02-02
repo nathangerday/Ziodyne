@@ -21,6 +21,17 @@ import fr.sorbonne_u.utils.PlotterDescription;
 import fr.sorbonne_u.utils.XYPlotter;
 import simulation.utils.DoublePiece;
 
+/**
+ * The class <code>WindModel</code> implements a simulation model
+ * for the wind providing the wind speed as a continuous variable
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 public class WindModel extends AtomicHIOAwithDE{
 
     public static class WindReport extends AbstractSimulationReport{

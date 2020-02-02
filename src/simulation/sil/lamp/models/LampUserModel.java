@@ -17,7 +17,17 @@ import simulation.sil.lamp.events.LampLow;
 import simulation.sil.lamp.events.LampMedium;
 import simulation.sil.lamp.events.LampOff;
 
-
+/**
+ * The class <code>LampUserModel</code> implements a simulation model
+ * of a user using a lamp over time
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(exported = {
         LampOff.class,
         LampHigh.class,

@@ -10,12 +10,32 @@ import components.WindTurbine;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractDistributedCVM;
 
+
+/**
+ * The class <code>DistributedCVM</code> implements the multi-JVM assembly for
+ * the Ziondyne project.
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ */
 public class DistributedCVM extends AbstractDistributedCVM{
 
     public DistributedCVM(String[] args,int xLayout, int yLayout) throws Exception {
         super(args,xLayout,yLayout);
     }
 
+	/**
+	 * do some initialisation before anything can go on.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	true				// no more preconditions.
+	 * post	true				// no more postconditions.
+	 * </pre>
+	 */
     @Override
     public void initialise() throws Exception{
         super.initialise();
@@ -32,7 +52,17 @@ public class DistributedCVM extends AbstractDistributedCVM{
             throw new RuntimeException(e) ;
         }
     }
-
+    
+    /**
+	 * instantiate components and publish their ports.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	true				// no more preconditions.
+	 * post	true				// no more postconditions.
+	 * </pre>
+	 */
     @Override
     public void instantiateAndPublish() throws Exception{
         if(thisJVMURI.equals(URI.JVM_CONTROLLER)) {
@@ -114,18 +144,34 @@ public class DistributedCVM extends AbstractDistributedCVM{
         }
         super.instantiateAndPublish();
     }
-
+    
+    /**
+	 * interconnect the components.
+	 * 
+	 * <p><strong>Contract</strong></p>
+	 * 
+	 * <pre>
+	 * pre	true				// no more preconditions.
+	 * post	true				// no more postconditions.
+	 * </pre>
+	 */
     @Override
     public void	interconnect() throws Exception{
         assert	this.isIntantiatedAndPublished() ;
         super.interconnect();
     }
-
+    
+    /**
+     * Start the execution
+     */
     @Override
     public void start() throws Exception{
         super.start();
     }
 
+    /**
+     * Finalise the execution
+     */
     @Override
     public void finalise() throws Exception{
         super.finalise();

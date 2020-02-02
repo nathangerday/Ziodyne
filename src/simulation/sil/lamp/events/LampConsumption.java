@@ -7,6 +7,11 @@ import fr.sorbonne_u.devs_simulation.models.events.EventInformationI;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.sil.electricmeter.models.ElectricMeterModel;
 
+
+/**
+ * The class <code>LampConsumption</code> represents a change in the .
+ * consumption of the lamp.
+ */
 public class LampConsumption extends Event {
 
     private static final long serialVersionUID = 1L;

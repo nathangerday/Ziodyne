@@ -5,6 +5,10 @@ import fr.sorbonne_u.devs_simulation.models.AtomicModel;
 import fr.sorbonne_u.devs_simulation.models.time.Time;
 import simulation.sil.fridge.models.FridgeModel;
 
+/**
+ * The class <code>FreezerClose</code> represents the closing 
+ * of the freezer's .
+ */
 public class FreezerClose extends AbstractFridgeEvent {
 
     private static final long serialVersionUID = 1L;

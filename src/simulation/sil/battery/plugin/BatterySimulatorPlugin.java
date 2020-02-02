@@ -6,6 +6,18 @@ import fr.sorbonne_u.components.cyphy.plugins.devs.AtomicSimulatorPlugin;
 import fr.sorbonne_u.devs_simulation.interfaces.ModelDescriptionI;
 import simulation.sil.battery.models.BatteryModel;
 
+
+/**
+ * The class <code>BatterySimulatorPlugin</code> implements the simulation
+ * plug-in for the component <code>Battery</code>.
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 public class BatterySimulatorPlugin extends AtomicSimulatorPlugin {
     private static final long serialVersionUID = 1L;
 

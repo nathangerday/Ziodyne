@@ -21,6 +21,18 @@ import fr.sorbonne_u.utils.XYPlotter;
 import simulation.sil.dishwasher.events.DishwasherConsumption;
 import simulation.sil.dishwasher.events.DishwasherOn;
 
+
+/**
+ * The class <code>DishwasherModel</code> implements a simulation model
+ * of a dishwasher providing the current consumption as a continuous variable
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(imported = {DishwasherOn.class},
 exported = {DishwasherConsumption.class})
 public class DishwasherModel extends AtomicModel{

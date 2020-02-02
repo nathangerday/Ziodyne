@@ -30,6 +30,18 @@ import simulation.models.common.TicModel;
 import simulation.sil.windturbine.events.WindReading;
 import simulation.sil.windturbine.events.WindTurbineProduction;
 
+/**
+ * The class <code>WindTurbineCoupledModel</code> implements the 
+ * simulation coupled model for the windturbine.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ */
 public class WindTurbineCoupledModel extends CoupledModel{
 
     private static final long serialVersionUID = 1L;

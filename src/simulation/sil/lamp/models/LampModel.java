@@ -26,6 +26,17 @@ import simulation.sil.lamp.events.LampLow;
 import simulation.sil.lamp.events.LampMedium;
 import simulation.sil.lamp.events.LampOff;
 
+/**
+ * The class <code>LampModel</code> implements a simulation model
+ * of a lamp providing the consumption as a continous variable
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(imported = {
         LampOff.class,
         LampLow.class,

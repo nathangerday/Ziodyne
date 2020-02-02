@@ -19,6 +19,18 @@ import fr.sorbonne_u.utils.XYPlotter;
 import simulation.sil.windturbine.events.WindReading;
 import simulation.sil.windturbine.events.WindTurbineProduction;
 
+
+/**
+ * The class <code>WindTurbineModel</code> implements a simulation model
+ * for a windturbine providing the production as a continuous variable
+ *  
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ * 
+ */
 @ModelExternalEvents(imported = {WindReading.class},
 exported = {WindTurbineProduction.class})
 public class WindTurbineModel extends AtomicModel {

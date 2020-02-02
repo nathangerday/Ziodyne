@@ -27,6 +27,19 @@ import fr.sorbonne_u.devs_simulation.utils.StandardCoupledModelReport;
 import simulation.sil.dishwasher.events.DishwasherConsumption;
 import simulation.sil.dishwasher.events.DishwasherOn;
 
+
+/**
+ * The class <code>DishwasherCoupledModel</code> implements the 
+ * simulation coupled model for the dishwasher.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ */
 public class DishwasherCoupledModel extends CoupledModel {
 
     private static final long serialVersionUID = 1L;

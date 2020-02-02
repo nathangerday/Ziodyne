@@ -1,5 +1,9 @@
 package simulation.utils;
 
+/**
+ * The class <code>DoubliePiece<code> is representation of 
+ * two associations of values.
+ */
 public class DoublePiece
 {
     public final double	first ;

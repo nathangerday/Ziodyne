@@ -14,6 +14,17 @@ import fr.sorbonne_u.devs_simulation.simulators.interfaces.SimulatorI;
 import fr.sorbonne_u.devs_simulation.utils.StandardLogger;
 import simulation.events.common.TicEvent;
 
+/**
+ * The class <code>TicModel</code> implements a simulator for the passage of time.
+ *
+ * <p><strong>Description</strong></p>
+ * 
+ * <p><strong>Invariant</strong></p>
+ * 
+ * <pre>
+ * invariant		true
+ * </pre>
+ */
 @ModelExternalEvents(exported = {TicEvent.class})
 public class TicModel extends AtomicModel{
     private static final long	serialVersionUID = 1L;
@@ -58,6 +69,7 @@ public class TicModel extends AtomicModel{
         ret.add(e);
         return ret;
     }
+    
 
     @Override
     public void	userDefinedInternalTransition(Duration elapsedTime){
